@@ -1,0 +1,48 @@
+/* MatSciEd Quantum: the three high-school modules. Friendlier density, the hook and
+   try-at-home boxes, teacher notes, and a few components used only there. */
+body{font-size:1.156rem;line-height:1.62}
+.prose{max-width:60ch}
+h2{font-size:clamp(1.55rem,3.2vw,2.1rem)}
+.msg{font-size:1.28rem}
+.sdek{font-size:1.04rem}
+.bench .bbody{padding:20px 18px}
+.btn{font-size:.917rem;padding:8px 13px}
+.btn.big{font-size:1rem;padding:10px 16px}
+.ctrl > label{font-size:.837rem}
+input[type=range]::-webkit-slider-thumb{width:18px;height:18px;margin-top:-7.5px}
+input[type=range]::-moz-range-thumb{width:16px;height:16px}
+.series{font-family:"IBM Plex Mono",monospace;font-size:.812rem;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);margin-bottom:14px}
+.series b{color:var(--zero);font-weight:500}
+.hook{display:grid;grid-template-columns:auto minmax(0,1fr);gap:14px 18px;align-items:start;border:1px solid var(--rule);border-left:3px solid var(--one);background:var(--surface);border-radius:0 4px 4px 0;padding:16px 20px;margin:24px 0}
+.hook .hk{font-family:"IBM Plex Mono",monospace;font-size:.812rem;letter-spacing:.14em;text-transform:uppercase;color:var(--one);padding-top:4px;white-space:nowrap}
+.hook p{margin:0;font-size:1.02rem;color:var(--ink-2)}
+.hook p b{color:var(--ink)}
+.home{border:1px solid var(--rule);border-radius:4px;background:var(--surface);margin:26px 0;overflow:hidden}
+.home .hh{padding:10px 18px;background:var(--surface-2);border-bottom:1px solid var(--rule);font-family:"IBM Plex Mono",monospace;font-size:.812rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.home .hh b{color:var(--ink);font-weight:500}
+.home .hb{padding:16px 18px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.6fr);gap:18px}
+.home h5{font-family:Archivo,sans-serif;font-size:.894rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 0 6px}
+.home ul,.home ol{margin:0;padding-left:1.15em;font-size:1rem;color:var(--ink-2)}
+.home li{margin:4px 0}
+.home .why{grid-column:1/-1;font-size:1rem;color:var(--ink-2);border-top:1px solid var(--rule);padding-top:12px}
+.home .why b{color:var(--ink)}
+@media (max-width:700px){.home .hb{grid-template-columns:1fr}.hook{grid-template-columns:1fr;gap:6px}}
+details.teacher{margin:14px 0 0;border:1px dashed var(--rule-strong);border-radius:3px;background:transparent}
+details.teacher>summary{cursor:pointer;padding:7px 12px;font-family:"IBM Plex Mono",monospace;font-size:.812rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);list-style:none;display:flex;gap:8px;align-items:center}
+details.teacher>summary::-webkit-details-marker{display:none}
+details.teacher>summary::before{content:"+";color:var(--phase);font-weight:600}
+details.teacher[open]>summary::before{content:"\2212"}
+details.teacher>.tb{padding:2px 14px 12px;font-size:1rem;line-height:1.55;color:var(--ink-2);border-top:1px dashed var(--rule)}
+details.teacher>.tb b{color:var(--ink)}
+.coinrow{display:flex;flex-wrap:wrap;gap:5px}
+.coin{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:"IBM Plex Mono",monospace;font-size:.837rem;font-weight:600;color:#fff;background:var(--faint)}
+.coin.z{background:var(--zero)}.coin.o{background:var(--one)}
+.bigpct{font-family:Archivo,sans-serif;font-weight:700;font-size:2.4rem;letter-spacing:-.02em;line-height:1;color:var(--ink);font-variant-numeric:tabular-nums}
+.bigpct small{font-family:"IBM Plex Mono",monospace;font-size:.837rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);display:block;margin-top:6px;font-weight:400}
+.uses{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.use{border:1px solid var(--rule);border-radius:4px;background:var(--surface);padding:14px 16px}
+.use b{display:block;font-family:Archivo,sans-serif;font-size:1rem;color:var(--ink);margin-bottom:4px}
+.use small{display:block;font-size:1rem;color:var(--muted);line-height:1.45}
+.use .n{font-family:"IBM Plex Mono",monospace;font-size:.787rem;letter-spacing:.12em;text-transform:uppercase;color:var(--zero);display:block;margin-bottom:6px}
+.stepper{display:flex;gap:6px;flex-wrap:wrap}
+.stepper button{flex:1 1 90px}
