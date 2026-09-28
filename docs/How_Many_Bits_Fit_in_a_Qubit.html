@@ -1,0 +1,1600 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="An undergraduate entry point to quantum computing that starts from binary, walks a dial from two positions to a continuum, and answers how much information one qubit really holds.">
+<style>:root{color-scheme:light dark}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+<title>How Many Bits Fit in a Qubit?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<style>
+:root{
+  --ground:#F2F4F4; --surface:#FFFFFF; --surface-2:#E8ECED; --bench:#FAFCFC;
+  --ink:#101619; --ink-2:#38464B; --muted:#5B6A70; --faint:#8C9BA1;
+  --rule:#D5DDDE; --rule-strong:#B6C3C5;
+  --zero:#00819F; --one:#AA6609; --phase:#7448B1;
+  --zero-soft:rgba(0,129,159,.13); --one-soft:rgba(170,102,9,.13); --phase-soft:rgba(116,72,177,.13);
+  --grid:rgba(16,22,25,.09); --sphere:rgba(16,22,25,.55);
+  --shade:rgba(0,129,159,.05);
+  --shadow:0 1px 2px rgba(16,22,25,.04), 0 10px 30px -18px rgba(16,22,25,.30);
+  --sel:rgba(0,129,159,.16);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ground:#0D1214; --surface:#141B1E; --surface-2:#1C2528; --bench:#101A1D;
+    --ink:#E4EDEF; --ink-2:#BAC8CC; --muted:#8FA1A7; --faint:#6B7B81;
+    --rule:#243033; --rule-strong:#35464B;
+    --zero:#1E9FA5; --one:#B97830; --phase:#906FC6;
+    --zero-soft:rgba(30,159,165,.15); --one-soft:rgba(185,120,48,.16); --phase-soft:rgba(144,111,198,.16);
+    --grid:rgba(228,237,239,.10); --sphere:rgba(228,237,239,.50);
+    --shade:rgba(30,159,165,.05);
+    --shadow:0 1px 2px rgba(0,0,0,.35), 0 12px 34px -20px rgba(0,0,0,.8);
+    --sel:rgba(30,159,165,.18);
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#0D1214; --surface:#141B1E; --surface-2:#1C2528; --bench:#101A1D;
+  --ink:#E4EDEF; --ink-2:#BAC8CC; --muted:#8FA1A7; --faint:#6B7B81;
+  --rule:#243033; --rule-strong:#35464B;
+  --zero:#1E9FA5; --one:#B97830; --phase:#906FC6;
+  --zero-soft:rgba(30,159,165,.15); --one-soft:rgba(185,120,48,.16); --phase-soft:rgba(144,111,198,.16);
+  --grid:rgba(228,237,239,.10); --sphere:rgba(228,237,239,.50);
+  --shade:rgba(30,159,165,.05);
+  --shadow:0 1px 2px rgba(0,0,0,.35), 0 12px 34px -20px rgba(0,0,0,.8);
+  --sel:rgba(30,159,165,.18);
+}
+
+*{box-sizing:border-box}
+body{
+  background:var(--ground); color:var(--ink);
+  font-family:"Source Serif 4","Iowan Old Style",Georgia,serif;
+  font-size:17px; line-height:1.62;
+  margin:0; padding-inline:20px; padding-block:0;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1080px;margin:0 auto}
+.prose{max-width:66ch}
+h1,h2,h3,h4,.mono,.eyebrow,.btn,label,th,.tab{font-family:Archivo,"Helvetica Neue",Arial,sans-serif}
+.mono,.eq,.num,code,.eyebrow,.tag,kbd{font-family:"IBM Plex Mono",ui-monospace,"SF Mono",Menlo,monospace}
+h1{font-size:clamp(2.1rem,5.4vw,3.3rem);line-height:1.04;font-weight:700;letter-spacing:-.024em;margin:0;text-wrap:balance}
+h2{font-size:clamp(1.5rem,3.1vw,2.05rem);line-height:1.14;font-weight:600;letter-spacing:-.02em;margin:0;text-wrap:balance}
+h3{font-size:1.12rem;font-weight:600;letter-spacing:-.008em;margin:0 0 .35em;text-wrap:balance}
+h4{font-size:.78rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;margin:0;color:var(--muted)}
+p{margin:0 0 1.05em}
+a{color:inherit;text-underline-offset:3px;text-decoration-color:var(--rule-strong)}
+strong{font-weight:600}
+em{font-style:italic}
+:focus-visible{outline:2px solid var(--zero);outline-offset:2px;border-radius:2px}
+
+/* ---------- masthead ---------- */
+.top{
+  position:sticky;top:0;z-index:40;background:color-mix(in srgb,var(--ground) 88%,transparent);
+  backdrop-filter:blur(10px);border-bottom:1px solid var(--rule);
+  margin-inline:-20px;padding-inline:20px;
+}
+.topin{max-width:1080px;margin:0 auto;display:flex;align-items:center;gap:18px;height:46px}
+.brand{font-family:"IBM Plex Mono",monospace;font-size:.68rem;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);white-space:nowrap;flex:0 1 auto;min-width:0;max-width:52%;overflow:hidden;text-overflow:ellipsis}
+.brand b{color:var(--ink);font-weight:500}
+.tocbar{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none;flex:1;margin-left:auto}
+.tocbar::-webkit-scrollbar{display:none}
+.tocbar a{
+  font-family:"IBM Plex Mono",monospace;font-size:.7rem;color:var(--muted);text-decoration:none;
+  padding:4px 7px;border-radius:3px;white-space:nowrap;transition:background .15s,color .15s;
+}
+.tocbar a:hover{background:var(--surface-2);color:var(--ink)}
+.tocbar a.on{color:var(--ink);background:var(--sel)}
+
+/* ---------- hero ---------- */
+.hero{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:44px;align-items:center;padding-block:64px 52px}
+.kicker{font-family:"IBM Plex Mono",monospace;font-size:.7rem;letter-spacing:.19em;text-transform:uppercase;color:var(--zero);margin-bottom:20px}
+.stand{font-size:1.16rem;color:var(--ink-2);margin-top:22px;max-width:46ch}
+.herofig{position:relative;display:flex;flex-direction:column;align-items:center;gap:10px}
+.herohint{font-family:"IBM Plex Mono",monospace;font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;color:var(--faint)}
+.claims{display:flex;flex-wrap:wrap;gap:0;margin-top:30px;border-top:1px solid var(--rule)}
+.claim{flex:1 1 210px;padding:15px 20px 15px 0;border-right:1px solid var(--rule)}
+.claim:last-child{border-right:none}
+.claim .n{font-family:"IBM Plex Mono",monospace;font-size:.66rem;letter-spacing:.13em;color:var(--faint);display:block;margin-bottom:5px}
+.claim .t{font-size:.95rem;line-height:1.42;color:var(--ink-2)}
+
+/* ---------- sections ---------- */
+section{padding-block:26px 46px;scroll-margin-top:60px}
+.shead{display:grid;grid-template-columns:56px minmax(0,1fr);gap:0;align-items:start;margin-bottom:22px;border-top:2px solid var(--ink);padding-top:14px}
+.snum{font-family:"IBM Plex Mono",monospace;font-size:.8rem;font-weight:500;color:var(--zero);padding-top:.25em}
+.sdek{color:var(--muted);font-size:1.02rem;margin-top:.5em;max-width:62ch}
+.body{display:grid;grid-template-columns:56px minmax(0,1fr);gap:0}
+.body > .col{min-width:0}
+
+/* ---------- bench (interactive panel) ---------- */
+.bench{
+  background:var(--bench);border:1px solid var(--rule);border-radius:4px;
+  margin:26px 0;box-shadow:var(--shadow);overflow:hidden;
+}
+.blab{
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+  padding:9px 16px;border-bottom:1px solid var(--rule);background:var(--surface-2);
+  font-family:"IBM Plex Mono",monospace;font-size:.66rem;letter-spacing:.13em;text-transform:uppercase;color:var(--muted);
+}
+.blab .dot{width:6px;height:6px;border-radius:50%;background:var(--zero);flex:none}
+.blab b{color:var(--ink);font-weight:500;letter-spacing:.09em}
+.bbody{padding:18px 16px}
+.bfoot{padding:11px 16px;border-top:1px solid var(--rule);background:var(--surface-2);font-size:.9rem;color:var(--muted);line-height:1.5}
+.bfoot b{color:var(--ink-2)}
+
+.row{display:flex;gap:18px;flex-wrap:wrap;align-items:flex-start}
+.row > *{min-width:0}
+.grow{flex:1 1 280px}
+.stack{display:flex;flex-direction:column;gap:12px}
+.stack > .ctrl{flex:0 0 auto}
+
+/* ---------- controls ---------- */
+.ctrls{display:flex;flex-wrap:wrap;gap:14px 22px;align-items:flex-end}
+.ctrl{display:flex;flex-direction:column;gap:5px;flex:1 1 170px;min-width:150px}
+.ctrl > label{font-family:"IBM Plex Mono",monospace;font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);display:flex;justify-content:space-between;gap:8px}
+.ctrl > label .v{color:var(--ink);font-variant-numeric:tabular-nums}
+input[type=range]{
+  -webkit-appearance:none;appearance:none;width:100%;height:18px;background:transparent;margin:0;cursor:pointer;
+}
+input[type=range]::-webkit-slider-runnable-track{height:3px;background:var(--rule-strong);border-radius:2px}
+input[type=range]::-moz-range-track{height:3px;background:var(--rule-strong);border-radius:2px}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:15px;height:15px;border-radius:50%;background:var(--zero);margin-top:-6px;border:2px solid var(--bench)}
+input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;background:var(--zero);border:2px solid var(--bench)}
+.btn{
+  font-size:.78rem;font-weight:600;letter-spacing:.01em;padding:6px 11px;border-radius:3px;
+  background:var(--surface);color:var(--ink);border:1px solid var(--rule-strong);cursor:pointer;
+  transition:background .13s,border-color .13s,transform .06s;
+}
+.btn:hover{background:var(--surface-2);border-color:var(--ink-2)}
+.btn:active{transform:translateY(1px)}
+.btn.on{background:var(--zero);border-color:var(--zero);color:#fff}
+.btn.gate{font-family:"IBM Plex Mono",monospace;font-weight:500;min-width:36px;text-align:center}
+.btn.ghost{background:transparent;border-style:dashed}
+.btn.wide{width:100%}
+.btnrow{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.btnrow .sep{width:1px;align-self:stretch;background:var(--rule);margin-inline:4px}
+.seg{display:inline-flex;border:1px solid var(--rule-strong);border-radius:3px;overflow:hidden}
+.seg button{font-family:"IBM Plex Mono",monospace;font-size:.72rem;padding:5px 10px;background:var(--surface);color:var(--muted);border:none;border-right:1px solid var(--rule);cursor:pointer}
+.seg button:last-child{border-right:none}
+.seg button.on{background:var(--zero);color:#fff}
+.swrap{display:flex;align-items:center;gap:7px;font-family:"IBM Plex Mono",monospace;font-size:.72rem;color:var(--muted);cursor:pointer;user-select:none}
+input[type=checkbox]{accent-color:var(--zero);width:15px;height:15px;cursor:pointer}
+
+/* ---------- canvas ---------- */
+canvas{display:block;max-width:100%;touch-action:pan-y}
+.cvwrap{display:flex;flex-direction:column;align-items:center;gap:6px}
+.cvcap{font-family:"IBM Plex Mono",monospace;font-size:.64rem;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);text-align:center}
+
+/* ---------- readouts ---------- */
+.read{font-family:"IBM Plex Mono",monospace;font-size:.8rem;line-height:1.85;font-variant-numeric:tabular-nums}
+.read .k{color:var(--muted)}
+.read .z{color:var(--zero)}
+.read .o{color:var(--one)}
+.read .p{color:var(--phase)}
+.pbar{display:flex;flex-direction:column;gap:7px;margin-top:2px}
+.pb{display:grid;grid-template-columns:58px minmax(0,1fr) 52px;gap:9px;align-items:center;font-family:"IBM Plex Mono",monospace;font-size:.73rem;font-variant-numeric:tabular-nums}
+.pb .track{height:11px;background:var(--surface-2);border-radius:2px;overflow:hidden}
+.pb .fill{height:100%;border-radius:2px;transition:width .22s ease}
+.pb .lbl{color:var(--muted)}
+.pb .val{text-align:right;color:var(--ink-2)}
+
+/* ---------- tables ---------- */
+.tbl{width:100%;border-collapse:collapse;font-family:"IBM Plex Mono",monospace;font-size:.76rem;font-variant-numeric:tabular-nums}
+.tbl th{font-family:Archivo,sans-serif;font-size:.64rem;letter-spacing:.11em;text-transform:uppercase;color:var(--muted);font-weight:600;text-align:left;padding:6px 9px;border-bottom:1px solid var(--rule-strong)}
+.tbl td{padding:5px 9px;border-bottom:1px solid var(--rule);color:var(--ink-2)}
+.tbl tr:last-child td{border-bottom:none}
+.tbl td.hi{background:var(--zero-soft);color:var(--ink)}
+.tbl td.lo{color:var(--faint)}
+.tbl .out{color:var(--ink);font-weight:500}
+.tblscroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+
+/* ---------- equations & notes ---------- */
+.eq{
+  display:block;font-size:.88rem;line-height:1.9;color:var(--ink);
+  background:var(--surface);border-left:2px solid var(--zero);
+  padding:11px 15px;margin:16px 0;border-radius:0 3px 3px 0;overflow-x:auto;white-space:nowrap;
+}
+.eq .c{color:var(--muted)}
+.inl{font-family:"IBM Plex Mono",monospace;font-size:.88em;background:var(--surface-2);padding:.08em .32em;border-radius:2px}
+.note{border-left:2px solid var(--rule-strong);padding:2px 0 2px 16px;margin:18px 0;color:var(--muted);font-size:.96rem}
+.note b{color:var(--ink-2)}
+details.math{margin:16px 0;border:1px solid var(--rule);border-radius:3px;background:var(--surface);overflow:hidden}
+details.math > summary{
+  cursor:pointer;padding:8px 14px;font-family:"IBM Plex Mono",monospace;font-size:.7rem;
+  letter-spacing:.1em;text-transform:uppercase;color:var(--muted);list-style:none;
+  display:flex;align-items:center;gap:8px;
+}
+details.math > summary::-webkit-details-marker{display:none}
+details.math > summary::before{content:"+";color:var(--zero);font-weight:600}
+details.math[open] > summary::before{content:"\2212"}
+details.math > summary:hover{color:var(--ink)}
+.mathbody{padding:2px 16px 14px;font-size:.95rem;border-top:1px solid var(--rule)}
+.mathbody .eq{background:var(--bench);margin:12px 0}
+.matrix{display:inline-grid;grid-template-columns:repeat(2,minmax(52px,auto));gap:2px 12px;font-family:"IBM Plex Mono",monospace;font-size:.8rem;
+  border-left:2px solid var(--ink-2);border-right:2px solid var(--ink-2);padding:6px 10px;text-align:right;font-variant-numeric:tabular-nums}
+.kv{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 14px;font-family:"IBM Plex Mono",monospace;font-size:.76rem;font-variant-numeric:tabular-nums}
+.kv dt{color:var(--muted)}
+.kv dd{margin:0;color:var(--ink)}
+.verdict{font-family:"IBM Plex Mono",monospace;font-size:.78rem;line-height:1.7;padding:9px 12px;border-radius:3px;background:var(--surface);border:1px solid var(--rule)}
+.verdict.bad{border-left:3px solid var(--one)}
+.verdict.good{border-left:3px solid var(--zero)}
+.tag{display:inline-block;font-size:.63rem;letter-spacing:.11em;text-transform:uppercase;padding:2px 6px;border-radius:2px;background:var(--surface-2);color:var(--muted)}
+.tag.z{background:var(--zero-soft);color:var(--zero)}
+.tag.o{background:var(--one-soft);color:var(--one)}
+.tag.p{background:var(--phase-soft);color:var(--phase)}
+.legend{display:flex;flex-wrap:wrap;gap:5px 16px;font-family:"IBM Plex Mono",monospace;font-size:.68rem;color:var(--muted);margin-top:9px}
+.legend span{display:flex;align-items:center;gap:6px}
+.legend i{width:11px;height:11px;border-radius:2px;display:block;flex:none}
+
+/* ---------- circuit strip ---------- */
+.circ{display:flex;align-items:center;gap:0;flex-wrap:wrap;font-family:"IBM Plex Mono",monospace;font-size:.76rem;
+  padding:9px 12px;background:var(--surface);border:1px solid var(--rule);border-radius:3px;min-height:42px}
+.circ .wire{height:1px;background:var(--rule-strong);flex:1 0 14px;min-width:14px}
+.circ .op{border:1px solid var(--ink-2);background:var(--bench);padding:2px 8px;border-radius:2px;color:var(--ink);white-space:nowrap}
+.circ .op.ph{border-color:var(--phase);color:var(--phase)}
+.circ .ket{color:var(--muted);white-space:nowrap}
+.circ .mtr{border:1px solid var(--zero);color:var(--zero);padding:2px 8px;border-radius:2px}
+
+/* ---------- closing ---------- */
+.roles{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:0;border-top:1px solid var(--rule);margin-top:20px}
+.role{padding:16px 20px 18px 0;border-bottom:1px solid var(--rule)}
+.role h5{font-family:Archivo,sans-serif;font-size:.95rem;font-weight:600;margin:0 0 5px;color:var(--ink)}
+.role p{font-size:.92rem;color:var(--muted);margin:0;line-height:1.5}
+.role .n{font-family:"IBM Plex Mono",monospace;font-size:.62rem;letter-spacing:.12em;color:var(--zero);display:block;margin-bottom:7px}
+footer{border-top:2px solid var(--ink);margin-top:40px;padding:20px 0 60px;font-family:"IBM Plex Mono",monospace;font-size:.7rem;color:var(--faint);line-height:1.8}
+
+@media (max-width:880px){
+  .hero{grid-template-columns:1fr;gap:30px;padding-block:40px 34px}
+  .shead,.body{grid-template-columns:1fr}
+  .snum{margin-bottom:6px;padding-top:0}
+  .claim{border-right:none;border-bottom:1px solid var(--rule);padding-right:0}
+  .claim:last-child{border-bottom:none}
+  body{font-size:16.5px}
+}
+@media (prefers-reduced-motion:reduce){
+  *{animation-duration:.001ms !important;transition-duration:.001ms !important}
+}
+</style>
+<style>
+/* ---- undergraduate module: lighter density, larger type, dial components ---- */
+body{font-size:18px;line-height:1.6}
+.prose{max-width:62ch}
+h1{font-size:clamp(2.2rem,5.8vw,3.5rem)}
+.hero{grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);padding-block:56px 40px}
+.assume{border:1px solid var(--rule);background:var(--surface);border-radius:4px;padding:16px 20px;margin-top:26px}
+.assume h4{margin-bottom:10px}
+.assume ol{margin:0;padding-left:1.2em;font-size:.98rem;color:var(--ink-2)}
+.assume li{margin:5px 0}
+.assume li b{color:var(--ink)}
+.msg{font-family:Archivo,sans-serif;font-weight:600;font-size:1.22rem;line-height:1.35;letter-spacing:-.012em;color:var(--ink);margin:6px 0 18px;text-wrap:balance}
+.toggles{display:flex;gap:8px;flex-wrap:wrap}
+.tg{width:54px;height:76px;border:1px solid var(--rule-strong);border-radius:5px;background:var(--surface);cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:7px 0;font-family:"IBM Plex Mono",monospace;font-size:.7rem;color:var(--muted);transition:background .12s}
+.tg .knob{width:30px;height:30px;border-radius:50%;background:var(--surface-2);border:1px solid var(--rule-strong);transition:transform .15s,background .15s}
+.tg.on{background:var(--zero-soft);border-color:var(--zero)}
+.tg.on .knob{background:var(--zero);border-color:var(--zero)}
+.tg .val{font-size:1.1rem;font-weight:600;color:var(--ink)}
+.bigread{font-family:"IBM Plex Mono",monospace;font-size:1.05rem;line-height:1.7;font-variant-numeric:tabular-nums}
+.bigread .k{color:var(--muted);font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;display:block}
+.bigread .z{color:var(--zero)}.bigread .o{color:var(--one)}.bigread .p{color:var(--phase)}
+.outcome{display:inline-flex;align-items:center;justify-content:center;width:64px;height:64px;border-radius:6px;font-family:"IBM Plex Mono",monospace;font-size:2rem;font-weight:600;background:var(--surface-2);color:var(--faint);border:1px solid var(--rule)}
+.outcome.z{background:var(--zero-soft);color:var(--zero);border-color:var(--zero)}
+.outcome.o{background:var(--one-soft);color:var(--one);border-color:var(--one)}
+.roundlog{font-family:"IBM Plex Mono",monospace;font-size:.72rem;line-height:1.7;color:var(--muted);border-top:1px solid var(--rule);padding-top:8px;margin-top:6px}
+.roundlog b{color:var(--ink-2);font-weight:500}
+.roundlog .hit{color:var(--zero)}.roundlog .miss{color:var(--one)}
+details.quick{margin:18px 0 0;border-left:2px solid var(--zero);background:var(--surface);border-radius:0 3px 3px 0}
+details.quick>summary{cursor:pointer;padding:9px 14px;font-family:Archivo,sans-serif;font-weight:600;font-size:.9rem;color:var(--ink-2);list-style:none;display:flex;gap:8px;align-items:center}
+details.quick>summary::-webkit-details-marker{display:none}
+details.quick>summary::before{content:"?";font-family:"IBM Plex Mono",monospace;color:var(--zero);font-weight:600}
+details.quick>.a{padding:0 14px 12px;font-size:.98rem;color:var(--ink-2)}
+.sdtable td.on,.sdtable th.on{background:var(--zero-soft)}
+.answer{border-top:2px solid var(--ink);margin-top:10px}
+.answer .line{display:grid;grid-template-columns:150px minmax(0,1fr);gap:16px;padding:14px 0;border-bottom:1px solid var(--rule);align-items:baseline}
+.answer .q{font-family:"IBM Plex Mono",monospace;font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.answer .v{font-family:Archivo,sans-serif;font-weight:600;font-size:1.15rem;color:var(--ink);letter-spacing:-.01em}
+.answer .v small{display:block;font-family:"Source Serif 4",serif;font-weight:400;font-size:.95rem;color:var(--muted);margin-top:3px}
+@media (max-width:880px){.answer .line{grid-template-columns:1fr;gap:4px}}
+</style>
+<style>
+/* ---- quick checks with an answer box ---- */
+.quiz{margin:18px 0 0;border:1px solid var(--rule);border-left:2px solid var(--zero);background:var(--surface);border-radius:0 3px 3px 0;padding:12px 16px 14px}
+.quiz .qh{font-family:"IBM Plex Mono",monospace;font-size:.64rem;letter-spacing:.12em;text-transform:uppercase;color:var(--zero);margin-bottom:6px;display:flex;justify-content:space-between;gap:10px}
+.quiz .qh .st{color:var(--muted)}
+.quiz .qt{font-family:Archivo,sans-serif;font-weight:600;font-size:.98rem;line-height:1.4;color:var(--ink);margin-bottom:11px;text-wrap:balance}
+.quiz .opts{display:flex;flex-direction:column;gap:6px}
+.quiz .opt{display:flex;gap:10px;align-items:flex-start;text-align:left;padding:8px 11px;border:1px solid var(--rule-strong);border-radius:3px;background:var(--bench);cursor:pointer;font-family:"Source Serif 4",Georgia,serif;font-size:.95rem;line-height:1.45;color:var(--ink-2);transition:border-color .12s,background .12s}
+.quiz .opt:hover{border-color:var(--ink-2)}
+.quiz .opt .L{font-family:"IBM Plex Mono",monospace;font-size:.7rem;color:var(--muted);padding-top:3px;min-width:14px;flex:none}
+.quiz .opt.right{border-color:var(--zero);background:var(--zero-soft);color:var(--ink)}
+.quiz .opt.wrong{border-color:var(--one);background:var(--one-soft)}
+.quiz .opt:disabled{cursor:default}
+.quiz .num{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.quiz .num .u{font-family:"IBM Plex Mono",monospace;font-size:.78rem;color:var(--muted)}
+.quiz input[type=text]{font-family:"IBM Plex Mono",monospace;font-size:.95rem;padding:6px 10px;border:1px solid var(--rule-strong);border-radius:3px;background:var(--bench);color:var(--ink);width:150px}
+.quiz input[type=text]:disabled{color:var(--muted)}
+.quiz .fb{margin-top:10px;padding:9px 12px;border-radius:3px;font-size:.95rem;line-height:1.5;color:var(--ink-2);border-left:3px solid var(--rule-strong);background:var(--bench)}
+.quiz .fb.ok{border-left-color:var(--zero)}
+.quiz .fb.no{border-left-color:var(--one)}
+.quiz .fb b{color:var(--ink)}
+.quiz .acts{margin-top:9px;display:flex;gap:6px;flex-wrap:wrap}
+.quiz .sol{margin-top:10px;font-size:.95rem;line-height:1.5;color:var(--ink-2);border-top:1px solid var(--rule);padding-top:9px}
+.quiz .sol b{color:var(--ink)}
+</style>
+<div class="top">
+  <div class="topin">
+    <div class="brand"><b>How Many Bits Fit in a Qubit?</b> &nbsp;/&nbsp; undergraduate</div>
+    <nav class="tocbar" id="toc" aria-label="Sections"></nav>
+  </div>
+</div>
+
+<div class="wrap">
+
+<!-- ============ HERO ============ -->
+<header class="hero">
+  <div>
+    <div class="kicker">Quantum, starting from the bit you already know</div>
+    <h1>How many bits fit in a qubit?</h1>
+    <p class="stand">A switch holds one bit. A dial with sixteen positions holds four. A qubit looks like a dial with infinitely many positions. So does it hold infinitely many bits? This page answers that question honestly, one step at a time, starting from binary and ending at the sphere.</p>
+    <div class="assume">
+      <h4>Three things we take for granted</h4>
+      <ol>
+        <li><b>Binary.</b> You know that <span class="inl">n</span> bits can hold <span class="inl">2<sup>n</sup></span> patterns, and you have seen a truth table.</li>
+        <li><b>A measurement returns one bit.</b> Whatever a qubit is doing, when you look at it you get a 0 or a 1. Nothing in between.</li>
+        <li><b>One rule for the odds.</b> A qubit pointing at angle <span class="inl">&theta;</span> on its dial gives 0 with probability <span class="inl">cos<sup>2</sup>(&theta;/2)</span>. We will not derive this. Treat it like Ohm's law.</li>
+      </ol>
+    </div>
+  </div>
+  <div class="herofig">
+    <div class="cvwrap">
+      <canvas id="heroDial" width="330" height="330" aria-label="A dial whose number of positions grows from two to a continuum"></canvas>
+      <div class="herohint" id="heroCap">2 positions &middot; 1 bit</div>
+    </div>
+  </div>
+</header>
+
+<!-- ============ 1 ============ -->
+<section id="s1" data-title="01 Switches">
+  <div class="shead">
+    <div class="snum">01</div>
+    <div>
+      <h2>A bit is a switch</h2>
+      <p class="sdek">Two positions, one bit. A row of switches is a register. This is the whole of classical computing, and it is worth one minute before we change it.</p>
+    </div>
+  </div>
+  <div class="body"><div></div><div class="col">
+    <div class="prose">
+      <p class="msg">n switches hold 2<sup>n</sup> patterns, and that is n bits. Not more, not less.</p>
+      <p>Flip the switches. The register below shows the pattern and the number it stands for. A gate is a rule for turning one pattern into another. <span class="inl">NOT</span> flips a switch. <span class="inl">XOR</span> compares two.</p>
+    </div>
+    <div class="bench">
+      <div class="blab"><span class="dot"></span><b>Bench 01</b> &nbsp;A four-switch register</div>
+      <div class="bbody">
+        <div class="row" style="align-items:center">
+          <div class="toggles" id="reg"></div>
+          <div class="grow bigread" id="regread" style="flex:1 1 220px"></div>
+          <div class="grow" style="flex:1 1 220px">
+            <h4 style="margin-bottom:8px">Gate reminder</h4>
+            <div class="tblscroll"><table class="tbl" id="gatetbl"></table></div>
+          </div>
+        </div>
+      </div>
+      <div class="bfoot"><b>Keep this number in mind.</b> Four switches, four bits. When we get to four qubits, the description will need thirty numbers and the readout will still be four bits. The gap between those two counts is the subject of this page.</div>
+    </div>
+  </div></div>
+</section>
+
+<!-- ============ 2 ============ -->
+<section id="s2" data-title="02 Dials">
+  <div class="shead">
+    <div class="snum">02</div>
+    <div>
+      <h2>A dial with k positions</h2>
+      <p class="sdek">Why stop at two? A symbol that can sit in any one of k positions carries log<sub>2</sub>k bits. Communications engineers do this every day.</p>
+    </div>
+  </div>
+  <div class="body"><div></div><div class="col">
+    <div class="prose">
+      <p class="msg">More positions, more bits. The count grows as the logarithm of the number of positions.</p>
+      <p>A switch is a two-position dial. Give the dial four positions and it holds two bits. Sixteen positions, four bits. This is exactly what a 16-QAM symbol does on a Wi-Fi link. Slide k and watch the ticks and the bit count.</p>
+    </div>
+    <div class="bench">
+      <div class="blab"><span class="dot"></span><b>Bench 02</b> &nbsp;The k-position dial</div>
+      <div class="bbody">
+        <div class="row" style="align-items:center">
+          <div class="cvwrap" style="flex:0 0 auto">
+            <canvas id="kDial" width="260" height="260" aria-label="A dial with k tick marks and a pointer snapped to one of them"></canvas>
+            <div class="cvcap">click the dial to move the pointer</div>
+          </div>
+          <div class="grow stack" style="flex:1 1 260px">
+            <div class="ctrl"><label for="kSl">Positions k <span class="v" id="kV"></span></label><input type="range" id="kSl" min="0" max="9" value="2" step="1"></div>
+            <div class="bigread" id="kread"></div>
+          </div>
+        </div>
+      </div>
+      <div class="bfoot"><b>The rule.</b> Bits per symbol = log<sub>2</sub>(positions). Doubling the positions adds exactly one bit. Going from 2 to 1024 positions adds only nine.</div>
+    </div>
+    <div class="quiz" data-q="q1"></div>
+  </div></div>
+</section>
+
+<!-- ============ 3 ============ -->
+<section id="s3" data-title="03 Analog">
+  <div class="shead">
+    <div class="snum">03</div>
+    <div>
+      <h2>Let k go to infinity. The analog dial.</h2>
+      <p class="sdek">A pointer that can rest anywhere on the circle has infinitely many positions. It does not hold infinitely many bits, and the reason is one every engineer already knows.</p>
+    </div>
+  </div>
+  <div class="body"><div></div><div class="col">
+    <div class="prose">
+      <p class="msg">A dial holds only as many bits as you can read back. Noise sets that number, not the dial.</p>
+      <p>Every real pointer wobbles. If the reader cannot tell positions apart that are closer than some angle <span class="inl">&delta;</span>, then the dial has only <span class="inl">360&deg;/&delta;</span> usable positions, and holds <span class="inl">log<sub>2</sub>(360&deg;/&delta;)</span> bits. Turn up the noise and watch the bit count fall. This is Shannon's capacity idea in its simplest form.</p>
+    </div>
+    <div class="bench">
+      <div class="blab"><span class="dot"></span><b>Bench 03</b> &nbsp;The analog dial with noise</div>
+      <div class="bbody">
+        <div class="row" style="align-items:center">
+          <div class="cvwrap" style="flex:0 0 auto">
+            <canvas id="aDial" width="260" height="260" aria-label="An analog dial whose pointer is blurred by noise, with the usable positions marked"></canvas>
+            <div class="cvcap">click the dial to move the pointer</div>
+          </div>
+          <div class="grow stack" style="flex:1 1 260px">
+            <div class="ctrl"><label for="nzSl">Reader noise &delta; <span class="v" id="nzV"></span></label><input type="range" id="nzSl" min="3" max="90" value="20" step="1"></div>
+            <div class="bigread" id="aread"></div>
+          </div>
+        </div>
+      </div>
+      <div class="bfoot"><b>Hold on to this sentence.</b> What a thing <em>stores</em> is what you can <em>read back</em> from it. We are about to meet a dial where the reading rule is stranger than noise, and the same sentence will still be the answer.</div>
+    </div>
+    <div class="quiz" data-q="q2"></div>
+  </div></div>
+</section>
+
+<!-- ============ 4 ============ -->
+<section id="s4" data-title="04 Qubit">
+  <div class="shead">
+    <div class="snum">04</div>
+    <div>
+      <h2>The quantum dial</h2>
+      <p class="sdek">A qubit is a dial too. Its pointer can rest anywhere. The difference is the reading rule, which is assumption three from the top of the page.</p>
+    </div>
+  </div>
+  <div class="body"><div></div><div class="col">
+    <div class="prose">
+      <p class="msg">The pointer can be anywhere. The reading is always a single 0 or 1.</p>
+      <p>Twelve o'clock is <span class="inl">|0&#10217;</span>. Six o'clock is <span class="inl">|1&#10217;</span>. Everything in between is a superposition, and the label means nothing more than "the pointer is there". When you measure, you do not get the angle. You get one bit, with the odds set by the angle.</p>
+      <div class="eq">P(0) = cos<sup>2</sup>(&theta;/2)<span class="c">&nbsp;&nbsp;&nbsp;</span>P(1) = sin<sup>2</sup>(&theta;/2)</div>
+      <p>Start discrete. Snap the dial to 2, 4, or 8 positions and measure. Then let it go anywhere. Notice what does not change.</p>
+    </div>
+    <div class="bench">
+      <div class="blab"><span class="dot"></span><b>Bench 04</b> &nbsp;One qubit, one measurement at a time</div>
+      <div class="bbody">
+        <div class="row" style="align-items:center">
+          <div class="cvwrap" style="flex:0 0 auto">
+            <canvas id="qDial" width="270" height="270" aria-label="The quantum dial with the qubit pointer"></canvas>
+            <div class="cvcap">click the dial to move the pointer</div>
+          </div>
+          <div class="grow stack" style="flex:1 1 280px">
+            <div class="btnrow" id="qsnap"></div>
+            <div class="ctrl"><label for="qSl">Pointer angle &theta; <span class="v" id="qV"></span></label><input type="range" id="qSl" min="0" max="359" value="60" step="1"></div>
+            <div class="row" style="align-items:center;gap:14px">
+              <button class="btn" id="qOnce">Measure once</button>
+              <div class="outcome" id="qOut">&middot;</div>
+              <button class="btn ghost" id="qMany">Measure 200 times</button>
+            </div>
+            <div class="pbar" id="qbars"></div>
+            <div class="bigread" id="qread"></div>
+          </div>
+        </div>
+      </div>
+      <div class="bfoot"><b>What did not change.</b> Two positions or two hundred, every reading was one bit. The angle shows up only in the odds, and you only learn the odds by measuring many times. That is the crack the whole subject grows out of.</div>
+    </div>
+    <div class="quiz" data-q="q3"></div>
+  </div></div>
+</section>
+
+<!-- ============ 5 ============ -->
+<section id="s5" data-title="05 The game">
+  <div class="shead">
+    <div class="snum">05</div>
+    <div>
+      <h2>The guessing game</h2>
+      <p class="sdek">Now ask the storage question properly. Alice sets the dial to one of k positions. Bob measures once and guesses. How often is he right, and how many bits did he get?</p>
+    </div>
+  </div>
+  <div class="body"><div></div><div class="col">
+    <div class="prose">
+      <p class="msg">With a classical dial Bob is always right. With a quantum dial his best odds are 2/k, and he never gets more than one bit.</p>
+      <p>Play the game. For each round the page picks a position at random, prepares the qubit, measures it, and lets Bob make his best guess from the one bit he saw. The chart on the right tracks how his success rate and his information fall as k grows.</p>
+    </div>
+    <div class="bench">
+      <div class="blab"><span class="dot"></span><b>Bench 05</b> &nbsp;Alice sets, Bob measures once</div>
+      <div class="bbody">
+        <div class="row">
+          <div class="grow stack" style="flex:1 1 250px">
+            <h4>Positions on the dial</h4>
+            <div class="btnrow" id="gk"></div>
+            <button class="btn" id="gPlay">Play 1000 rounds</button>
+            <div class="bigread" id="gread"></div>
+            <div class="roundlog" id="glog"></div>
+          </div>
+          <div class="cvwrap grow" style="flex:1 1 380px">
+            <canvas id="gChart" width="470" height="300" aria-label="Success rate and bits per measurement versus the number of dial positions, classical against quantum"></canvas>
+          </div>
+        </div>
+      </div>
+      <div class="bfoot"><b>The ceiling is a theorem.</b> No measurement of any kind, however clever, extracts more than one bit from one qubit. This is the Holevo bound, and the dashed line is where it sits. The quantum dial can be <em>set</em> to infinitely many positions and can be <em>read</em> for at most one bit.</div>
+    </div>
+
+    <div class="prose">
+      <p>You might object that Bob measured the lazy way, always asking "0 or 1?". He can rotate his detector. Below, two positions only. Turn the detector and find the best angle. You will discover a limit that has a name.</p>
+    </div>
+    <div class="bench">
+      <div class="blab"><span class="dot"></span><b>Bench 05b</b> &nbsp;Two positions, a rotatable detector</div>
+      <div class="bbody">
+        <div class="row" style="align-items:center">
+          <div class="cvwrap" style="flex:0 0 auto">
+            <canvas id="hDial" width="260" height="260" aria-label="Two candidate pointer positions and a rotatable detector axis"></canvas>
+            <div class="cvcap">two candidates and the detector axis</div>
+          </div>
+          <div class="grow stack" style="flex:1 1 280px">
+            <div class="ctrl"><label for="hSep">Separation of the two positions <span class="v" id="hSepV"></span></label><input type="range" id="hSep" min="10" max="180" value="90" step="1"></div>
+            <div class="ctrl"><label for="hMu">Detector angle &mu; <span class="v" id="hMuV"></span></label><input type="range" id="hMu" min="-180" max="180" value="0" step="1"></div>
+            <div class="bigread" id="hread"></div>
+          </div>
+        </div>
+      </div>
+      <div class="bfoot"><b>The Helstrom limit.</b> The best a detector can do on two positions separated by &Delta; on the dial is <span class="inl">&frac12;(1 + sin(&Delta;/2))</span>. Only at 180&deg; apart, the two poles, does it reach certainty. Those are the two positions a plain bit uses, which is no accident.</div>
+    </div>
+    <div class="quiz" data-q="q4"></div>
+  </div></div>
+</section>
+
+<!-- ============ 6 ============ -->
+<section id="s6" data-title="06 Copies">
+  <div class="shead">
+    <div class="snum">06</div>
+    <div>
+      <h2>Where the rest of the angle went</h2>
+      <p class="sdek">The angle is real. You can recover it, but not from one copy. Statistics gives it back one square root at a time.</p>
+    </div>
+  </div>
+  <div class="body"><div></div><div class="col">
+    <div class="prose">
+      <p class="msg">Measure N identical copies and the angle comes back, with an error that shrinks as 1/&radic;N.</p>
+      <p>The page hides a pointer angle. Choose how many copies to measure. It counts the zeros, works out <span class="inl">cos<sup>2</sup>(&theta;/2)</span>, and reports an estimate with an error bar. Four times the copies, half the error. The continuum is there, and you pay for it in copies.</p>
+    </div>
+    <div class="bench">
+      <div class="blab"><span class="dot"></span><b>Bench 06</b> &nbsp;Recovering the angle from many copies</div>
+      <div class="bbody">
+        <div class="row" style="align-items:center">
+          <div class="cvwrap" style="flex:0 0 auto">
+            <canvas id="eDial" width="260" height="260" aria-label="The hidden pointer, the estimate, and its error wedge"></canvas>
+            <div class="cvcap">hidden pointer, estimate, and error wedge</div>
+          </div>
+          <div class="grow stack" style="flex:1 1 280px">
+            <div class="ctrl"><label for="eN">Copies measured N <span class="v" id="eNV"></span></label><input type="range" id="eN" min="2" max="14" value="5" step="1"></div>
+            <div class="btnrow"><button class="btn" id="eRun">Measure them all</button><button class="btn ghost" id="eNew">New hidden angle</button></div>
+            <div class="bigread" id="eread"></div>
+          </div>
+          <div class="cvwrap grow" style="flex:1 1 260px">
+            <canvas id="eChart" width="330" height="220" aria-label="Estimation error versus number of copies, with the one over root N line"></canvas>
+          </div>
+        </div>
+      </div>
+      <div class="bfoot"><b>Compare with the noisy analog dial.</b> There, noise limited the bits and averaging helped. Here, the reading rule itself limits the bits, and averaging over copies is the only way in. Same square root, different cause. This is also how every quantum sensor works.</div>
+    </div>
+    <div class="quiz" data-q="q5"></div>
+  </div></div>
+</section>
+
+<!-- ============ 7 ============ -->
+<section id="s7" data-title="07 Sphere">
+  <div class="shead">
+    <div class="snum">07</div>
+    <div>
+      <h2>The continuum limit, done properly: a second dial</h2>
+      <p class="sdek">A real qubit has two angles, not one. The circle becomes a sphere. The count of what you can read does not change at all.</p>
+    </div>
+  </div>
+  <div class="body"><div></div><div class="col">
+    <div class="prose">
+      <p class="msg">Two real numbers to write a qubit down. One bit to read it. That gap is the entire story.</p>
+      <p>The second angle is called the phase. It moves the pointer around the vertical axis and changes nothing about the odds of 0 and 1. It is invisible to the measurement we have been using. It is not useless. It is what quantum computers compute with, and the companion page on this site is about exactly that.</p>
+    </div>
+    <div class="bench">
+      <div class="blab"><span class="dot"></span><b>Bench 07</b> &nbsp;From the dial to the sphere</div>
+      <div class="bbody">
+        <div class="row" style="align-items:center">
+          <div class="cvwrap" style="flex:0 0 auto">
+            <canvas id="sph" width="290" height="290" aria-label="The Bloch sphere, the full continuum of one qubit"></canvas>
+            <div class="cvcap">drag to rotate</div>
+          </div>
+          <div class="grow stack" style="flex:1 1 280px">
+            <div class="ctrl"><label for="sTh">First angle &theta; <span class="v" id="sThV"></span></label><input type="range" id="sTh" min="0" max="180" value="60" step="1"></div>
+            <div class="ctrl"><label for="sPh">Second angle &phi;, the phase <span class="v" id="sPhV"></span></label><input type="range" id="sPh" min="0" max="360" value="40" step="1"></div>
+            <div class="pbar" id="sbars"></div>
+            <div class="bigread" id="sread"></div>
+          </div>
+        </div>
+      </div>
+      <div class="bfoot"><b>Turn the phase slider.</b> The pointer moves and the bars do not. That is the cleanest demonstration on this page of information that is present, that matters, and that a single measurement cannot see.</div>
+    </div>
+  </div></div>
+</section>
+
+<!-- ============ 8 ============ -->
+<section id="s8" data-title="08 Registers">
+  <div class="shead">
+    <div class="snum">08</div>
+    <div>
+      <h2>Many qubits: the description explodes, the readout does not</h2>
+      <p class="sdek">This is the count from section one, finished. Compare how many numbers it takes to write a register down against how many bits you can read out of it.</p>
+    </div>
+  </div>
+  <div class="body"><div></div><div class="col">
+    <div class="prose">
+      <p class="msg">n qubits need 2<sup>n</sup> amplitudes to describe and give back n bits when read.</p>
+      <p>If every qubit kept to its own dial, n qubits would need 2n numbers, which is a lot but not alarming. Real qubits can be correlated in ways no separate dials can capture. The word for that is entanglement, and it means a general state of n qubits needs about <span class="inl">2<sup>n+1</sup></span> real numbers. Thirty for four qubits. Over a hundred thousand for sixteen. The readout stays at n bits the whole way.</p>
+    </div>
+    <div class="bench">
+      <div class="blab"><span class="dot"></span><b>Bench 08</b> &nbsp;Numbers to describe versus bits to read</div>
+      <div class="bbody">
+        <div class="row">
+          <div class="cvwrap grow" style="flex:1 1 380px">
+            <canvas id="rChart" width="470" height="280" aria-label="Numbers needed to describe a register versus its size, for switches, independent qubits, and entangled qubits, against the bits you can read"></canvas>
+          </div>
+          <div class="grow stack" style="flex:1 1 240px">
+            <div class="ctrl"><label for="rN">Register size n <span class="v" id="rNV"></span></label><input type="range" id="rN" min="1" max="30" value="4" step="1"></div>
+            <div class="bigread" id="rread"></div>
+          </div>
+        </div>
+      </div>
+      <div class="bfoot"><b>Why this is not a swindle.</b> Those amplitudes are not answers waiting to be read. They are an internal ledger. A quantum computer is a machine that pushes the ledger around so that, when the n bits finally come out, they are the n bits you wanted. The companion page shows how.</div>
+    </div>
+    <div class="quiz" data-q="q6"></div>
+  </div></div>
+</section>
+
+<!-- ============ 9 ============ -->
+<section id="s9" data-title="09 Two bits">
+  <div class="shead">
+    <div class="snum">09</div>
+    <div>
+      <h2>A straight answer: two bits per qubit, with a friend</h2>
+      <p class="sdek">There is one honest way to get more than a bit out of a sent qubit. Share an entangled pair first. Then one qubit carries two bits, and a lookup table shows how.</p>
+    </div>
+  </div>
+  <div class="body"><div></div><div class="col">
+    <div class="prose">
+      <p class="msg">Sending one qubit delivers two bits, if Alice and Bob already share one entangled pair.</p>
+      <p>Alice and Bob each hold half of a pair. Alice wants to send two bits. She applies one of four operations to her half, chosen by the two bits, and sends that one qubit to Bob. Bob measures the pair together and reads both bits, every time. No probabilities anywhere in this table.</p>
+    </div>
+    <div class="bench">
+      <div class="blab"><span class="dot"></span><b>Bench 09</b> &nbsp;Superdense coding as a lookup table</div>
+      <div class="bbody">
+        <div class="row" style="align-items:flex-start">
+          <div class="grow stack" style="flex:1 1 240px">
+            <h4>Alice's two bits</h4>
+            <div class="btnrow" id="sdbits"></div>
+            <div class="circ" id="sdcirc"></div>
+            <div class="bigread" id="sdread"></div>
+          </div>
+          <div class="grow" style="flex:1 1 300px">
+            <div class="tblscroll"><table class="tbl sdtable" id="sdtbl"></table></div>
+          </div>
+        </div>
+      </div>
+      <div class="bfoot"><b>The accounting.</b> Bob ends up holding two qubits, and two qubits can carry two bits, so the Holevo bound is respected. What is new is <em>when</em> the second qubit travelled. It went before Alice knew what she wanted to say. Entanglement let her spend that qubit later.</div>
+    </div>
+  </div></div>
+</section>
+
+<!-- ============ 10 ============ -->
+<section id="s10" data-title="10 Answer">
+  <div class="shead">
+    <div class="snum">10</div>
+    <div>
+      <h2>So, how many bits fit in a qubit?</h2>
+      <p class="sdek">Three answers, and all three are true at once.</p>
+    </div>
+  </div>
+  <div class="body"><div></div><div class="col">
+    <div class="answer">
+      <div class="line"><div class="q">To write it down</div><div class="v">Infinitely many<small>Two real numbers, a continuum. The dial can point anywhere on the sphere.</small></div></div>
+      <div class="line"><div class="q">To read it out</div><div class="v">One<small>A single measurement returns a single bit, and no measurement scheme gets more. Holevo's bound.</small></div></div>
+      <div class="line"><div class="q">To send, with shared entanglement</div><div class="v">Two<small>Superdense coding. The extra bit was paid for by a qubit sent earlier.</small></div></div>
+    </div>
+    <div class="verdict" id="quizTally" style="margin-top:22px"></div>
+    <div class="prose" style="margin-top:22px">
+      <p>The gap between the first number and the second is not a flaw. It is the resource. Everything a quantum computer or a quantum sensor does is a way of making that hidden continuum act before it collapses to one bit. How it acts, through phase and interference, is the subject of the companion page, <em>Bits, Qubits, and Phase</em>.</p>
+    </div>
+  </div></div>
+</section>
+
+<footer>
+  Built for undergraduate engineering students as an entry point to quantum computing and sensing.<br>
+  All figures are computed live in the browser. The 2/k guessing limit, the one-bit ceiling, the Helstrom formula, and the superdense coding table were each verified against a direct calculation.
+</footer>
+</div>
+<style>canvas{height:auto}</style>
+<script>
+(function(){
+"use strict";
+const REDUCED=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+function norm3(a){const m=Math.hypot(a[0],a[1],a[2])||1;return [a[0]/m,a[1]/m,a[2]/m];}
+const D2R=Math.PI/180, R2D=180/Math.PI;
+const KS=[2,3,4,5,6,8,12,16,32,64];
+const h2=p=>{p=Math.min(Math.max(p,1e-12),1-1e-12);return -p*Math.log2(p)-(1-p)*Math.log2(1-p);};
+/* ================= theme-aware colors ================= */
+const CV={};
+function readVars(){
+  const cs=getComputedStyle(document.documentElement);
+  ["--ink","--ink-2","--muted","--faint","--rule","--rule-strong","--zero","--one","--phase","--surface","--bench","--surface-2","--grid","--sphere"]
+    .forEach(k=>CV[k]=cs.getPropertyValue(k).trim());
+}
+readVars();
+const C=k=>CV["--"+k];
+const redraws=[];
+const redrawAll=()=>{readVars();redraws.forEach(f=>{try{f();}catch(e){}});};
+if(window.matchMedia){
+  const mq=window.matchMedia("(prefers-color-scheme: dark)");
+  (mq.addEventListener?mq.addEventListener("change",redrawAll):mq.addListener(redrawAll));
+}
+new MutationObserver(redrawAll).observe(document.documentElement,{attributes:true,attributeFilter:["data-theme"]});
+
+/* ================= canvas helpers ================= */
+function setup(cv){
+  const w=cv.width,h=cv.height,dpr=Math.min(window.devicePixelRatio||1,2);
+  cv.style.width=w+"px";cv.style.height=h+"px";
+  cv.width=Math.round(w*dpr);cv.height=Math.round(h*dpr);
+  const g=cv.getContext("2d");g.scale(dpr,dpr);
+  cv._w=w;cv._h=h;return g;
+}
+function clear(g,cv,bg){g.save();g.setTransform(1,0,0,1,0,0);g.clearRect(0,0,cv.width,cv.height);g.restore();
+  if(bg){g.fillStyle=bg;g.fillRect(0,0,cv._w,cv._h);} }
+function mono(g,size,weight){g.font=(weight||400)+" "+size+"px 'IBM Plex Mono', ui-monospace, monospace";}
+function dash(g,arr){g.setLineDash(arr||[]);}
+function line(g,x1,y1,x2,y2,col,w){g.strokeStyle=col;g.lineWidth=w||1;g.beginPath();g.moveTo(x1,y1);g.lineTo(x2,y2);g.stroke();}
+function rr(g,x,y,w,h,r){g.beginPath();
+  if(g.roundRect){g.roundRect(x,y,w,h,r);}else{g.rect(x,y,w,h);} }
+
+/* ================= Bloch sphere ================= */
+function Sphere(cv,opt){
+  opt=opt||{};
+  const g=setup(cv),W=cv._w,H=cv._h;
+  const S={az:opt.az!==undefined?opt.az:-0.72,el:opt.el!==undefined?opt.el:0.30,
+           r:[0,0,1],len:1,axis:null,axisT:0,cap:opt.cap,
+           labels:opt.labels!==false,small:!!opt.small,ghost:null};
+  const R=Math.min(W,H)*(opt.scale||0.345);
+  const cxp=W/2, cyp=H/2+(opt.dy||0);
+
+  function basis(){
+    const ca=Math.cos(S.az),sa=Math.sin(S.az),ce=Math.cos(S.el),se=Math.sin(S.el);
+    return {right:[-sa,ca,0],up:[-ca*se,-sa*se,ce],fwd:[ca*ce,sa*ce,se]};
+  }
+  function P(p,b){
+    const d=p[0]*b.fwd[0]+p[1]*b.fwd[1]+p[2]*b.fwd[2];
+    return {x:cxp+R*(p[0]*b.right[0]+p[1]*b.right[1]+p[2]*b.right[2]),
+            y:cyp-R*(p[0]*b.up[0]+p[1]*b.up[1]+p[2]*b.up[2]), d:d};
+  }
+  function circlePts(kind,a){
+    const pts=[];
+    for(let i=0;i<=96;i++){
+      const t=i/96*Math.PI*2;
+      if(kind==="lat"){const s=Math.sin(a);pts.push([s*Math.cos(t),s*Math.sin(t),Math.cos(a)]);}
+      else{pts.push([Math.sin(t)*Math.cos(a),Math.sin(t)*Math.sin(a),Math.cos(t)]);}
+    }
+    return pts;
+  }
+  function poly(pts,b,colFront,colBack,w){
+    for(let i=0;i<pts.length-1;i++){
+      const p1=P(pts[i],b),p2=P(pts[i+1],b);
+      const front=(p1.d+p2.d)/2>0;
+      g.strokeStyle=front?colFront:colBack;g.lineWidth=w||1;
+      g.beginPath();g.moveTo(p1.x,p1.y);g.lineTo(p2.x,p2.y);g.stroke();
+    }
+  }
+  function arrow(from,to,col,b,w){
+    const a=P(from,b),c=P(to,b);
+    g.strokeStyle=col;g.lineWidth=w||2.4;g.lineCap="round";
+    g.beginPath();g.moveTo(a.x,a.y);g.lineTo(c.x,c.y);g.stroke();g.lineCap="butt";
+    const ang=Math.atan2(c.y-a.y,c.x-a.x),hl=9,hw=4.4;
+    g.fillStyle=col;g.beginPath();
+    g.moveTo(c.x,c.y);
+    g.lineTo(c.x-hl*Math.cos(ang-0.42),c.y-hl*Math.sin(ang-0.42));
+    g.lineTo(c.x-hl*Math.cos(ang+0.42),c.y-hl*Math.sin(ang+0.42));
+    g.closePath();g.fill();
+  }
+  function tag(p,txt,col,b,off){
+    const q=P(p,b);mono(g,S.small?9:10.5,500);g.fillStyle=col;
+    g.textAlign="center";g.textBaseline="middle";
+    g.fillText(txt,q.x+(off?off[0]:0),q.y+(off?off[1]:0));
+  }
+
+  S.draw=function(){
+    const b=basis();
+    clear(g,cv,null);
+    /* ball */
+    g.fillStyle=C("surface");g.globalAlpha=0.55;
+    g.beginPath();g.arc(cxp,cyp,R,0,7);g.fill();g.globalAlpha=1;
+    /* equatorial disc */
+    const eq=circlePts("lat",Math.PI/2);
+    g.beginPath();
+    eq.forEach((p,i)=>{const q=P(p,b);i?g.lineTo(q.x,q.y):g.moveTo(q.x,q.y);});
+    g.closePath();g.fillStyle=C("zero");g.globalAlpha=0.055;g.fill();g.globalAlpha=1;
+
+    const back=hex(C("sphere"),0.16), front=hex(C("sphere"),0.42);
+    if(!S.small){
+      [Math.PI/4,Math.PI/2,3*Math.PI/4].forEach(a=>poly(circlePts("lat",a),b,front,back,a===Math.PI/2?1.25:0.8));
+      for(let k=0;k<4;k++)poly(circlePts("lon",k*Math.PI/4),b,hex(C("sphere"),0.26),hex(C("sphere"),0.10),0.8);
+    }else{
+      poly(circlePts("lat",Math.PI/2),b,front,back,1.1);
+      poly(circlePts("lon",0),b,hex(C("sphere"),0.2),hex(C("sphere"),0.08),0.8);
+      poly(circlePts("lon",Math.PI/2),b,hex(C("sphere"),0.2),hex(C("sphere"),0.08),0.8);
+    }
+    /* rim */
+    g.strokeStyle=hex(C("sphere"),0.5);g.lineWidth=1;g.beginPath();g.arc(cxp,cyp,R,0,7);g.stroke();
+
+    /* axes */
+    const AX=[[[1,0,0],"x"],[[0,1,0],"y"],[[0,0,1],"z"]];
+    AX.forEach(function(A){
+      const p1=P(A[0].map(v=>-v*1.14),b),p2=P(A[0].map(v=>v*1.14),b);
+      dash(g,[3,3]);line(g,p1.x,p1.y,p2.x,p2.y,hex(C("sphere"),0.35),1);dash(g);
+    });
+    if(S.labels){
+      tag([0,0,1.34],"|0⟩",C("zero"),b);
+      tag([0,0,-1.34],"|1⟩",C("one"),b);
+      if(!S.small){
+        tag([1.3,0,0],"|+⟩",C("muted"),b);
+        tag([-1.3,0,0],"|−⟩",C("muted"),b);
+        tag([0,1.3,0],"|i⟩",C("muted"),b);
+        tag([0,-1.3,0],"|−i⟩",C("muted"),b);
+      }
+    }
+
+    /* rotation axis being applied */
+    if(S.axis&&S.axisT>0.02){
+      const n=norm3(S.axis);
+      const p1=P(n.map(v=>-v*1.24),b),p2=P(n.map(v=>v*1.24),b);
+      g.globalAlpha=Math.min(1,S.axisT);
+      dash(g,[5,4]);line(g,p1.x,p1.y,p2.x,p2.y,C("phase"),1.8);dash(g);
+      g.globalAlpha=1;
+    }
+
+    const r=S.r,L=S.len;
+    const rv=[r[0]*L,r[1]*L,r[2]*L];
+
+    /* phase construction */
+    if(opt.showPhase&&L>0.02&&Math.hypot(rv[0],rv[1])>0.03){
+      const foot=[rv[0],rv[1],0];
+      dash(g,[2,3]);
+      const a=P(rv,b),f=P(foot,b),o=P([0,0,0],b);
+      line(g,a.x,a.y,f.x,f.y,hex(C("phase"),0.75),1);
+      line(g,o.x,o.y,f.x,f.y,hex(C("phase"),0.75),1);
+      dash(g);
+      const phi=Math.atan2(rv[1],rv[0]);
+      const arc=[];for(let i=0;i<=40;i++){const t=phi*i/40;arc.push([0.36*Math.cos(t),0.36*Math.sin(t),0]);}
+      g.strokeStyle=C("phase");g.lineWidth=1.6;g.beginPath();
+      arc.forEach((p,i)=>{const q=P(p,b);i?g.lineTo(q.x,q.y):g.moveTo(q.x,q.y);});g.stroke();
+      tag([0.52*Math.cos(phi/2),0.52*Math.sin(phi/2),0.04],"φ",C("phase"),b);
+      /* theta arc */
+      const st=Math.hypot(rv[0],rv[1]),ct=rv[2],th=Math.atan2(st,ct),ux=rv[0]/(st||1),uy=rv[1]/(st||1);
+      const arc2=[];for(let i=0;i<=40;i++){const t=th*i/40;arc2.push([0.5*Math.sin(t)*ux,0.5*Math.sin(t)*uy,0.5*Math.cos(t)]);}
+      g.strokeStyle=C("zero");g.lineWidth=1.6;g.beginPath();
+      arc2.forEach((p,i)=>{const q=P(p,b);i?g.lineTo(q.x,q.y):g.moveTo(q.x,q.y);});g.stroke();
+      tag([0.63*Math.sin(th/2)*ux,0.63*Math.sin(th/2)*uy,0.63*Math.cos(th/2)],"θ",C("zero"),b);
+    }
+
+    /* ghost (previous state) */
+    if(S.ghost){
+      g.globalAlpha=0.28;arrow([0,0,0],S.ghost,C("muted"),b,1.8);g.globalAlpha=1;
+    }
+
+    /* state vector */
+    if(L<0.035){
+      const o=P([0,0,0],b);
+      g.fillStyle=C("muted");g.beginPath();g.arc(o.x,o.y,4,0,7);g.fill();
+      g.strokeStyle=hex(C("muted"),0.5);dash(g,[2,3]);g.lineWidth=1;
+      g.beginPath();g.arc(cxp,cyp,R*0.985,0,7);g.stroke();dash(g);
+      mono(g,S.small?9:9.5,500);g.fillStyle=C("muted");g.textAlign="center";g.textBaseline="middle";
+      g.fillText("no direction",cxp,cyp+19);
+    }else{
+      const col=rv[2]>=0?C("zero"):C("one");
+      arrow([0,0,0],rv,col,b,2.6);
+      if(L<0.985){
+        const q=P(rv,b);g.strokeStyle=hex(col,0.5);g.lineWidth=1;dash(g,[2,2]);
+        const e=P(r,b);g.beginPath();g.moveTo(q.x,q.y);g.lineTo(e.x,e.y);g.stroke();dash(g);
+      }
+    }
+    if(S.cap){mono(g,9.5,500);g.fillStyle=C("faint");g.textAlign="left";g.textBaseline="top";g.fillText(S.cap,8,7);}
+  };
+
+  /* drag */
+  let drag=null;
+  cv.style.cursor="grab";
+  cv.addEventListener("pointerdown",e=>{drag={x:e.clientX,y:e.clientY,az:S.az,el:S.el};cv.setPointerCapture(e.pointerId);cv.style.cursor="grabbing";});
+  cv.addEventListener("pointermove",e=>{
+    if(!drag)return;
+    S.az=drag.az-(e.clientX-drag.x)*0.0115;
+    S.el=Math.max(-1.35,Math.min(1.35,drag.el+(e.clientY-drag.y)*0.0115));
+    S.draw();
+  });
+  const end=()=>{drag=null;cv.style.cursor="grab";};
+  cv.addEventListener("pointerup",end);cv.addEventListener("pointercancel",end);
+  redraws.push(()=>S.draw());
+  return S;
+}
+function hex(c,a){
+  c=(c||"#888").trim();
+  if(c[0]==="#"){
+    if(c.length===4)c="#"+c[1]+c[1]+c[2]+c[2]+c[3]+c[3];
+    const n=parseInt(c.slice(1),16);
+    return "rgba("+((n>>16)&255)+","+((n>>8)&255)+","+(n&255)+","+a+")";
+  }
+  if(c.indexOf("rgb")===0)return c.replace(/rgba?\(([^)]+)\)/,(m,p)=>{const v=p.split(",").map(s=>s.trim());return "rgba("+v[0]+","+v[1]+","+v[2]+","+a+")";});
+  return c;
+}
+
+/* ================= probability bars ================= */
+function bars(el,p0,p1){
+  el.innerHTML=
+   '<div class="pb"><span class="lbl">P(0)</span><span class="track"><span class="fill" style="width:'+(p0*100).toFixed(1)+'%;background:'+C("zero")+'"></span></span><span class="val">'+(p0*100).toFixed(1)+'%</span></div>'+
+   '<div class="pb"><span class="lbl">P(1)</span><span class="track"><span class="fill" style="width:'+(p1*100).toFixed(1)+'%;background:'+C("one")+'"></span></span><span class="val">'+(p1*100).toFixed(1)+'%</span></div>';
+}
+
+/* ================= chart frame helper ================= */
+function frame(g,cv,m){
+  clear(g,cv,C("bench"));
+  return {l:m.l,r:cv._w-m.r,t:m.t,b:cv._h-m.b,w:cv._w-m.l-m.r,h:cv._h-m.t-m.b};
+}
+function axisText(g,txt,x,y,align,base,col,size){
+  mono(g,size||9.5,400);g.fillStyle=col||C("muted");
+  g.textAlign=align||"center";g.textBaseline=base||"middle";g.fillText(txt,x,y);
+}
+
+
+/* ================= dial renderer ================= */
+function dialGeom(cv){const W=cv._w,H=cv._h;return {cx:W/2,cy:H/2,R:Math.min(W,H)*0.37};}
+function dialPt(d,angDeg,rad){const a=angDeg*D2R;return {x:d.cx+(rad===undefined?d.R:rad)*Math.sin(a),y:d.cy-(rad===undefined?d.R:rad)*Math.cos(a)};}
+function drawDial(g,cv,o){
+  const d=dialGeom(cv);
+  clear(g,cv,null);
+  /* face */
+  g.fillStyle=C("surface");g.globalAlpha=0.7;g.beginPath();g.arc(d.cx,d.cy,d.R,0,7);g.fill();g.globalAlpha=1;
+  /* cells (resolution) */
+  if(o.cells){
+    const n=Math.max(1,Math.floor(360/o.cells)), step=360/n;
+    for(let i=0;i<n;i++){
+      g.beginPath();
+      g.arc(d.cx,d.cy,d.R*1.06,(i*step-90)*D2R,((i+1)*step-90)*D2R);
+      g.arc(d.cx,d.cy,d.R*0.94,((i+1)*step-90)*D2R,(i*step-90)*D2R,true);
+      g.closePath();
+      g.fillStyle=i%2?hex(C("zero"),0.30):hex(C("zero"),0.08);g.fill();
+    }
+  }
+  /* ring */
+  g.strokeStyle=hex(C("sphere"),0.55);g.lineWidth=1.2;g.beginPath();g.arc(d.cx,d.cy,d.R,0,7);g.stroke();
+  /* ticks */
+  if(o.ticks&&o.ticks>0&&o.ticks<=128){
+    for(let i=0;i<o.ticks;i++){
+      const a=i*360/o.ticks, p1=dialPt(d,a,d.R*0.9), p2=dialPt(d,a,d.R*1.0);
+      line(g,p1.x,p1.y,p2.x,p2.y,hex(C("ink"),0.7),o.ticks>24?1:1.6);
+    }
+  }else if(o.ticks>128){
+    g.strokeStyle=hex(C("ink"),0.5);g.lineWidth=5;g.beginPath();g.arc(d.cx,d.cy,d.R*0.95,0,7);g.stroke();
+  }
+  /* fuzz wedge */
+  if(o.fuzz&&o.pointer!==null&&o.pointer!==undefined){
+    const a0=(o.pointer-o.fuzz/2-90)*D2R,a1=(o.pointer+o.fuzz/2-90)*D2R;
+    g.beginPath();g.moveTo(d.cx,d.cy);g.arc(d.cx,d.cy,d.R,a0,a1);g.closePath();
+    g.fillStyle=hex(C("one"),0.22);g.fill();
+  }
+  /* labels */
+  if(o.labels){
+    mono(g,11,500);g.textAlign="center";g.textBaseline="middle";
+    const L=o.labels, r=d.R*1.22;
+    if(L.t){g.fillStyle=L.tc||C("zero");const p=dialPt(d,0,r);g.fillText(L.t,p.x,p.y);}
+    if(L.b){g.fillStyle=L.bc||C("one");const p=dialPt(d,180,r);g.fillText(L.b,p.x,p.y);}
+    if(L.r){g.fillStyle=C("muted");const p=dialPt(d,90,r);g.fillText(L.r,p.x,p.y);}
+    if(L.l){g.fillStyle=C("muted");const p=dialPt(d,270,r);g.fillText(L.l,p.x,p.y);}
+  }
+  if(o.extra)o.extra(g,d);
+  /* pointer(s) */
+  const ptrs=o.pointers||(o.pointer!==null&&o.pointer!==undefined?[{a:o.pointer,c:o.pointerColor}]:[]);
+  ptrs.forEach(function(p){
+    const col=p.c||C("ink"), tip=dialPt(d,p.a,d.R*0.86);
+    g.strokeStyle=col;g.lineWidth=p.w||2.6;g.lineCap="round";
+    g.beginPath();g.moveTo(d.cx,d.cy);g.lineTo(tip.x,tip.y);g.stroke();g.lineCap="butt";
+    g.fillStyle=col;g.beginPath();g.arc(tip.x,tip.y,4.2,0,7);g.fill();
+    if(p.label){mono(g,10,500);g.fillStyle=col;g.textAlign="center";g.textBaseline="middle";
+      const q=dialPt(d,p.a,d.R*1.13);g.fillText(p.label,q.x,q.y);}
+  });
+  g.fillStyle=C("ink");g.beginPath();g.arc(d.cx,d.cy,3.2,0,7);g.fill();
+  if(o.cap){mono(g,9.5,500);g.fillStyle=C("faint");g.textAlign="left";g.textBaseline="top";g.fillText(o.cap,8,7);}
+}
+function dialClick(cv,fn){
+  const d=()=>dialGeom(cv);
+  let down=false;
+  function ang(e){
+    const r=cv.getBoundingClientRect(), sx=cv._w/r.width, sy=cv._h/r.height;
+    const x=(e.clientX-r.left)*sx-d().cx, y=(e.clientY-r.top)*sy-d().cy;
+    return ((Math.atan2(x,-y)*R2D)+360)%360;
+  }
+  cv.style.cursor="crosshair";
+  cv.addEventListener("pointerdown",e=>{down=true;cv.setPointerCapture(e.pointerId);fn(ang(e));});
+  cv.addEventListener("pointermove",e=>{if(down)fn(ang(e));});
+  const up=()=>{down=false;};
+  cv.addEventListener("pointerup",up);cv.addEventListener("pointercancel",up);
+}
+const p0of=thDeg=>Math.pow(Math.cos(thDeg*D2R/2),2);
+
+/* ================================================================
+   HERO - the dial grows from 2 positions to a continuum
+   ================================================================ */
+(function(){
+  const cv=document.getElementById("heroDial"),g=setup(cv),cap=document.getElementById("heroCap");
+  const seq=[2,4,8,16,32,64,1000];
+  let idx=0,t=0,ptr=30;
+  function draw(){
+    const k=seq[idx];
+    const shown=k>128?null:k;
+    let a=ptr;
+    if(k<=128)a=Math.round(ptr/(360/k))*(360/k);
+    drawDial(g,cv,{ticks:k,pointer:a,pointerColor:C("zero")});
+    cap.textContent=k>128?"a continuum · how many bits?":k+" positions · "+Math.log2(k).toFixed(0)+" bits";
+  }
+  if(REDUCED){idx=3;draw();return;}
+  (function loop(){
+    t+=1/60;ptr=(ptr+0.35)%360;
+    if(t>2.2){t=0;idx=(idx+1)%seq.length;}
+    draw();requestAnimationFrame(loop);
+  })();
+  redraws.push(draw);
+})();
+
+/* ================================================================
+   BENCH 01 - register
+   ================================================================ */
+(function(){
+  const bits=[0,1,1,0];
+  const reg=document.getElementById("reg");
+  function render(){
+    reg.innerHTML="";
+    bits.forEach(function(b,i){
+      const el=document.createElement("button");el.className="tg"+(b?" on":"");
+      el.innerHTML='<span>'+["a","b","c","d"][i]+'</span><span class="knob"></span><span class="val">'+b+'</span>';
+      el.setAttribute("aria-label","switch "+["a","b","c","d"][i]+" is "+b);
+      el.onclick=()=>{bits[i]^=1;render();};
+      reg.appendChild(el);
+    });
+    const v=bits.reduce((s,b)=>s*2+b,0);
+    document.getElementById("regread").innerHTML=
+      '<span class="k">pattern</span>'+bits.join("")+'<br><span class="k">as a number</span>'+v+
+      '<br><span class="k">capacity</span>4 switches → 2<sup>4</sup> = 16 patterns → <span class="z">4 bits</span>';
+    const a=bits[0],b=bits[1];
+    document.getElementById("gatetbl").innerHTML=
+      "<tr><th>a</th><th>b</th><th>NOT a</th><th>a XOR b</th></tr>"+
+      [[0,0],[0,1],[1,0],[1,1]].map(r=>{
+        const on=r[0]===a&&r[1]===b;
+        return "<tr>"+[r[0],r[1],1-r[0],r[0]^r[1]].map((x,j)=>'<td class="'+(on?"hi":"")+(j>=2?" out":"")+'">'+x+"</td>").join("")+"</tr>";
+      }).join("");
+  }
+  render();
+})();
+
+/* ================================================================
+   BENCH 02 - k-position dial
+   ================================================================ */
+(function(){
+  const cv=document.getElementById("kDial"),g=setup(cv),sl=document.getElementById("kSl");
+  let ptr=45;
+  const names={2:"a switch, or BPSK",4:"QPSK",8:"8-PSK",16:"16-QAM",32:"32-QAM",64:"64-QAM"};
+  function upd(){
+    const k=KS[+sl.value], step=360/k, a=Math.round(ptr/step)*step%360;
+    drawDial(g,cv,{ticks:k,pointer:a,pointerColor:C("zero")});
+    document.getElementById("kV").textContent=k;
+    document.getElementById("kread").innerHTML=
+      '<span class="k">positions</span>'+k+
+      '<br><span class="k">bits per symbol</span>log<sub>2</sub> '+k+' = <span class="z">'+Math.log2(k).toFixed(2)+'</span>'+
+      '<br><span class="k">pointer at</span>position '+Math.round(a/step)%k+' of '+k+
+      (names[k]?'<br><span class="k">in a comms course</span>'+names[k]:'');
+  }
+  sl.oninput=upd;dialClick(cv,a=>{ptr=a;upd();});
+  redraws.push(upd);upd();
+})();
+
+/* ================================================================
+   BENCH 03 - analog dial with noise
+   ================================================================ */
+(function(){
+  const cv=document.getElementById("aDial"),g=setup(cv),sl=document.getElementById("nzSl");
+  let ptr=200;
+  function upd(){
+    const dz=+sl.value, n=Math.floor(360/dz), bits=Math.log2(360/dz);
+    drawDial(g,cv,{ticks:0,pointer:ptr,pointerColor:C("one"),fuzz:dz,cells:dz});
+    document.getElementById("nzV").textContent=dz+"°";
+    document.getElementById("aread").innerHTML=
+      '<span class="k">positions the reader can tell apart</span>360° / '+dz+'° ≈ '+n+
+      '<br><span class="k">bits the dial really holds</span>log<sub>2</sub>(360/'+dz+') = <span class="o">'+bits.toFixed(2)+'</span>'+
+      '<br><span class="k">usable as whole bits</span>'+Math.floor(bits)+' bits, '+(1<<Math.floor(bits))+' positions';
+  }
+  sl.oninput=upd;dialClick(cv,a=>{ptr=a;upd();});
+  redraws.push(upd);upd();
+})();
+
+/* ================================================================
+   BENCH 04 - quantum dial
+   ================================================================ */
+(function(){
+  const cv=document.getElementById("qDial"),g=setup(cv),sl=document.getElementById("qSl");
+  let ticks=0, lastShots=null;
+  const snaps=[["2 positions",2],["4 positions",4],["8 positions",8],["anywhere",0]];
+  const row=document.getElementById("qsnap");
+  snaps.forEach(function(s){
+    const b=document.createElement("button");b.className="btn gate"+(s[1]===0?" on":"");b.textContent=s[0];
+    b.onclick=()=>{ticks=s[1];[].forEach.call(row.children,c=>c.classList.remove("on"));b.classList.add("on");snap();upd();};
+    row.appendChild(b);
+  });
+  function snap(){if(ticks){const st=360/ticks;sl.value=Math.round(+sl.value/st)*st%360;}}
+  function paintDial(){
+    const th=+sl.value;
+    drawDial(g,cv,{ticks:ticks||0,pointer:th,pointerColor:th<=90||th>=270?C("zero"):C("one"),
+      labels:{t:"|0⟩",b:"|1⟩",r:"|+⟩",l:"|−⟩"}});
+  }
+  function upd(){
+    const th=+sl.value,p0=p0of(th);
+    document.getElementById("qV").textContent=th+"°";
+    paintDial();
+    bars(document.getElementById("qbars"),p0,1-p0);
+    document.getElementById("qread").innerHTML=
+      '<span class="k">reading rule</span>P(0) = cos<sup>2</sup>('+th+'°/2) = <span class="z">'+p0.toFixed(3)+'</span>'+
+      (lastShots?'<br><span class="k">last 200 readings</span>0 × <span class="z">'+lastShots[0]+'</span>&nbsp;&nbsp;1 × <span class="o">'+lastShots[1]+'</span>':'')+
+      '<br><span class="k">bits per reading</span>1, every time';
+  }
+  sl.oninput=()=>{lastShots=null;snap();upd();};
+  dialClick(cv,a=>{sl.value=Math.round(a);lastShots=null;snap();upd();});
+  document.getElementById("qOnce").onclick=function(){
+    const p0=p0of(+sl.value), r=Math.random()<p0?0:1, o=document.getElementById("qOut");
+    o.textContent=r;o.className="outcome "+(r?"o":"z");
+  };
+  document.getElementById("qMany").onclick=function(){
+    const p0=p0of(+sl.value);let z=0;for(let i=0;i<200;i++)if(Math.random()<p0)z++;
+    lastShots=[z,200-z];upd();
+  };
+  redraws.push(upd);upd();
+})();
+
+/* ================================================================
+   BENCH 05 - guessing game
+   ================================================================ */
+(function(){
+  const cv=document.getElementById("gChart"),g=setup(cv);
+  const KG=[2,3,4,6,8,16,32];
+  let k=4, played={};
+  const row=document.getElementById("gk");
+  KG.forEach(function(kk){
+    const b=document.createElement("button");b.className="btn gate"+(kk===k?" on":"");b.textContent=kk;
+    b.onclick=()=>{k=kk;[].forEach.call(row.children,c=>c.classList.remove("on"));b.classList.add("on");upd();};
+    row.appendChild(b);
+  });
+  function stats(kk){
+    let p0=[];for(let j=0;j<kk;j++)p0.push(p0of(360*j/kk));
+    const py0=p0.reduce((s,v)=>s+v,0)/kk;
+    const succ=(Math.max.apply(null,p0)+Math.max.apply(null,p0.map(v=>1-v)))/kk;
+    const I=h2(py0)-p0.reduce((s,v)=>s+h2(v),0)/kk;
+    return {p0:p0,succ:succ,I:I};
+  }
+  function play(){
+    const s=stats(k), guess0=s.p0.indexOf(Math.max.apply(null,s.p0)), guess1=s.p0.indexOf(Math.min.apply(null,s.p0));
+    let hits=0, log=[];
+    for(let r=0;r<1000;r++){
+      const j=Math.floor(Math.random()*k), y=Math.random()<s.p0[j]?0:1, gs=y===0?guess0:guess1, hit=gs===j;
+      if(hit)hits++;
+      if(r>=995)log.push({j:j,y:y,g:gs,hit:hit});
+    }
+    played[k]=hits/1000;
+    document.getElementById("glog").innerHTML='<b>last five rounds</b><br>'+log.map(x=>
+      "Alice set "+x.j+" · Bob read "+x.y+" · guessed "+x.g+" · <span class='"+(x.hit?"hit'>right":"miss'>wrong")+"</span>").join("<br>");
+    upd();
+  }
+  function upd(){
+    const s=stats(k);
+    document.getElementById("gread").innerHTML=
+      '<span class="k">classical dial, '+k+' positions</span>Bob right 100% · gets log<sub>2</sub>'+k+' = '+Math.log2(k).toFixed(2)+' bits'+
+      '<br><span class="k">quantum dial, '+k+' positions</span>Bob right <span class="o">'+(100*s.succ).toFixed(1)+'%</span> at best (2/k = '+(200/k).toFixed(1)+'%)'+
+      (played[k]!==undefined?'<br><span class="k">your 1000 rounds</span><span class="o">'+(100*played[k]).toFixed(1)+'%</span> right':'')+
+      '<br><span class="k">bits Bob actually gets</span><span class="p">'+s.I.toFixed(3)+'</span> per measurement, ceiling 1';
+    chart();
+  }
+  function chart(){
+    const A=frame(g,cv,{l:44,r:20,t:22,b:42});
+    const X=kk=>A.l+A.w*(Math.log2(kk)-1)/4;
+    const hTop=A.h*0.46, gap=26, hBot=A.h-hTop-gap;
+    /* top: success rate */
+    const t0=A.t, Yt=v=>t0+hTop*(1-v);
+    [0,0.5,1].forEach(v=>{line(g,A.l,Yt(v),A.r,Yt(v),C("grid"),1);axisText(g,(v*100)+"%",A.l-6,Yt(v),"right","middle",C("faint"),9);});
+    line(g,A.l,Yt(1),A.r,Yt(1),C("zero"),2);
+    g.strokeStyle=C("one");g.lineWidth=2;g.beginPath();
+    for(let kk=2;kk<=32;kk+=0.25){const x=X(kk),y=Yt(2/kk);kk===2?g.moveTo(x,y):g.lineTo(x,y);}g.stroke();
+    KG.forEach(kk=>{
+      const s=stats(kk);g.fillStyle=C("one");g.beginPath();g.arc(X(kk),Yt(s.succ),3,0,7);g.fill();
+      if(played[kk]!==undefined){g.fillStyle=C("bench");g.beginPath();g.arc(X(kk),Yt(played[kk]),6,0,7);g.fill();
+        g.strokeStyle=C("one");g.lineWidth=1.5;g.beginPath();g.arc(X(kk),Yt(played[kk]),5,0,7);g.stroke();}
+    });
+    axisText(g,"BOB IS RIGHT",A.l,A.t-11,"left","middle",C("faint"),8.6);
+    axisText(g,"classical dial",A.r-4,Yt(1)+10,"right","middle",C("zero"),9);
+    axisText(g,"quantum dial, 2/k",A.r-4,Yt(2/32)-10,"right","middle",C("one"),9);
+    /* bottom: bits */
+    const b0=A.t+hTop+gap, Yb=v=>b0+hBot*(1-v/5);
+    [0,1,2,3,4,5].forEach(v=>{line(g,A.l,Yb(v),A.r,Yb(v),C("grid"),1);axisText(g,v+"",A.l-6,Yb(v),"right","middle",C("faint"),9);});
+    g.strokeStyle=C("zero");g.lineWidth=2;g.beginPath();
+    for(let kk=2;kk<=32;kk+=0.25){const x=X(kk),y=Yb(Math.log2(kk));kk===2?g.moveTo(x,y):g.lineTo(x,y);}g.stroke();
+    dash(g,[5,4]);line(g,A.l,Yb(1),A.r,Yb(1),C("phase"),1.6);dash(g);
+    g.strokeStyle=C("one");g.lineWidth=2;g.beginPath();
+    KG.forEach((kk,i)=>{const x=X(kk),y=Yb(stats(kk).I);i?g.lineTo(x,y):g.moveTo(x,y);});g.stroke();
+    KG.forEach(kk=>{g.fillStyle=C("one");g.beginPath();g.arc(X(kk),Yb(stats(kk).I),3,0,7);g.fill();});
+    axisText(g,"BITS PER MEASUREMENT",A.l,b0-11,"left","middle",C("faint"),8.6);
+    axisText(g,"classical, log₂k",X(11),Yb(Math.log2(11))-11,"center","middle",C("zero"),9);
+    axisText(g,"one-bit ceiling (Holevo)",A.r-4,Yb(1)-9,"right","middle",C("phase"),9);
+    axisText(g,"quantum",A.r-4,Yb(stats(32).I)-10,"right","middle",C("one"),9);
+    KG.forEach(kk=>axisText(g,kk+"",X(kk),A.b+12,"center","middle",C("faint"),9));
+    axisText(g,"positions k on the dial",A.r,A.b+27,"right","middle",C("faint"),9);
+    /* current k marker */
+    dash(g,[2,3]);line(g,X(k),A.t,X(k),A.b,C("rule-strong"),1);dash(g);
+  }
+  document.getElementById("gPlay").onclick=play;
+  redraws.push(upd);upd();
+})();
+
+/* ================================================================
+   BENCH 05b - two positions, rotatable detector (Helstrom)
+   ================================================================ */
+(function(){
+  const cv=document.getElementById("hDial"),g=setup(cv),sep=document.getElementById("hSep"),mu=document.getElementById("hMu");
+  function upd(){
+    const D=+sep.value, m=+mu.value;
+    const P=0.5*(Math.pow(Math.cos((0-m)*D2R/2),2)+Math.pow(Math.sin((D-m)*D2R/2),2));
+    const best=0.5*(1+Math.sin(D*D2R/2));
+    document.getElementById("hSepV").textContent=D+"°";document.getElementById("hMuV").textContent=m+"°";
+    drawDial(g,cv,{ticks:0,pointers:[{a:0,c:C("zero"),label:"A"},{a:D,c:C("one"),label:"B"}],
+      extra:function(gg,d){
+        const p1=dialPt(d,m,d.R*1.08),p2=dialPt(d,m+180,d.R*1.08);
+        dash(gg,[6,4]);line(gg,p1.x,p1.y,p2.x,p2.y,C("phase"),1.8);dash(gg);
+        gg.fillStyle=C("phase");gg.beginPath();gg.arc(p1.x,p1.y,5,0,7);gg.fill();
+        mono(gg,9.5,500);gg.fillStyle=C("phase");gg.textAlign="center";gg.textBaseline="middle";
+        const q=dialPt(d,m,d.R*1.24);gg.fillText("detector",q.x,q.y);
+      }});
+    const close=Math.abs(P-best)<0.004;
+    document.getElementById("hread").innerHTML=
+      '<span class="k">Bob is right</span><span class="'+(close?"z":"o")+'">'+(100*P).toFixed(1)+'%</span> of the time at this detector angle'+
+      '<br><span class="k">best possible, Helstrom</span>½(1 + sin('+D+'°/2)) = '+(100*best).toFixed(1)+'%'+
+      '<br><span class="k">'+(close?'found it':'keep turning')+'</span>'+(close?'this is the best any detector can do':'the optimum is a specific angle. It is not halfway between A and B.');
+  }
+  sep.oninput=mu.oninput=upd;redraws.push(upd);upd();
+})();
+
+/* ================================================================
+   BENCH 06 - recover the angle from N copies
+   ================================================================ */
+(function(){
+  const cv=document.getElementById("eDial"),g=setup(cv),ch=document.getElementById("eChart"),gc=setup(ch);
+  const sl=document.getElementById("eN");
+  let hidden=70, est=null, runs=[], revealed=false;
+  function newAngle(){hidden=20+Math.floor(Math.random()*140);est=null;revealed=false;upd();}
+  function run(){
+    const N=1<<+sl.value, p=p0of(hidden);let z=0;for(let i=0;i<N;i++)if(Math.random()<p)z++;
+    const ph=z/N, th=2*Math.acos(Math.sqrt(Math.min(1,Math.max(0,ph))))*R2D, sig=R2D/Math.sqrt(N);
+    est={N:N,z:z,th:th,sig:sig,err:Math.abs(th-hidden)};revealed=true;runs.push({N:N,err:est.err});upd();
+  }
+  function upd(){
+    const N=1<<+sl.value;
+    document.getElementById("eNV").textContent=N;
+    const ptrs=[];
+    if(revealed)ptrs.push({a:hidden,c:C("muted"),w:1.6,label:"true"});
+    if(est)ptrs.push({a:est.th,c:C("zero"),label:"estimate"});
+    drawDial(g,cv,{ticks:0,pointers:ptrs,labels:{t:"|0⟩",b:"|1⟩"},
+      extra:est?function(gg,d){
+        const a0=(est.th-est.sig-90)*D2R,a1=(est.th+est.sig-90)*D2R;
+        gg.beginPath();gg.moveTo(d.cx,d.cy);gg.arc(d.cx,d.cy,d.R,a0,a1);gg.closePath();
+        gg.fillStyle=hex(C("zero"),0.18);gg.fill();
+      }:null});
+    document.getElementById("eread").innerHTML=est?
+      '<span class="k">readings</span>'+est.z+' zeros in '+est.N+
+      '<br><span class="k">estimate</span><span class="z">'+est.th.toFixed(1)+'°</span> ± '+est.sig.toFixed(1)+'°'+
+      '<br><span class="k">true angle</span>'+hidden+'° (off by '+est.err.toFixed(1)+'°)'+
+      '<br><span class="k">error rule</span>57.3° / √N = '+est.sig.toFixed(1)+'°'
+      :'<span class="k">status</span>angle hidden. Measure '+N+' copies to estimate it.';
+    chart();
+  }
+  function chart(){
+    const A=frame(gc,ch,{l:40,r:14,t:20,b:42});
+    const X=N=>A.l+A.w*(Math.log2(N)-2)/12, Y=e=>A.b-A.h*(Math.log10(Math.max(e,0.1))+1)/3.2;
+    [0.1,1,10,100].forEach(e=>{line(gc,A.l,Y(e),A.r,Y(e),C("grid"),1);axisText(gc,e+"°",A.l-5,Y(e),"right","middle",C("faint"),9);});
+    [4,64,1024,16384].forEach(N=>axisText(gc,N>=1024?(N/1024)+"k":N+"",X(N),A.b+12,"center","middle",C("faint"),9));
+    gc.strokeStyle=C("zero");gc.lineWidth=1.6;gc.beginPath();
+    for(let l=2;l<=14;l+=0.5){const N=Math.pow(2,l),x=X(N),y=Y(R2D/Math.sqrt(N));l===2?gc.moveTo(x,y):gc.lineTo(x,y);}gc.stroke();
+    runs.forEach(r=>{gc.fillStyle=hex(C("one"),0.85);gc.beginPath();gc.arc(X(r.N),Y(r.err),3.5,0,7);gc.fill();});
+    axisText(gc,"ERROR OF THE ESTIMATE",A.l,A.t-9,"left","middle",C("faint"),8.6);
+    axisText(gc,"57.3°/√N",X(4096),Y(R2D/64)-12,"center","middle",C("zero"),9);
+    axisText(gc,"copies measured, N",A.r,A.b+27,"right","middle",C("faint"),9);
+    line(gc,A.l,A.b,A.r,A.b,C("rule-strong"),1);
+  }
+  sl.oninput=upd;document.getElementById("eRun").onclick=run;document.getElementById("eNew").onclick=newAngle;
+  redraws.push(upd);upd();
+})();
+
+/* ================================================================
+   BENCH 07 - sphere
+   ================================================================ */
+(function(){
+  const sph=Sphere(document.getElementById("sph"),{showPhase:true});
+  const th=document.getElementById("sTh"),ph=document.getElementById("sPh");
+  function upd(){
+    const T=+th.value*D2R,P=+ph.value*D2R;
+    sph.r=[Math.sin(T)*Math.cos(P),Math.sin(T)*Math.sin(P),Math.cos(T)];sph.len=1;sph.draw();
+    const p0=Math.pow(Math.cos(T/2),2);
+    document.getElementById("sThV").textContent=th.value+"°";document.getElementById("sPhV").textContent=ph.value+"°";
+    bars(document.getElementById("sbars"),p0,1-p0);
+    document.getElementById("sread").innerHTML=
+      '<span class="k">numbers needed to write the state down</span>2, namely θ = '+th.value+'° and φ = '+ph.value+'°'+
+      '<br><span class="k">bits a reading returns</span>1'+
+      '<br><span class="k">what the phase changes</span><span class="p">nothing you can see here</span>';
+  }
+  th.oninput=ph.oninput=upd;redraws.push(upd);upd();
+})();
+
+/* ================================================================
+   BENCH 08 - register scaling
+   ================================================================ */
+(function(){
+  const cv=document.getElementById("rChart"),g=setup(cv),sl=document.getElementById("rN");
+  const fmtBig=x=>x<1e6?x.toLocaleString():x.toExponential(2).replace("e+","×10^");
+  function upd(){
+    const n=+sl.value;
+    document.getElementById("rNV").textContent=n;
+    const A=frame(g,cv,{l:52,r:22,t:22,b:42});
+    const X=k=>A.l+A.w*(k-1)/29, Y=v=>A.b-A.h*Math.log10(Math.max(v,1))/10;
+    for(let e=0;e<=10;e+=2){line(g,A.l,Y(Math.pow(10,e)),A.r,Y(Math.pow(10,e)),C("grid"),1);axisText(g,e===0?"1":"10"+sup(e),A.l-7,Y(Math.pow(10,e)),"right","middle",C("faint"),9);}
+    [1,5,10,15,20,25,30].forEach(k=>axisText(g,k+"",X(k),A.b+12,"center","middle",C("faint"),9));
+    function curve(f,col,w,dsh){g.strokeStyle=col;g.lineWidth=w;if(dsh)dash(g,dsh);g.beginPath();
+      for(let k=1;k<=30;k+=0.25){const x=X(k),y=Y(f(k));k===1?g.moveTo(x,y):g.lineTo(x,y);}g.stroke();dash(g);}
+    curve(k=>Math.pow(2,k+1)-2,C("phase"),2.2);
+    curve(k=>2*k,C("one"),2);
+    curve(k=>k,C("zero"),2.2);
+    curve(k=>k,C("ink"),1.4,[3,4]);
+    dash(g,[2,3]);line(g,X(n),A.t,X(n),A.b,C("rule-strong"),1);dash(g);
+    [[Math.pow(2,n+1)-2,C("phase")],[2*n,C("one")],[n,C("zero")]].forEach(d=>{
+      g.fillStyle=C("bench");g.beginPath();g.arc(X(n),Y(d[0]),5.4,0,7);g.fill();
+      g.fillStyle=d[1];g.beginPath();g.arc(X(n),Y(d[0]),3.6,0,7);g.fill();});
+    axisText(g,"NUMBERS TO WRITE THE REGISTER DOWN",A.l,A.t-11,"left","middle",C("faint"),8.6);
+    axisText(g,"entangled qubits, 2ⁿ⁺¹−2",X(12),Y(Math.pow(2,13))-13,"center","middle",C("phase"),9);
+    axisText(g,"independent qubits, 2n",X(21),Y(42)-12,"center","middle",C("one"),9);
+    axisText(g,"switches, n  =  bits you can read, n",X(21),Y(21)+13,"center","middle",C("zero"),9);
+    axisText(g,"register size n",A.r,A.b+27,"right","middle",C("faint"),9);
+    line(g,A.l,A.b,A.r,A.b,C("rule-strong"),1);
+    document.getElementById("rread").innerHTML=
+      '<span class="k">'+n+' switches</span>'+n+' bits to describe, '+n+' to read'+
+      '<br><span class="k">'+n+' independent qubits</span>'+(2*n)+' real numbers'+
+      '<br><span class="k">'+n+' entangled qubits</span><span class="p">'+fmtBig(Math.pow(2,n+1)-2)+'</span> real numbers'+
+      '<br><span class="k">bits you can read out</span><span class="z">'+n+'</span>, always';
+  }
+  function sup(e){const m={"2":"²","4":"⁴","6":"⁶","8":"⁸","10":"¹⁰"};return m[String(e)]||"";}
+  sl.oninput=upd;redraws.push(upd);upd();
+})();
+
+/* ================================================================
+   BENCH 09 - superdense coding
+   ================================================================ */
+(function(){
+  const rows=[["00","do nothing (I)","|00⟩"],["01","flip it (X)","|01⟩"],["10","phase flip (Z)","|10⟩"],["11","both (Z then X)","|11⟩"]];
+  let cur=2;
+  const bt=document.getElementById("sdbits");
+  rows.forEach(function(r,i){
+    const b=document.createElement("button");b.className="btn gate"+(i===cur?" on":"");b.textContent=r[0];
+    b.onclick=()=>{cur=i;[].forEach.call(bt.children,c=>c.classList.remove("on"));b.classList.add("on");upd();};
+    bt.appendChild(b);
+  });
+  function upd(){
+    const r=rows[cur];
+    document.getElementById("sdcirc").innerHTML=
+      '<span class="ket">shared pair</span><span class="wire"></span><span class="op ph">Alice: '+r[1]+'</span><span class="wire"></span>'+
+      '<span class="op">send 1 qubit</span><span class="wire"></span><span class="mtr">Bob: measure the pair</span>';
+    document.getElementById("sdtbl").innerHTML=
+      "<tr><th>Alice wants to send</th><th>she applies to her qubit</th><th>Bob reads</th></tr>"+
+      rows.map((x,i)=>"<tr>"+[x[0],x[1],x[2]].map((c,j)=>'<td class="'+(i===cur?"on":"")+(j===2?" out":"")+'">'+c+"</td>").join("")+"</tr>").join("");
+    document.getElementById("sdread").innerHTML=
+      '<span class="k">qubits that travelled after Alice chose</span>1'+
+      '<br><span class="k">bits delivered</span><span class="z">2</span>, with certainty'+
+      '<br><span class="k">qubits Bob holds at the end</span>2, so the one-bit-per-qubit rule survives';
+  }
+  redraws.push(upd);upd();
+})();
+
+/* ================================================================
+   table of contents + scroll spy
+   ================================================================ */
+(function(){
+  const toc=document.getElementById("toc");
+  const secs=[].slice.call(document.querySelectorAll("section[data-title]"));
+  secs.forEach(function(s){const a=document.createElement("a");a.href="#"+s.id;a.textContent=s.dataset.title;a.dataset.for=s.id;toc.appendChild(a);});
+  const links={};[].forEach.call(toc.children,a=>links[a.dataset.for]=a);
+  if("IntersectionObserver" in window){
+    const io=new IntersectionObserver(function(ents){ents.forEach(function(e){if(e.isIntersecting){
+      Object.keys(links).forEach(k=>links[k].classList.remove("on"));links[e.target.id].classList.add("on");}});},
+      {rootMargin:"-45% 0px -50% 0px"});
+    secs.forEach(s=>io.observe(s));
+  }
+})();
+
+/* ================================================================
+   QUICK CHECKS - answer first, then feedback and the solution
+   quizEngine(bank, storageKey) renders every .quiz[data-q] mount
+   ================================================================ */
+function quizEngine(QUIZ,KEY){
+  let state={};
+  try{state=JSON.parse(localStorage.getItem(KEY)||"{}")||{};}catch(e){state={};}
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){}}
+  function st(id){return state[id]||(state[id]={tries:0,done:false,first:null,solved:false});}
+
+  function parseNum(s){
+    s=String(s||"").trim().replace(/,/g,"").replace(/\s+/g,"").replace(/°|%|ns$/g,"");
+    if(!s)return NaN;
+    if(/^-?[\d.]+$/.test(s))return parseFloat(s);
+    if(/^[\d.^*+\-/()]+$/.test(s)){
+      try{const v=Function('"use strict";return ('+s.replace(/\^/g,"**")+")")();return typeof v==="number"&&isFinite(v)?v:NaN;}catch(e){return NaN;}
+    }
+    return NaN;
+  }
+
+  function render(Q,mount){
+    const S=st(Q.id);
+    mount.innerHTML="";
+    const head=document.createElement("div");head.className="qh";
+    head.innerHTML='<span>Quick check · section '+Q.sec+'</span><span class="st" id="'+Q.id+'st"></span>';
+    const qt=document.createElement("div");qt.className="qt";qt.innerHTML=Q.q;
+    mount.appendChild(head);mount.appendChild(qt);
+    const fb=document.createElement("div");fb.className="fb";fb.hidden=true;
+    const acts=document.createElement("div");acts.className="acts";
+    const sol=document.createElement("div");sol.className="sol";sol.hidden=true;sol.innerHTML="<b>Solution.</b> "+Q.sol;
+    const showSol=document.createElement("button");showSol.className="btn ghost";showSol.textContent="Show solution";
+    const again=document.createElement("button");again.className="btn ghost";again.textContent="Try again";again.hidden=true;
+    let inputs=[];
+
+    function status(){
+      const el=document.getElementById(Q.id+"st");
+      if(!el)return;
+      el.textContent=S.done?(S.first?"correct first time":"correct after "+S.tries+(S.tries===1?" try":" tries")):S.solved?"solution shown":(S.tries?S.tries+(S.tries===1?" try":" tries"):"");
+      tally();
+    }
+    function finish(correct,msg){
+      S.tries++;
+      if(correct&&!S.done){S.done=true;if(S.first===null)S.first=(S.tries===1);}
+      if(!correct&&S.first===null)S.first=false;
+      save();
+      fb.hidden=false;fb.className="fb "+(correct?"ok":"no");
+      fb.innerHTML=(correct?"<b>Correct.</b> ":"<b>Not quite.</b> ")+msg;
+      if(correct){sol.hidden=false;showSol.hidden=true;again.hidden=true;inputs.forEach(i=>i.disabled=true);}
+      else{again.hidden=false;}
+      status();
+    }
+    function reveal(){S.solved=true;save();sol.hidden=false;showSol.hidden=true;status();}
+
+    if(Q.type==="mc"){
+      const opts=document.createElement("div");opts.className="opts";
+      Q.opts.forEach(function(o,i){
+        const b=document.createElement("button");b.className="opt";b.type="button";
+        b.innerHTML='<span class="L">'+"abcd"[i]+'</span><span>'+o[0]+'</span>';
+        b.onclick=function(){
+          if(S.done)return;
+          [].forEach.call(opts.children,c=>c.classList.remove("wrong"));
+          const correct=(i===Q.ans);
+          b.classList.add(correct?"right":"wrong");
+          if(correct){[].forEach.call(opts.children,c=>c.disabled=true);}
+          finish(correct,correct?"":o[1]);
+        };
+        opts.appendChild(b);inputs.push(b);
+      });
+      mount.appendChild(opts);
+      again.onclick=()=>{[].forEach.call(opts.children,c=>c.classList.remove("wrong"));fb.hidden=true;again.hidden=true;};
+    }else{
+      const row=document.createElement("div");row.className="num";
+      const inp=document.createElement("input");inp.type="text";inp.inputMode="decimal";inp.placeholder="your answer";inp.id=Q.id+"in";inp.setAttribute("aria-label","answer for "+Q.id);
+      const unit=document.createElement("span");unit.className="u";unit.textContent=Q.unit;
+      const chk=document.createElement("button");chk.className="btn";chk.textContent="Check";
+      function submit(){
+        if(S.done)return;
+        const v=parseNum(inp.value);
+        if(isNaN(v)){fb.hidden=false;fb.className="fb no";fb.innerHTML="Enter a number. Powers like <b>2^7</b> are fine.";return;}
+        if(Q.ok(v))finish(true,"");
+        else if(Q.near&&Q.near(v))finish(true,Q.nearMsg||"Close enough.");
+        else finish(false,Q.hint(v));
+      }
+      chk.onclick=submit;inp.addEventListener("keydown",e=>{if(e.key==="Enter")submit();});
+      row.appendChild(inp);row.appendChild(unit);row.appendChild(chk);
+      mount.appendChild(row);inputs.push(inp,chk);
+      again.onclick=()=>{fb.hidden=true;again.hidden=true;inp.focus();};
+    }
+    showSol.onclick=reveal;
+    acts.appendChild(again);acts.appendChild(showSol);
+    mount.appendChild(fb);mount.appendChild(acts);mount.appendChild(sol);
+    if(S.done){sol.hidden=false;showSol.hidden=true;inputs.forEach(i=>i.disabled=true);
+      if(Q.type==="mc"){const b=mount.querySelectorAll(".opt")[Q.ans];if(b)b.classList.add("right");}
+      fb.hidden=false;fb.className="fb ok";fb.innerHTML="<b>Correct.</b> Answered earlier.";}
+    else if(S.solved){sol.hidden=false;showSol.hidden=true;}
+    status();
+  }
+  function tally(){
+    const el=document.getElementById("quizTally");if(!el)return;
+    const done=QUIZ.filter(Q=>st(Q.id).done).length, first=QUIZ.filter(Q=>st(Q.id).done&&st(Q.id).first).length;
+    el.className="verdict "+(done===QUIZ.length?"good":"");
+    el.innerHTML="<b>Your quick checks.</b> "+done+" of "+QUIZ.length+" answered correctly"+(done?", "+first+" on the first try":"")+"."+
+      (done<QUIZ.length?" The unanswered ones are back in sections "+QUIZ.filter(Q=>!st(Q.id).done).map(Q=>Q.sec).join(", ")+".":" Every section's question is done.")+
+      ' <button class="btn ghost" id="quizReset" style="margin-left:8px">Reset</button>';
+    const r=document.getElementById("quizReset");
+    if(r)r.onclick=()=>{state={};save();QUIZ.forEach(Q=>{const m=document.querySelector('.quiz[data-q="'+Q.id+'"]');if(m)render(Q,m);});tally();};
+  }
+  QUIZ.forEach(Q=>{const m=document.querySelector('.quiz[data-q="'+Q.id+'"]');if(m)render(Q,m);});
+  tally();
+}
+
+quizEngine([
+    {id:"q1",sec:"02",type:"num",unit:"positions",
+     q:"How many positions does a dial need to hold 7 bits?",
+     ok:v=>v===128,
+     hint:v=>v===7?"That is the number of bits. The question asks for positions."
+            :v===14?"Bits do not add up to positions. Each extra bit doubles the positions."
+            :"Bits = log₂(positions), so positions = 2 to the power of the bits.",
+     sol:"2<sup>7</sup> = 128. And 129 positions would still hold only 7 bits, because the extra position cannot be used without confusing it with a neighbour once noise is present. That is the next section."},
+    {id:"q2",sec:"03",type:"num",unit:"bits",
+     q:"The reader noise is 5 degrees. How many bits does the dial hold?",
+     ok:v=>v>=6&&v<=6.2,
+     hint:v=>v===72?"72 is the number of positions the reader can tell apart. Take log₂ of it."
+            :v===5?"That is the noise. Start from 360° / 5°."
+            :"Usable positions = 360° / δ. Then bits = log₂ of that.",
+     sol:"360 / 5 = 72 usable positions, and log<sub>2</sub> 72 = 6.17 bits. Rounding down to whole bits gives 6 bits, which is 64 positions. The other 8 positions go unused."},
+    {id:"q3",sec:"04",type:"mc",
+     q:"The pointer is at 90 degrees, three o'clock. What do you get when you measure?",
+     opts:[
+       ["90 degrees","No measurement ever returns the angle. Assumption two at the top of the page: a reading is a 0 or a 1."],
+       ["0.5","0.5 is the probability of reading a 0. It is not something the measurement hands you. You get a 0 or a 1."],
+       ["A 0 or a 1, each with probability ½",null],
+       ["Always 0, since the pointer is closer to |0⟩ than to |1⟩","At 90 degrees the pointer is exactly halfway between the poles. cos²(45°) = 0.5."]],
+     ans:2,
+     sol:"A 0 or a 1, each with probability cos<sup>2</sup>(45°) = 0.5. A fair coin. You do not get \"90 degrees\", and no single measurement ever will."},
+    {id:"q4",sec:"05",type:"mc",
+     q:"Alice uses 4 positions on the quantum dial. Classically that is 2 bits. What does Bob get from one measurement?",
+     opts:[
+       ["2 bits, the same as the classical dial","The ceiling is one bit per qubit per measurement, however many positions Alice uses. That is the dashed line in the chart."],
+       ["At most 1 bit, and he guesses the position right half the time",null],
+       ["Nothing. A single measurement is pure chance","Not nothing. The two pole positions are told apart perfectly. It is the two equator positions that look like coin flips."],
+       ["4 bits, one for each position","Bits grow as log₂ of the positions, and even that only holds for a classical dial."]],
+     ans:1,
+     sol:"At most 1 bit, and with the best detector he guesses the position correctly half the time, which is 2/k with k = 4. Two of the four positions are the poles and are easy. The other two sit on the equator and look like coin flips from every angle."},
+    {id:"q5",sec:"06",type:"num",unit:"copies",
+     q:"You want the angle to about one degree. Roughly how many copies do you need?",
+     ok:v=>v>=2500&&v<=4500,
+     near:v=>v>=1000&&v<=10000,
+     hint:v=>v===57||v===57.3?"57.3° is the error for a single copy. Set 57.3°/√N equal to 1° and solve for N."
+            :v<100?"Far too few. The error shrinks only as the square root of the number of copies."
+            :"The error is 57.3° / √N. Set that equal to 1° and solve for N.",
+     sol:"The error is 57.3° / √N. For one degree, √N = 57.3, so N ≈ 3300. A quantum sensor is a device that prepares and measures that many copies every second."},
+    {id:"q6",sec:"08",type:"mc",
+     q:"50 qubits. How many numbers does it take to describe the register, and how many bits can you read out?",
+     opts:[
+       ["50 and 50","That is the count for 50 switches. Entangled qubits need far more numbers to describe."],
+       ["About 2⁵¹ and 50",null],
+       ["100 and 100","100 is the count for 50 independent qubits. And the readout is never more than one bit per qubit."],
+       ["2⁵⁰ and 2⁵⁰","The description is exponential, but the readout is not. Measuring 50 qubits returns 50 bits."]],
+     ans:1,
+     sol:"About 2<sup>51</sup>, which is two quadrillion real numbers, and 50 bits. The first number is why nobody can simulate 50 qubits on a laptop. The second is why that fact alone does not make a quantum computer useful."}
+  ],"hmb-quiz-v1");
+
+})();
+</script>
+
+</body>
+</html>

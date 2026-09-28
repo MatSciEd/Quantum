@@ -1,0 +1,1198 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="High-school page 3 of 3: a field turns the arrow like a clock hand, the stopwatch experiment, beating randomness by counting, why the hand forgets, and where quantum sensors are already in use.">
+<style>:root{color-scheme:light dark}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+<title>A Qubit as a Sensor</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<style>
+:root{
+  --ground:#F2F4F4; --surface:#FFFFFF; --surface-2:#E8ECED; --bench:#FAFCFC;
+  --ink:#101619; --ink-2:#38464B; --muted:#5B6A70; --faint:#8C9BA1;
+  --rule:#D5DDDE; --rule-strong:#B6C3C5;
+  --zero:#00819F; --one:#AA6609; --phase:#7448B1;
+  --zero-soft:rgba(0,129,159,.13); --one-soft:rgba(170,102,9,.13); --phase-soft:rgba(116,72,177,.13);
+  --grid:rgba(16,22,25,.09); --sphere:rgba(16,22,25,.55);
+  --shade:rgba(0,129,159,.05);
+  --shadow:0 1px 2px rgba(16,22,25,.04), 0 10px 30px -18px rgba(16,22,25,.30);
+  --sel:rgba(0,129,159,.16);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ground:#0D1214; --surface:#141B1E; --surface-2:#1C2528; --bench:#101A1D;
+    --ink:#E4EDEF; --ink-2:#BAC8CC; --muted:#8FA1A7; --faint:#6B7B81;
+    --rule:#243033; --rule-strong:#35464B;
+    --zero:#1E9FA5; --one:#B97830; --phase:#906FC6;
+    --zero-soft:rgba(30,159,165,.15); --one-soft:rgba(185,120,48,.16); --phase-soft:rgba(144,111,198,.16);
+    --grid:rgba(228,237,239,.10); --sphere:rgba(228,237,239,.50);
+    --shade:rgba(30,159,165,.05);
+    --shadow:0 1px 2px rgba(0,0,0,.35), 0 12px 34px -20px rgba(0,0,0,.8);
+    --sel:rgba(30,159,165,.18);
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#0D1214; --surface:#141B1E; --surface-2:#1C2528; --bench:#101A1D;
+  --ink:#E4EDEF; --ink-2:#BAC8CC; --muted:#8FA1A7; --faint:#6B7B81;
+  --rule:#243033; --rule-strong:#35464B;
+  --zero:#1E9FA5; --one:#B97830; --phase:#906FC6;
+  --zero-soft:rgba(30,159,165,.15); --one-soft:rgba(185,120,48,.16); --phase-soft:rgba(144,111,198,.16);
+  --grid:rgba(228,237,239,.10); --sphere:rgba(228,237,239,.50);
+  --shade:rgba(30,159,165,.05);
+  --shadow:0 1px 2px rgba(0,0,0,.35), 0 12px 34px -20px rgba(0,0,0,.8);
+  --sel:rgba(30,159,165,.18);
+}
+
+*{box-sizing:border-box}
+body{
+  background:var(--ground); color:var(--ink);
+  font-family:"Source Serif 4","Iowan Old Style",Georgia,serif;
+  font-size:17px; line-height:1.62;
+  margin:0; padding-inline:20px; padding-block:0;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1080px;margin:0 auto}
+.prose{max-width:66ch}
+h1,h2,h3,h4,.mono,.eyebrow,.btn,label,th,.tab{font-family:Archivo,"Helvetica Neue",Arial,sans-serif}
+.mono,.eq,.num,code,.eyebrow,.tag,kbd{font-family:"IBM Plex Mono",ui-monospace,"SF Mono",Menlo,monospace}
+h1{font-size:clamp(2.1rem,5.4vw,3.3rem);line-height:1.04;font-weight:700;letter-spacing:-.024em;margin:0;text-wrap:balance}
+h2{font-size:clamp(1.5rem,3.1vw,2.05rem);line-height:1.14;font-weight:600;letter-spacing:-.02em;margin:0;text-wrap:balance}
+h3{font-size:1.12rem;font-weight:600;letter-spacing:-.008em;margin:0 0 .35em;text-wrap:balance}
+h4{font-size:.78rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;margin:0;color:var(--muted)}
+p{margin:0 0 1.05em}
+a{color:inherit;text-underline-offset:3px;text-decoration-color:var(--rule-strong)}
+strong{font-weight:600}
+em{font-style:italic}
+:focus-visible{outline:2px solid var(--zero);outline-offset:2px;border-radius:2px}
+
+/* ---------- masthead ---------- */
+.top{
+  position:sticky;top:0;z-index:40;background:color-mix(in srgb,var(--ground) 88%,transparent);
+  backdrop-filter:blur(10px);border-bottom:1px solid var(--rule);
+  margin-inline:-20px;padding-inline:20px;
+}
+.topin{max-width:1080px;margin:0 auto;display:flex;align-items:center;gap:18px;height:46px}
+.brand{font-family:"IBM Plex Mono",monospace;font-size:.68rem;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);white-space:nowrap;flex:0 1 auto;min-width:0;max-width:52%;overflow:hidden;text-overflow:ellipsis}
+.brand b{color:var(--ink);font-weight:500}
+.tocbar{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none;flex:1;margin-left:auto}
+.tocbar::-webkit-scrollbar{display:none}
+.tocbar a{
+  font-family:"IBM Plex Mono",monospace;font-size:.7rem;color:var(--muted);text-decoration:none;
+  padding:4px 7px;border-radius:3px;white-space:nowrap;transition:background .15s,color .15s;
+}
+.tocbar a:hover{background:var(--surface-2);color:var(--ink)}
+.tocbar a.on{color:var(--ink);background:var(--sel)}
+
+/* ---------- hero ---------- */
+.hero{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:44px;align-items:center;padding-block:64px 52px}
+.kicker{font-family:"IBM Plex Mono",monospace;font-size:.7rem;letter-spacing:.19em;text-transform:uppercase;color:var(--zero);margin-bottom:20px}
+.stand{font-size:1.16rem;color:var(--ink-2);margin-top:22px;max-width:46ch}
+.herofig{position:relative;display:flex;flex-direction:column;align-items:center;gap:10px}
+.herohint{font-family:"IBM Plex Mono",monospace;font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;color:var(--faint)}
+.claims{display:flex;flex-wrap:wrap;gap:0;margin-top:30px;border-top:1px solid var(--rule)}
+.claim{flex:1 1 210px;padding:15px 20px 15px 0;border-right:1px solid var(--rule)}
+.claim:last-child{border-right:none}
+.claim .n{font-family:"IBM Plex Mono",monospace;font-size:.66rem;letter-spacing:.13em;color:var(--faint);display:block;margin-bottom:5px}
+.claim .t{font-size:.95rem;line-height:1.42;color:var(--ink-2)}
+
+/* ---------- sections ---------- */
+section{padding-block:26px 46px;scroll-margin-top:60px}
+.shead{display:grid;grid-template-columns:56px minmax(0,1fr);gap:0;align-items:start;margin-bottom:22px;border-top:2px solid var(--ink);padding-top:14px}
+.snum{font-family:"IBM Plex Mono",monospace;font-size:.8rem;font-weight:500;color:var(--zero);padding-top:.25em}
+.sdek{color:var(--muted);font-size:1.02rem;margin-top:.5em;max-width:62ch}
+.body{display:grid;grid-template-columns:56px minmax(0,1fr);gap:0}
+.body > .col{min-width:0}
+
+/* ---------- bench (interactive panel) ---------- */
+.bench{
+  background:var(--bench);border:1px solid var(--rule);border-radius:4px;
+  margin:26px 0;box-shadow:var(--shadow);overflow:hidden;
+}
+.blab{
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+  padding:9px 16px;border-bottom:1px solid var(--rule);background:var(--surface-2);
+  font-family:"IBM Plex Mono",monospace;font-size:.66rem;letter-spacing:.13em;text-transform:uppercase;color:var(--muted);
+}
+.blab .dot{width:6px;height:6px;border-radius:50%;background:var(--zero);flex:none}
+.blab b{color:var(--ink);font-weight:500;letter-spacing:.09em}
+.bbody{padding:18px 16px}
+.bfoot{padding:11px 16px;border-top:1px solid var(--rule);background:var(--surface-2);font-size:.9rem;color:var(--muted);line-height:1.5}
+.bfoot b{color:var(--ink-2)}
+
+.row{display:flex;gap:18px;flex-wrap:wrap;align-items:flex-start}
+.row > *{min-width:0}
+.grow{flex:1 1 280px}
+.stack{display:flex;flex-direction:column;gap:12px}
+.stack > .ctrl{flex:0 0 auto}
+
+/* ---------- controls ---------- */
+.ctrls{display:flex;flex-wrap:wrap;gap:14px 22px;align-items:flex-end}
+.ctrl{display:flex;flex-direction:column;gap:5px;flex:1 1 170px;min-width:150px}
+.ctrl > label{font-family:"IBM Plex Mono",monospace;font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);display:flex;justify-content:space-between;gap:8px}
+.ctrl > label .v{color:var(--ink);font-variant-numeric:tabular-nums}
+input[type=range]{
+  -webkit-appearance:none;appearance:none;width:100%;height:18px;background:transparent;margin:0;cursor:pointer;
+}
+input[type=range]::-webkit-slider-runnable-track{height:3px;background:var(--rule-strong);border-radius:2px}
+input[type=range]::-moz-range-track{height:3px;background:var(--rule-strong);border-radius:2px}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:15px;height:15px;border-radius:50%;background:var(--zero);margin-top:-6px;border:2px solid var(--bench)}
+input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;background:var(--zero);border:2px solid var(--bench)}
+.btn{
+  font-size:.78rem;font-weight:600;letter-spacing:.01em;padding:6px 11px;border-radius:3px;
+  background:var(--surface);color:var(--ink);border:1px solid var(--rule-strong);cursor:pointer;
+  transition:background .13s,border-color .13s,transform .06s;
+}
+.btn:hover{background:var(--surface-2);border-color:var(--ink-2)}
+.btn:active{transform:translateY(1px)}
+.btn.on{background:var(--zero);border-color:var(--zero);color:#fff}
+.btn.gate{font-family:"IBM Plex Mono",monospace;font-weight:500;min-width:36px;text-align:center}
+.btn.ghost{background:transparent;border-style:dashed}
+.btn.wide{width:100%}
+.btnrow{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.btnrow .sep{width:1px;align-self:stretch;background:var(--rule);margin-inline:4px}
+.seg{display:inline-flex;border:1px solid var(--rule-strong);border-radius:3px;overflow:hidden}
+.seg button{font-family:"IBM Plex Mono",monospace;font-size:.72rem;padding:5px 10px;background:var(--surface);color:var(--muted);border:none;border-right:1px solid var(--rule);cursor:pointer}
+.seg button:last-child{border-right:none}
+.seg button.on{background:var(--zero);color:#fff}
+.swrap{display:flex;align-items:center;gap:7px;font-family:"IBM Plex Mono",monospace;font-size:.72rem;color:var(--muted);cursor:pointer;user-select:none}
+input[type=checkbox]{accent-color:var(--zero);width:15px;height:15px;cursor:pointer}
+
+/* ---------- canvas ---------- */
+canvas{display:block;max-width:100%;touch-action:pan-y}
+.cvwrap{display:flex;flex-direction:column;align-items:center;gap:6px}
+.cvcap{font-family:"IBM Plex Mono",monospace;font-size:.64rem;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);text-align:center}
+
+/* ---------- readouts ---------- */
+.read{font-family:"IBM Plex Mono",monospace;font-size:.8rem;line-height:1.85;font-variant-numeric:tabular-nums}
+.read .k{color:var(--muted)}
+.read .z{color:var(--zero)}
+.read .o{color:var(--one)}
+.read .p{color:var(--phase)}
+.pbar{display:flex;flex-direction:column;gap:7px;margin-top:2px}
+.pb{display:grid;grid-template-columns:58px minmax(0,1fr) 52px;gap:9px;align-items:center;font-family:"IBM Plex Mono",monospace;font-size:.73rem;font-variant-numeric:tabular-nums}
+.pb .track{height:11px;background:var(--surface-2);border-radius:2px;overflow:hidden}
+.pb .fill{height:100%;border-radius:2px;transition:width .22s ease}
+.pb .lbl{color:var(--muted)}
+.pb .val{text-align:right;color:var(--ink-2)}
+
+/* ---------- tables ---------- */
+.tbl{width:100%;border-collapse:collapse;font-family:"IBM Plex Mono",monospace;font-size:.76rem;font-variant-numeric:tabular-nums}
+.tbl th{font-family:Archivo,sans-serif;font-size:.64rem;letter-spacing:.11em;text-transform:uppercase;color:var(--muted);font-weight:600;text-align:left;padding:6px 9px;border-bottom:1px solid var(--rule-strong)}
+.tbl td{padding:5px 9px;border-bottom:1px solid var(--rule);color:var(--ink-2)}
+.tbl tr:last-child td{border-bottom:none}
+.tbl td.hi{background:var(--zero-soft);color:var(--ink)}
+.tbl td.lo{color:var(--faint)}
+.tbl .out{color:var(--ink);font-weight:500}
+.tblscroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+
+/* ---------- equations & notes ---------- */
+.eq{
+  display:block;font-size:.88rem;line-height:1.9;color:var(--ink);
+  background:var(--surface);border-left:2px solid var(--zero);
+  padding:11px 15px;margin:16px 0;border-radius:0 3px 3px 0;overflow-x:auto;white-space:nowrap;
+}
+.eq .c{color:var(--muted)}
+.inl{font-family:"IBM Plex Mono",monospace;font-size:.88em;background:var(--surface-2);padding:.08em .32em;border-radius:2px}
+.note{border-left:2px solid var(--rule-strong);padding:2px 0 2px 16px;margin:18px 0;color:var(--muted);font-size:.96rem}
+.note b{color:var(--ink-2)}
+details.math{margin:16px 0;border:1px solid var(--rule);border-radius:3px;background:var(--surface);overflow:hidden}
+details.math > summary{
+  cursor:pointer;padding:8px 14px;font-family:"IBM Plex Mono",monospace;font-size:.7rem;
+  letter-spacing:.1em;text-transform:uppercase;color:var(--muted);list-style:none;
+  display:flex;align-items:center;gap:8px;
+}
+details.math > summary::-webkit-details-marker{display:none}
+details.math > summary::before{content:"+";color:var(--zero);font-weight:600}
+details.math[open] > summary::before{content:"\2212"}
+details.math > summary:hover{color:var(--ink)}
+.mathbody{padding:2px 16px 14px;font-size:.95rem;border-top:1px solid var(--rule)}
+.mathbody .eq{background:var(--bench);margin:12px 0}
+.matrix{display:inline-grid;grid-template-columns:repeat(2,minmax(52px,auto));gap:2px 12px;font-family:"IBM Plex Mono",monospace;font-size:.8rem;
+  border-left:2px solid var(--ink-2);border-right:2px solid var(--ink-2);padding:6px 10px;text-align:right;font-variant-numeric:tabular-nums}
+.kv{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 14px;font-family:"IBM Plex Mono",monospace;font-size:.76rem;font-variant-numeric:tabular-nums}
+.kv dt{color:var(--muted)}
+.kv dd{margin:0;color:var(--ink)}
+.verdict{font-family:"IBM Plex Mono",monospace;font-size:.78rem;line-height:1.7;padding:9px 12px;border-radius:3px;background:var(--surface);border:1px solid var(--rule)}
+.verdict.bad{border-left:3px solid var(--one)}
+.verdict.good{border-left:3px solid var(--zero)}
+.tag{display:inline-block;font-size:.63rem;letter-spacing:.11em;text-transform:uppercase;padding:2px 6px;border-radius:2px;background:var(--surface-2);color:var(--muted)}
+.tag.z{background:var(--zero-soft);color:var(--zero)}
+.tag.o{background:var(--one-soft);color:var(--one)}
+.tag.p{background:var(--phase-soft);color:var(--phase)}
+.legend{display:flex;flex-wrap:wrap;gap:5px 16px;font-family:"IBM Plex Mono",monospace;font-size:.68rem;color:var(--muted);margin-top:9px}
+.legend span{display:flex;align-items:center;gap:6px}
+.legend i{width:11px;height:11px;border-radius:2px;display:block;flex:none}
+
+/* ---------- circuit strip ---------- */
+.circ{display:flex;align-items:center;gap:0;flex-wrap:wrap;font-family:"IBM Plex Mono",monospace;font-size:.76rem;
+  padding:9px 12px;background:var(--surface);border:1px solid var(--rule);border-radius:3px;min-height:42px}
+.circ .wire{height:1px;background:var(--rule-strong);flex:1 0 14px;min-width:14px}
+.circ .op{border:1px solid var(--ink-2);background:var(--bench);padding:2px 8px;border-radius:2px;color:var(--ink);white-space:nowrap}
+.circ .op.ph{border-color:var(--phase);color:var(--phase)}
+.circ .ket{color:var(--muted);white-space:nowrap}
+.circ .mtr{border:1px solid var(--zero);color:var(--zero);padding:2px 8px;border-radius:2px}
+
+/* ---------- closing ---------- */
+.roles{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:0;border-top:1px solid var(--rule);margin-top:20px}
+.role{padding:16px 20px 18px 0;border-bottom:1px solid var(--rule)}
+.role h5{font-family:Archivo,sans-serif;font-size:.95rem;font-weight:600;margin:0 0 5px;color:var(--ink)}
+.role p{font-size:.92rem;color:var(--muted);margin:0;line-height:1.5}
+.role .n{font-family:"IBM Plex Mono",monospace;font-size:.62rem;letter-spacing:.12em;color:var(--zero);display:block;margin-bottom:7px}
+footer{border-top:2px solid var(--ink);margin-top:40px;padding:20px 0 60px;font-family:"IBM Plex Mono",monospace;font-size:.7rem;color:var(--faint);line-height:1.8}
+
+@media (max-width:880px){
+  .hero{grid-template-columns:1fr;gap:30px;padding-block:40px 34px}
+  .shead,.body{grid-template-columns:1fr}
+  .snum{margin-bottom:6px;padding-top:0}
+  .claim{border-right:none;border-bottom:1px solid var(--rule);padding-right:0}
+  .claim:last-child{border-bottom:none}
+  body{font-size:16.5px}
+}
+@media (prefers-reduced-motion:reduce){
+  *{animation-duration:.001ms !important;transition-duration:.001ms !important}
+}
+</style>
+<style>
+/* ---- undergraduate module: lighter density, larger type, dial components ---- */
+body{font-size:18px;line-height:1.6}
+.prose{max-width:62ch}
+h1{font-size:clamp(2.2rem,5.8vw,3.5rem)}
+.hero{grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);padding-block:56px 40px}
+.assume{border:1px solid var(--rule);background:var(--surface);border-radius:4px;padding:16px 20px;margin-top:26px}
+.assume h4{margin-bottom:10px}
+.assume ol{margin:0;padding-left:1.2em;font-size:.98rem;color:var(--ink-2)}
+.assume li{margin:5px 0}
+.assume li b{color:var(--ink)}
+.msg{font-family:Archivo,sans-serif;font-weight:600;font-size:1.22rem;line-height:1.35;letter-spacing:-.012em;color:var(--ink);margin:6px 0 18px;text-wrap:balance}
+.toggles{display:flex;gap:8px;flex-wrap:wrap}
+.tg{width:54px;height:76px;border:1px solid var(--rule-strong);border-radius:5px;background:var(--surface);cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:7px 0;font-family:"IBM Plex Mono",monospace;font-size:.7rem;color:var(--muted);transition:background .12s}
+.tg .knob{width:30px;height:30px;border-radius:50%;background:var(--surface-2);border:1px solid var(--rule-strong);transition:transform .15s,background .15s}
+.tg.on{background:var(--zero-soft);border-color:var(--zero)}
+.tg.on .knob{background:var(--zero);border-color:var(--zero)}
+.tg .val{font-size:1.1rem;font-weight:600;color:var(--ink)}
+.bigread{font-family:"IBM Plex Mono",monospace;font-size:1.05rem;line-height:1.7;font-variant-numeric:tabular-nums}
+.bigread .k{color:var(--muted);font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;display:block}
+.bigread .z{color:var(--zero)}.bigread .o{color:var(--one)}.bigread .p{color:var(--phase)}
+.outcome{display:inline-flex;align-items:center;justify-content:center;width:64px;height:64px;border-radius:6px;font-family:"IBM Plex Mono",monospace;font-size:2rem;font-weight:600;background:var(--surface-2);color:var(--faint);border:1px solid var(--rule)}
+.outcome.z{background:var(--zero-soft);color:var(--zero);border-color:var(--zero)}
+.outcome.o{background:var(--one-soft);color:var(--one);border-color:var(--one)}
+.roundlog{font-family:"IBM Plex Mono",monospace;font-size:.72rem;line-height:1.7;color:var(--muted);border-top:1px solid var(--rule);padding-top:8px;margin-top:6px}
+.roundlog b{color:var(--ink-2);font-weight:500}
+.roundlog .hit{color:var(--zero)}.roundlog .miss{color:var(--one)}
+details.quick{margin:18px 0 0;border-left:2px solid var(--zero);background:var(--surface);border-radius:0 3px 3px 0}
+details.quick>summary{cursor:pointer;padding:9px 14px;font-family:Archivo,sans-serif;font-weight:600;font-size:.9rem;color:var(--ink-2);list-style:none;display:flex;gap:8px;align-items:center}
+details.quick>summary::-webkit-details-marker{display:none}
+details.quick>summary::before{content:"?";font-family:"IBM Plex Mono",monospace;color:var(--zero);font-weight:600}
+details.quick>.a{padding:0 14px 12px;font-size:.98rem;color:var(--ink-2)}
+.sdtable td.on,.sdtable th.on{background:var(--zero-soft)}
+.answer{border-top:2px solid var(--ink);margin-top:10px}
+.answer .line{display:grid;grid-template-columns:150px minmax(0,1fr);gap:16px;padding:14px 0;border-bottom:1px solid var(--rule);align-items:baseline}
+.answer .q{font-family:"IBM Plex Mono",monospace;font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.answer .v{font-family:Archivo,sans-serif;font-weight:600;font-size:1.15rem;color:var(--ink);letter-spacing:-.01em}
+.answer .v small{display:block;font-family:"Source Serif 4",serif;font-weight:400;font-size:.95rem;color:var(--muted);margin-top:3px}
+@media (max-width:880px){.answer .line{grid-template-columns:1fr;gap:4px}}
+</style>
+<style>
+/* ---- quick checks with an answer box ---- */
+.quiz{margin:18px 0 0;border:1px solid var(--rule);border-left:2px solid var(--zero);background:var(--surface);border-radius:0 3px 3px 0;padding:12px 16px 14px}
+.quiz .qh{font-family:"IBM Plex Mono",monospace;font-size:.64rem;letter-spacing:.12em;text-transform:uppercase;color:var(--zero);margin-bottom:6px;display:flex;justify-content:space-between;gap:10px}
+.quiz .qh .st{color:var(--muted)}
+.quiz .qt{font-family:Archivo,sans-serif;font-weight:600;font-size:.98rem;line-height:1.4;color:var(--ink);margin-bottom:11px;text-wrap:balance}
+.quiz .opts{display:flex;flex-direction:column;gap:6px}
+.quiz .opt{display:flex;gap:10px;align-items:flex-start;text-align:left;padding:8px 11px;border:1px solid var(--rule-strong);border-radius:3px;background:var(--bench);cursor:pointer;font-family:"Source Serif 4",Georgia,serif;font-size:.95rem;line-height:1.45;color:var(--ink-2);transition:border-color .12s,background .12s}
+.quiz .opt:hover{border-color:var(--ink-2)}
+.quiz .opt .L{font-family:"IBM Plex Mono",monospace;font-size:.7rem;color:var(--muted);padding-top:3px;min-width:14px;flex:none}
+.quiz .opt.right{border-color:var(--zero);background:var(--zero-soft);color:var(--ink)}
+.quiz .opt.wrong{border-color:var(--one);background:var(--one-soft)}
+.quiz .opt:disabled{cursor:default}
+.quiz .num{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.quiz .num .u{font-family:"IBM Plex Mono",monospace;font-size:.78rem;color:var(--muted)}
+.quiz input[type=text]{font-family:"IBM Plex Mono",monospace;font-size:.95rem;padding:6px 10px;border:1px solid var(--rule-strong);border-radius:3px;background:var(--bench);color:var(--ink);width:150px}
+.quiz input[type=text]:disabled{color:var(--muted)}
+.quiz .fb{margin-top:10px;padding:9px 12px;border-radius:3px;font-size:.95rem;line-height:1.5;color:var(--ink-2);border-left:3px solid var(--rule-strong);background:var(--bench)}
+.quiz .fb.ok{border-left-color:var(--zero)}
+.quiz .fb.no{border-left-color:var(--one)}
+.quiz .fb b{color:var(--ink)}
+.quiz .acts{margin-top:9px;display:flex;gap:6px;flex-wrap:wrap}
+.quiz .sol{margin-top:10px;font-size:.95rem;line-height:1.5;color:var(--ink-2);border-top:1px solid var(--rule);padding-top:9px}
+.quiz .sol b{color:var(--ink)}
+</style>
+<style>
+/* ---- high-school modules: friendlier density ---- */
+body{font-size:18.5px;line-height:1.62}
+.prose{max-width:60ch}
+h2{font-size:clamp(1.55rem,3.2vw,2.1rem)}
+.msg{font-size:1.28rem}
+.sdek{font-size:1.04rem}
+.bench .bbody{padding:20px 18px}
+.btn{font-size:.84rem;padding:8px 13px}
+.btn.big{font-size:.95rem;padding:10px 16px}
+.ctrl > label{font-size:.7rem}
+input[type=range]::-webkit-slider-thumb{width:18px;height:18px;margin-top:-7.5px}
+input[type=range]::-moz-range-thumb{width:16px;height:16px}
+.series{font-family:"IBM Plex Mono",monospace;font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);margin-bottom:14px}
+.series b{color:var(--zero);font-weight:500}
+.hook{display:grid;grid-template-columns:auto minmax(0,1fr);gap:14px 18px;align-items:start;border:1px solid var(--rule);border-left:3px solid var(--one);background:var(--surface);border-radius:0 4px 4px 0;padding:16px 20px;margin:24px 0}
+.hook .hk{font-family:"IBM Plex Mono",monospace;font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;color:var(--one);padding-top:4px;white-space:nowrap}
+.hook p{margin:0;font-size:1.02rem;color:var(--ink-2)}
+.hook p b{color:var(--ink)}
+.home{border:1px solid var(--rule);border-radius:4px;background:var(--surface);margin:26px 0;overflow:hidden}
+.home .hh{padding:10px 18px;background:var(--surface-2);border-bottom:1px solid var(--rule);font-family:"IBM Plex Mono",monospace;font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.home .hh b{color:var(--ink);font-weight:500}
+.home .hb{padding:16px 18px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.6fr);gap:18px}
+.home h5{font-family:Archivo,sans-serif;font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 0 6px}
+.home ul,.home ol{margin:0;padding-left:1.15em;font-size:.98rem;color:var(--ink-2)}
+.home li{margin:4px 0}
+.home .why{grid-column:1/-1;font-size:.98rem;color:var(--ink-2);border-top:1px solid var(--rule);padding-top:12px}
+.home .why b{color:var(--ink)}
+@media (max-width:700px){.home .hb{grid-template-columns:1fr}.hook{grid-template-columns:1fr;gap:6px}}
+details.teacher{margin:14px 0 0;border:1px dashed var(--rule-strong);border-radius:3px;background:transparent}
+details.teacher>summary{cursor:pointer;padding:7px 12px;font-family:"IBM Plex Mono",monospace;font-size:.66rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);list-style:none;display:flex;gap:8px;align-items:center}
+details.teacher>summary::-webkit-details-marker{display:none}
+details.teacher>summary::before{content:"+";color:var(--phase);font-weight:600}
+details.teacher[open]>summary::before{content:"\2212"}
+details.teacher>.tb{padding:2px 14px 12px;font-size:.93rem;line-height:1.55;color:var(--ink-2);border-top:1px dashed var(--rule)}
+details.teacher>.tb b{color:var(--ink)}
+.coinrow{display:flex;flex-wrap:wrap;gap:5px}
+.coin{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:"IBM Plex Mono",monospace;font-size:.7rem;font-weight:600;color:#fff;background:var(--faint)}
+.coin.z{background:var(--zero)}.coin.o{background:var(--one)}
+.bigpct{font-family:Archivo,sans-serif;font-weight:700;font-size:2.4rem;letter-spacing:-.02em;line-height:1;color:var(--ink);font-variant-numeric:tabular-nums}
+.bigpct small{font-family:"IBM Plex Mono",monospace;font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);display:block;margin-top:6px;font-weight:400}
+.uses{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.use{border:1px solid var(--rule);border-radius:4px;background:var(--surface);padding:14px 16px}
+.use b{display:block;font-family:Archivo,sans-serif;font-size:.98rem;color:var(--ink);margin-bottom:4px}
+.use small{display:block;font-size:.92rem;color:var(--muted);line-height:1.45}
+.use .n{font-family:"IBM Plex Mono",monospace;font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;color:var(--zero);display:block;margin-bottom:6px}
+.stepper{display:flex;gap:6px;flex-wrap:wrap}
+.stepper button{flex:1 1 90px}
+</style>
+<div class="top">
+  <div class="topin">
+    <div class="brand"><b>A Qubit as a Sensor</b> &nbsp;/&nbsp; high school</div>
+    <nav class="tocbar" id="toc" aria-label="Sections"></nav>
+  </div>
+</div>
+
+<div class="wrap">
+
+<header class="hero">
+  <div>
+    <div class="series"><b>Quantum for high school</b> · page 3 of 3</div>
+    <div class="kicker">The same arrow, used the other way round</div>
+    <h1>A qubit as a sensor</h1>
+    <p class="stand">A qubit's hidden direction turns at a rate set by the field around it. On page 2 that was a nuisance. Here it is the whole point. Start the arrow, let the world turn it, read how far it went, and you have measured the field. This is how the clocks behind GPS work, and how a diamond can sense the magnetic field of a beating heart.</p>
+    <div class="assume">
+      <h4>What you need to know already</h4>
+      <ol>
+        <li><b>The arrow and its hidden direction.</b> From page 1. Looking reads the height. Tipping sideways turns the hidden direction into height.</li>
+        <li><b>A magnet has a field.</b> A compass needle turns to line up with it. Stronger magnet, stronger field. We will use magnetic fields, but everything works the same for electric ones.</li>
+        <li><b>A pile of coin flips tells you the odds.</b> One flip does not. From page 1, section 02.</li>
+      </ol>
+    </div>
+  </div>
+  <div class="herofig">
+    <div class="cvwrap">
+      <canvas id="heroDial" width="330" height="330" aria-label="A qubit arrow seen from above, turning at a rate set by a field"></canvas>
+      <div class="herohint" id="heroCap">seen from above, the arrow is a clock hand</div>
+    </div>
+  </div>
+</header>
+
+<!-- ============ 1 ============ -->
+<section id="s1" data-title="01 The clock">
+  <div class="shead">
+    <div class="snum">01</div>
+    <div>
+      <h2>A field turns the arrow, like a clock hand</h2>
+      <p class="sdek">A compass needle swings to point along a field and stops. A qubit's arrow does something different. It keeps turning around the field, and the stronger the field, the faster it turns.</p>
+    </div>
+  </div>
+  <div class="body"><div></div><div class="col">
+    <div class="prose">
+      <p class="msg">Seen from above, a sideways arrow is a clock hand. The field sets how fast it goes round.</p>
+      <p>The dial below is the sphere seen from the top, so you are watching the hidden direction directly. Turn up the field and the hand speeds up. Double the field and it goes round twice as fast. Every qubit does this, and the rate for a given field is a fixed number for each kind of qubit. That number is what turns a qubit into a ruler for fields.</p>
+    </div>
+    <div class="bench">
+      <div class="blab"><span class="dot"></span><b>Try it</b> &nbsp;The clock hand</div>
+      <div class="bbody">
+        <div class="row" style="align-items:center">
+          <div class="cvwrap" style="flex:0 0 auto">
+            <canvas id="ckDial" width="260" height="260" aria-label="The arrow seen from above, turning at a rate set by the field"></canvas>
+            <div class="cvcap">the sphere from above</div>
+          </div>
+          <div class="grow stack" style="flex:1 1 260px">
+            <div class="ctrl"><label for="ckB">Field strength <span class="v" id="ckBV"></span></label><input type="range" id="ckB" min="0" max="100" value="40" step="1"></div>
+            <div class="btnrow"><button class="btn" id="ckPlay">Pause</button><button class="btn ghost" id="ckReset">Back to start</button></div>
+            <div class="bigread" id="ckread"></div>
+          </div>
+        </div>
+      </div>
+      <div class="bfoot"><b>The number physicists use.</b> For an electron, the hand goes round about 28 billion times per second in a field of one tesla, which is a strong laboratory magnet. In the Earth's field, about fifty millionths of a tesla, it still goes round more than a million times a second. Qubits are very fast clocks.</div>
+    </div>
+    <details class="teacher"><summary>For teachers</summary><div class="tb">Larmor precession. The Bloch vector rotates about the field axis at ω = γB, with γ/2π ≈ 28 GHz/T for a free electron and about 42.6 MHz/T for a proton. The dial is the equatorial plane of the Bloch sphere, so its angle is the phase φ from page 1. Precession, not alignment, is the point students most often miss, since a compass needle is the only field-following object they have handled.</div></details>
+    <div class="quiz" data-q="q1"></div>
+  </div></div>
+</section>
+
+<!-- ============ 2 ============ -->
+<section id="s2" data-title="02 Stopwatch">
+  <div class="shead">
+    <div class="snum">02</div>
+    <div>
+      <h2>Start the clock, wait, read it</h2>
+      <p class="sdek">You cannot see the hand turn. You can only look, and looking reads height. So tip the hand back up before you look, and the height tells you how far it turned.</p>
+    </div>
+  </div>
+  <div class="body"><div></div><div class="col">
+    <div class="prose">
+      <p class="msg">Tip sideways, wait, tip back, look. The chance of reading 0 goes up and down as the wait gets longer, and the field sets how fast.</p>
+      <div class="eq">angle turned = rate × field × wait<br>chance of 0 = (1 + cos(angle turned)) / 2</div>
+      <p>This four-step recipe is the same fork-in-the-road from page 2, with the delay set by the world instead of by you. Slide the wait time. The chance swings between 100 percent and 0 percent, one full swing for every full turn of the hand. Now change the field. The swings get faster or slower. If you know the wait and count the swings, you know the field.</p>
+    </div>
+    <div class="bench">
+      <div class="blab"><span class="dot"></span><b>Try it</b> &nbsp;The stopwatch experiment</div>
+      <div class="bbody">
+        <div class="circ" id="rmCirc" style="margin-bottom:14px"></div>
+        <div class="row" style="align-items:center">
+          <div class="cvwrap" style="flex:0 0 auto">
+            <canvas id="rmDial" width="230" height="230" aria-label="The clock hand at the end of the wait"></canvas>
+            <div class="cvcap">the hand at the end of the wait</div>
+          </div>
+          <div class="cvwrap grow" style="flex:1 1 320px">
+            <canvas id="rmChart" width="420" height="220" aria-label="Chance of reading 0 versus the wait time"></canvas>
+          </div>
+        </div>
+        <div class="ctrls" style="margin-top:14px">
+          <div class="ctrl"><label for="rmB">Field strength <span class="v" id="rmBV"></span></label><input type="range" id="rmB" min="10" max="100" value="40" step="1"></div>
+          <div class="ctrl"><label for="rmT">Wait time <span class="v" id="rmTV"></span></label><input type="range" id="rmT" min="0" max="100" value="30" step="1"></div>
+        </div>
+        <div class="row" style="margin-top:14px;align-items:center;gap:14px">
+          <button class="btn big" id="rmLook">Run it once and look</button><div class="outcome" id="rmOut">·</div>
+          <div class="bigread grow" id="rmread" style="flex:1 1 260px"></div>
+        </div>
+      </div>
+      <div class="bfoot"><b>Why this is a sensor.</b> The chance depends on the field through the angle turned. If you can measure the chance, you can work backwards to the field. And measuring a chance is what the next section is about.</div>
+    </div>
+    <details class="teacher"><summary>For teachers</summary><div class="tb">The Ramsey sequence: π/2 pulse, free evolution for τ, π/2 pulse, measure. P(0) = cos²(γBτ/2) = (1 + cos γBτ)/2. It is the H · R<sub>z</sub>(φ) · H circuit of page 2 with φ = γBτ set by the environment. Atomic clocks run exactly this sequence and adjust their oscillator until the fringe sits at its steepest point. Field units on the bench are relative; the footer of section 01 gives the real scale.</div></details>
+    <div class="quiz" data-q="q2"></div>
+  </div></div>
+</section>
+
+<!-- ============ 3 ============ -->
+<section id="s3" data-title="03 Counting">
+  <div class="shead">
+    <div class="snum">03</div>
+    <div>
+      <h2>Beating randomness by counting</h2>
+      <p class="sdek">One look gives a 0 or a 1, which says almost nothing about the chance. A thousand looks pin the chance down to a few percent, and that pins down the field.</p>
+    </div>
+  </div>
+  <div class="body"><div></div><div class="col">
+    <div class="prose">
+      <p class="msg">A hundred times more looks makes the answer ten times better. The error shrinks with the square root of the count.</p>
+      <p>The page hides a field strength. Choose how many times to run the stopwatch experiment and it counts the zeros, works out the chance, and turns that into a field estimate with an error bar. Watch the error bar shrink as you add looks, and notice that it shrinks slowly. Ten times the looks buys only about three times the precision.</p>
+    </div>
+    <div class="bench">
+      <div class="blab"><span class="dot"></span><b>Try it</b> &nbsp;Estimate a hidden field</div>
+      <div class="bbody">
+        <div class="row" style="align-items:center">
+          <div class="grow stack" style="flex:1 1 260px">
+            <h4>Number of looks</h4>
+            <div class="btnrow" id="esN"></div>
+            <div class="btnrow"><button class="btn big" id="esRun">Run and count</button><button class="btn ghost" id="esNew">New hidden field</button></div>
+            <div class="bigread" id="esread"></div>
+          </div>
+          <div class="cvwrap grow" style="flex:1 1 340px">
+            <canvas id="esChart" width="420" height="230" aria-label="Estimated field with error bars for each run, against the hidden true value"></canvas>
+          </div>
+        </div>
+      </div>
+      <div class="bfoot"><b>The square-root rule.</b> With N looks the chance is known to about 1/(2√N). For N = 100 that is 5 percent. For N = 10,000 it is half a percent. Real quantum sensors run the experiment millions of times a second, which is how they reach such precision.</div>
+    </div>
+    <details class="teacher"><summary>For teachers</summary><div class="tb">Binomial statistics: the standard error of an estimated probability is √(p(1−p)/N), at most 1/(2√N). Propagated through the fringe at its steepest point, the phase uncertainty is 1/√N radians, which is the standard quantum limit. The bench biases the hidden field so the operating point sits on a steep part of the fringe; a real sensor does this deliberately. Entangled sensors can beat 1/√N, but that is beyond this page.</div></details>
+    <div class="quiz" data-q="q3"></div>
+  </div></div>
+</section>
+
+<!-- ============ 4 ============ -->
+<section id="s4" data-title="04 Forgetting">
+  <div class="shead">
+    <div class="snum">04</div>
+    <div>
+      <h2>The hand forgets</h2>
+      <p class="sdek">A longer wait means a bigger angle and a more sensitive measurement. But stray fields from everything nearby jiggle the hand, and after a while its direction is scrambled.</p>
+    </div>
+  </div>
+  <div class="body"><div></div><div class="col">
+    <div class="prose">
+      <p class="msg">Wait longer for more sensitivity, but not too long, because the swings fade away. There is a best waiting time.</p>
+      <p>Every atom near the qubit makes its own tiny field, and they all wobble. The hand picks up a little random extra turn each moment. Average over many runs and the swings in the chance get shallower and shallower. Physicists call the time it takes for them to fade the coherence time. Turn up the noise and watch the swings die.</p>
+    </div>
+    <div class="bench">
+      <div class="blab"><span class="dot"></span><b>Try it</b> &nbsp;Noise kills the swings</div>
+      <div class="bbody">
+        <div class="row" style="align-items:center">
+          <div class="cvwrap grow" style="flex:1 1 360px">
+            <canvas id="dcChart" width="460" height="230" aria-label="Chance of reading 0 versus wait time, with swings that fade as noise increases"></canvas>
+          </div>
+          <div class="grow stack" style="flex:1 1 240px">
+            <div class="ctrl"><label for="dcNz">Noise from the surroundings <span class="v" id="dcNzV"></span></label><input type="range" id="dcNz" min="0" max="100" value="35" step="1"></div>
+            <div class="bigread" id="dcread"></div>
+          </div>
+        </div>
+      </div>
+      <div class="bfoot"><b>The materials problem.</b> Making the hand remember longer is a question of what surrounds the qubit. Fewer nearby atoms with their own little magnets, purer crystals, and colder temperatures all help. A large part of quantum research is exactly this: chemistry and materials science in the service of a longer memory.</div>
+    </div>
+    <details class="teacher"><summary>For teachers</summary><div class="tb">Dephasing with coherence time T<sub>2</sub>. The fringe contrast decays as e<sup>−τ/T₂</sup>, and the best interrogation time for sensitivity is τ = T<sub>2</sub>/2. The undergraduate page "Why a Qubit Forgets" develops this fully, including why fast-moving surroundings are less harmful than slow ones and how a spin echo undoes slow noise.</div></details>
+    <div class="quiz" data-q="q4"></div>
+  </div></div>
+</section>
+
+<!-- ============ 5 ============ -->
+<section id="s5" data-title="05 In use">
+  <div class="shead">
+    <div class="snum">05</div>
+    <div>
+      <h2>Where this is already in use</h2>
+      <p class="sdek">Quantum sensors are not a future technology. Some of them have been running for decades, and one of them is in orbit above you right now.</p>
+    </div>
+  </div>
+  <div class="body"><div></div><div class="col">
+    <div class="uses">
+      <div class="use"><span class="n">Atomic clocks</span><b>GPS</b><small>Every GPS satellite carries a clock that runs the stopwatch experiment on atoms billions of times a second. Your phone's location comes from comparing those clocks. An error of a millionth of a second would put you 300 metres off.</small></div>
+      <div class="use"><span class="n">MRI</span><b>Medical imaging</b><small>The hydrogen nuclei in your body are qubits. An MRI scanner tips them sideways, lets them turn in a strong field, and listens to the signal as they lose their direction. Different tissues forget at different rates, and that is the contrast in the picture.</small></div>
+      <div class="use"><span class="n">Diamond</span><b>Magnetometers</b><small>A single electron trapped in a diamond can sense the magnetic field of a nerve firing or a heart beating, from outside the body, at room temperature.</small></div>
+      <div class="use"><span class="n">Navigation</span><b>Where GPS cannot reach</b><small>Submarines, and aircraft when GPS is jammed, are starting to navigate by measuring tiny changes in gravity and in the Earth's magnetic field with atom-based sensors.</small></div>
+    </div>
+    <div class="hook">
+      <div class="hk">Why this matters</div>
+      <p><b>The same fragility that makes quantum computers hard to build makes quantum sensors easy to make sensitive.</b> A qubit forgets its direction because it feels every field around it. A sensor is a qubit whose forgetting you have learned to read. Which is why the people who build better qubits for computing and the people who build better sensors are often the same people, working on the same materials.</p>
+    </div>
+    <div class="home">
+      <div class="hh"><b>Try this at home</b> &nbsp;a field turns a needle, and a phone can measure it</div>
+      <div class="hb">
+        <div><h5>You need</h5><ul><li>A compass, or a compass app</li><li>A fridge magnet</li><li>A phone with a magnetometer app (most have one; search for "magnetometer" or "tesla meter")</li><li>A ruler</li></ul></div>
+        <div>
+          <h5>Steps</h5>
+          <ol><li>Open the magnetometer app. Away from anything magnetic it reads the Earth's field, roughly 25 to 65 microtesla depending on where you live.</li><li>Bring the fridge magnet toward the phone from 30 cm away, 2 cm at a time, and write down the reading at each distance.</li><li>Plot reading against distance. The field of a small magnet falls off very fast, roughly as one over the distance cubed. Halving the distance gives about eight times the field.</li><li>Now hold the compass near the magnet. The needle swings and stops. A qubit's arrow would not stop. It would keep turning, faster the closer you got.</li></ol>
+        </div>
+        <div class="why"><b>Why this one.</b> The phone's magnetometer is a real field sensor, and the one-over-distance-cubed rule is why a qubit only feels its nearest neighbours, which is the whole story of section 04.</div>
+      </div>
+    </div>
+    <div class="verdict" id="quizTally" style="margin-top:22px"></div>
+    <div class="prose" style="margin-top:22px">
+      <p>That is the end of the three pages. A bit is a switch. A qubit is an arrow with a hidden direction. Turn the direction on purpose and you can make wrong answers cancel, which is computing. Let the world turn it and read how far it went, which is sensing. Everything else is detail, and the detail is where the careers are.</p>
+    </div>
+  </div></div>
+</section>
+
+<footer>
+  Page 3 of a three-page introduction to qubits for high-school students.<br>
+  All figures are computed live in the browser.
+</footer>
+</div>
+<style>canvas{height:auto}</style>
+<script>
+(function(){
+"use strict";
+const REDUCED=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+function norm3(a){const m=Math.hypot(a[0],a[1],a[2])||1;return [a[0]/m,a[1]/m,a[2]/m];}
+const D2R=Math.PI/180, R2D=180/Math.PI;
+const KS=[2,3,4,5,6,8,12,16,32,64];
+function gauss(){let u=0,v=0;while(u===0)u=Math.random();while(v===0)v=Math.random();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v);}
+function tocBuild(){
+  const toc=document.getElementById("toc");if(!toc)return;
+  const secs=[].slice.call(document.querySelectorAll("section[data-title]"));
+  secs.forEach(function(s){const a=document.createElement("a");a.href="#"+s.id;a.textContent=s.dataset.title;a.dataset.for=s.id;toc.appendChild(a);});
+  const links={};[].forEach.call(toc.children,a=>links[a.dataset.for]=a);
+  if("IntersectionObserver" in window){
+    const io=new IntersectionObserver(function(ents){ents.forEach(function(e){if(e.isIntersecting){
+      Object.keys(links).forEach(k=>links[k].classList.remove("on"));links[e.target.id].classList.add("on");}});},{rootMargin:"-45% 0px -50% 0px"});
+    secs.forEach(s=>io.observe(s));
+  }
+}
+/* ================= theme-aware colors ================= */
+const CV={};
+function readVars(){
+  const cs=getComputedStyle(document.documentElement);
+  ["--ink","--ink-2","--muted","--faint","--rule","--rule-strong","--zero","--one","--phase","--surface","--bench","--surface-2","--grid","--sphere"]
+    .forEach(k=>CV[k]=cs.getPropertyValue(k).trim());
+}
+readVars();
+const C=k=>CV["--"+k];
+const redraws=[];
+const redrawAll=()=>{readVars();redraws.forEach(f=>{try{f();}catch(e){}});};
+if(window.matchMedia){
+  const mq=window.matchMedia("(prefers-color-scheme: dark)");
+  (mq.addEventListener?mq.addEventListener("change",redrawAll):mq.addListener(redrawAll));
+}
+new MutationObserver(redrawAll).observe(document.documentElement,{attributes:true,attributeFilter:["data-theme"]});
+
+/* ================= canvas helpers ================= */
+function setup(cv){
+  const w=cv.width,h=cv.height,dpr=Math.min(window.devicePixelRatio||1,2);
+  cv.style.width=w+"px";cv.style.height=h+"px";
+  cv.width=Math.round(w*dpr);cv.height=Math.round(h*dpr);
+  const g=cv.getContext("2d");g.scale(dpr,dpr);
+  cv._w=w;cv._h=h;return g;
+}
+function clear(g,cv,bg){g.save();g.setTransform(1,0,0,1,0,0);g.clearRect(0,0,cv.width,cv.height);g.restore();
+  if(bg){g.fillStyle=bg;g.fillRect(0,0,cv._w,cv._h);} }
+function mono(g,size,weight){g.font=(weight||400)+" "+size+"px 'IBM Plex Mono', ui-monospace, monospace";}
+function dash(g,arr){g.setLineDash(arr||[]);}
+function line(g,x1,y1,x2,y2,col,w){g.strokeStyle=col;g.lineWidth=w||1;g.beginPath();g.moveTo(x1,y1);g.lineTo(x2,y2);g.stroke();}
+function rr(g,x,y,w,h,r){g.beginPath();
+  if(g.roundRect){g.roundRect(x,y,w,h,r);}else{g.rect(x,y,w,h);} }
+
+/* ================= Bloch sphere ================= */
+function Sphere(cv,opt){
+  opt=opt||{};
+  const g=setup(cv),W=cv._w,H=cv._h;
+  const S={az:opt.az!==undefined?opt.az:-0.72,el:opt.el!==undefined?opt.el:0.30,
+           r:[0,0,1],len:1,axis:null,axisT:0,cap:opt.cap,
+           labels:opt.labels!==false,small:!!opt.small,ghost:null};
+  const R=Math.min(W,H)*(opt.scale||0.345);
+  const cxp=W/2, cyp=H/2+(opt.dy||0);
+
+  function basis(){
+    const ca=Math.cos(S.az),sa=Math.sin(S.az),ce=Math.cos(S.el),se=Math.sin(S.el);
+    return {right:[-sa,ca,0],up:[-ca*se,-sa*se,ce],fwd:[ca*ce,sa*ce,se]};
+  }
+  function P(p,b){
+    const d=p[0]*b.fwd[0]+p[1]*b.fwd[1]+p[2]*b.fwd[2];
+    return {x:cxp+R*(p[0]*b.right[0]+p[1]*b.right[1]+p[2]*b.right[2]),
+            y:cyp-R*(p[0]*b.up[0]+p[1]*b.up[1]+p[2]*b.up[2]), d:d};
+  }
+  function circlePts(kind,a){
+    const pts=[];
+    for(let i=0;i<=96;i++){
+      const t=i/96*Math.PI*2;
+      if(kind==="lat"){const s=Math.sin(a);pts.push([s*Math.cos(t),s*Math.sin(t),Math.cos(a)]);}
+      else{pts.push([Math.sin(t)*Math.cos(a),Math.sin(t)*Math.sin(a),Math.cos(t)]);}
+    }
+    return pts;
+  }
+  function poly(pts,b,colFront,colBack,w){
+    for(let i=0;i<pts.length-1;i++){
+      const p1=P(pts[i],b),p2=P(pts[i+1],b);
+      const front=(p1.d+p2.d)/2>0;
+      g.strokeStyle=front?colFront:colBack;g.lineWidth=w||1;
+      g.beginPath();g.moveTo(p1.x,p1.y);g.lineTo(p2.x,p2.y);g.stroke();
+    }
+  }
+  function arrow(from,to,col,b,w){
+    const a=P(from,b),c=P(to,b);
+    g.strokeStyle=col;g.lineWidth=w||2.4;g.lineCap="round";
+    g.beginPath();g.moveTo(a.x,a.y);g.lineTo(c.x,c.y);g.stroke();g.lineCap="butt";
+    const ang=Math.atan2(c.y-a.y,c.x-a.x),hl=9,hw=4.4;
+    g.fillStyle=col;g.beginPath();
+    g.moveTo(c.x,c.y);
+    g.lineTo(c.x-hl*Math.cos(ang-0.42),c.y-hl*Math.sin(ang-0.42));
+    g.lineTo(c.x-hl*Math.cos(ang+0.42),c.y-hl*Math.sin(ang+0.42));
+    g.closePath();g.fill();
+  }
+  function tag(p,txt,col,b,off){
+    const q=P(p,b);mono(g,S.small?9:10.5,500);g.fillStyle=col;
+    g.textAlign="center";g.textBaseline="middle";
+    g.fillText(txt,q.x+(off?off[0]:0),q.y+(off?off[1]:0));
+  }
+
+  S.draw=function(){
+    const b=basis();
+    clear(g,cv,null);
+    /* ball */
+    g.fillStyle=C("surface");g.globalAlpha=0.55;
+    g.beginPath();g.arc(cxp,cyp,R,0,7);g.fill();g.globalAlpha=1;
+    /* equatorial disc */
+    const eq=circlePts("lat",Math.PI/2);
+    g.beginPath();
+    eq.forEach((p,i)=>{const q=P(p,b);i?g.lineTo(q.x,q.y):g.moveTo(q.x,q.y);});
+    g.closePath();g.fillStyle=C("zero");g.globalAlpha=0.055;g.fill();g.globalAlpha=1;
+
+    const back=hex(C("sphere"),0.16), front=hex(C("sphere"),0.42);
+    if(!S.small){
+      [Math.PI/4,Math.PI/2,3*Math.PI/4].forEach(a=>poly(circlePts("lat",a),b,front,back,a===Math.PI/2?1.25:0.8));
+      for(let k=0;k<4;k++)poly(circlePts("lon",k*Math.PI/4),b,hex(C("sphere"),0.26),hex(C("sphere"),0.10),0.8);
+    }else{
+      poly(circlePts("lat",Math.PI/2),b,front,back,1.1);
+      poly(circlePts("lon",0),b,hex(C("sphere"),0.2),hex(C("sphere"),0.08),0.8);
+      poly(circlePts("lon",Math.PI/2),b,hex(C("sphere"),0.2),hex(C("sphere"),0.08),0.8);
+    }
+    /* rim */
+    g.strokeStyle=hex(C("sphere"),0.5);g.lineWidth=1;g.beginPath();g.arc(cxp,cyp,R,0,7);g.stroke();
+
+    /* axes */
+    const AX=[[[1,0,0],"x"],[[0,1,0],"y"],[[0,0,1],"z"]];
+    AX.forEach(function(A){
+      const p1=P(A[0].map(v=>-v*1.14),b),p2=P(A[0].map(v=>v*1.14),b);
+      dash(g,[3,3]);line(g,p1.x,p1.y,p2.x,p2.y,hex(C("sphere"),0.35),1);dash(g);
+    });
+    if(S.labels){
+      tag([0,0,1.34],opt.pole0||"|0⟩",C("zero"),b);
+      tag([0,0,-1.34],opt.pole1||"|1⟩",C("one"),b);
+      if(!S.small&&!opt.noSide){
+        tag([1.3,0,0],opt.side||"|+⟩",C("muted"),b);
+        tag([-1.3,0,0],opt.side2||"|−⟩",C("muted"),b);
+        tag([0,1.3,0],opt.side3||"|i⟩",C("muted"),b);
+        tag([0,-1.3,0],opt.side4||"|−i⟩",C("muted"),b);
+      }
+    }
+
+    /* rotation axis being applied */
+    if(S.axis&&S.axisT>0.02){
+      const n=norm3(S.axis);
+      const p1=P(n.map(v=>-v*1.24),b),p2=P(n.map(v=>v*1.24),b);
+      g.globalAlpha=Math.min(1,S.axisT);
+      dash(g,[5,4]);line(g,p1.x,p1.y,p2.x,p2.y,C("phase"),1.8);dash(g);
+      g.globalAlpha=1;
+    }
+
+    const r=S.r,L=S.len;
+    const rv=[r[0]*L,r[1]*L,r[2]*L];
+
+    /* phase construction */
+    if(opt.showPhase&&L>0.02&&Math.hypot(rv[0],rv[1])>0.03){
+      const foot=[rv[0],rv[1],0];
+      dash(g,[2,3]);
+      const a=P(rv,b),f=P(foot,b),o=P([0,0,0],b);
+      line(g,a.x,a.y,f.x,f.y,hex(C("phase"),0.75),1);
+      line(g,o.x,o.y,f.x,f.y,hex(C("phase"),0.75),1);
+      dash(g);
+      const phi=Math.atan2(rv[1],rv[0]);
+      const arc=[];for(let i=0;i<=40;i++){const t=phi*i/40;arc.push([0.36*Math.cos(t),0.36*Math.sin(t),0]);}
+      g.strokeStyle=C("phase");g.lineWidth=1.6;g.beginPath();
+      arc.forEach((p,i)=>{const q=P(p,b);i?g.lineTo(q.x,q.y):g.moveTo(q.x,q.y);});g.stroke();
+      tag([0.52*Math.cos(phi/2),0.52*Math.sin(phi/2),0.04],"φ",C("phase"),b);
+      /* theta arc */
+      const st=Math.hypot(rv[0],rv[1]),ct=rv[2],th=Math.atan2(st,ct),ux=rv[0]/(st||1),uy=rv[1]/(st||1);
+      const arc2=[];for(let i=0;i<=40;i++){const t=th*i/40;arc2.push([0.5*Math.sin(t)*ux,0.5*Math.sin(t)*uy,0.5*Math.cos(t)]);}
+      g.strokeStyle=C("zero");g.lineWidth=1.6;g.beginPath();
+      arc2.forEach((p,i)=>{const q=P(p,b);i?g.lineTo(q.x,q.y):g.moveTo(q.x,q.y);});g.stroke();
+      tag([0.63*Math.sin(th/2)*ux,0.63*Math.sin(th/2)*uy,0.63*Math.cos(th/2)],"θ",C("zero"),b);
+    }
+
+    /* point cloud */
+    if(S.points&&S.points.length){
+      S.points.forEach(function(p){const q=P(p,b);g.fillStyle=hex(p[3]||C("zero"),q.d>0?0.8:0.22);g.beginPath();g.arc(q.x,q.y,2.1,0,7);g.fill();});
+    }
+    /* ghost (previous state) */
+    if(S.ghost){
+      g.globalAlpha=0.28;arrow([0,0,0],S.ghost,C("muted"),b,1.8);g.globalAlpha=1;
+    }
+
+    /* state vector */
+    if(S.noArrow){}else if(L<0.035){
+      const o=P([0,0,0],b);
+      g.fillStyle=C("muted");g.beginPath();g.arc(o.x,o.y,4,0,7);g.fill();
+      g.strokeStyle=hex(C("muted"),0.5);dash(g,[2,3]);g.lineWidth=1;
+      g.beginPath();g.arc(cxp,cyp,R*0.985,0,7);g.stroke();dash(g);
+      mono(g,S.small?9:9.5,500);g.fillStyle=C("muted");g.textAlign="center";g.textBaseline="middle";
+      g.fillText("no direction",cxp,cyp+19);
+    }else{
+      const col=rv[2]>=0?C("zero"):C("one");
+      arrow([0,0,0],rv,col,b,2.6);
+      if(L<0.985){
+        const q=P(rv,b);g.strokeStyle=hex(col,0.5);g.lineWidth=1;dash(g,[2,2]);
+        const e=P(r,b);g.beginPath();g.moveTo(q.x,q.y);g.lineTo(e.x,e.y);g.stroke();dash(g);
+      }
+    }
+    if(S.second){arrow([0,0,0],S.second.r,S.second.c||C("phase"),b,2.6);
+      if(S.second.label){tag(S.second.r.map(v=>v*1.18),S.second.label,S.second.c||C("phase"),b);}}
+    if(S.mainLabel){tag(rv.map(v=>v*1.18),S.mainLabel,rv[2]>=0?C("zero"):C("one"),b);}
+    if(S.cap){mono(g,9.5,500);g.fillStyle=C("faint");g.textAlign="left";g.textBaseline="top";g.fillText(S.cap,8,7);}
+  };
+
+  /* drag */
+  let drag=null;
+  cv.style.cursor="grab";
+  cv.addEventListener("pointerdown",e=>{drag={x:e.clientX,y:e.clientY,az:S.az,el:S.el};cv.setPointerCapture(e.pointerId);cv.style.cursor="grabbing";});
+  cv.addEventListener("pointermove",e=>{
+    if(!drag)return;
+    S.az=drag.az-(e.clientX-drag.x)*0.0115;
+    S.el=Math.max(-1.35,Math.min(1.35,drag.el+(e.clientY-drag.y)*0.0115));
+    S.draw();
+  });
+  const end=()=>{drag=null;cv.style.cursor="grab";};
+  cv.addEventListener("pointerup",end);cv.addEventListener("pointercancel",end);
+  redraws.push(()=>S.draw());
+  return S;
+}
+function hex(c,a){
+  c=(c||"#888").trim();
+  if(c[0]==="#"){
+    if(c.length===4)c="#"+c[1]+c[1]+c[2]+c[2]+c[3]+c[3];
+    const n=parseInt(c.slice(1),16);
+    return "rgba("+((n>>16)&255)+","+((n>>8)&255)+","+(n&255)+","+a+")";
+  }
+  if(c.indexOf("rgb")===0)return c.replace(/rgba?\(([^)]+)\)/,(m,p)=>{const v=p.split(",").map(s=>s.trim());return "rgba("+v[0]+","+v[1]+","+v[2]+","+a+")";});
+  return c;
+}
+
+/* ================= probability bars ================= */
+function bars(el,p0,p1){
+  el.innerHTML=
+   '<div class="pb"><span class="lbl">P(0)</span><span class="track"><span class="fill" style="width:'+(p0*100).toFixed(1)+'%;background:'+C("zero")+'"></span></span><span class="val">'+(p0*100).toFixed(1)+'%</span></div>'+
+   '<div class="pb"><span class="lbl">P(1)</span><span class="track"><span class="fill" style="width:'+(p1*100).toFixed(1)+'%;background:'+C("one")+'"></span></span><span class="val">'+(p1*100).toFixed(1)+'%</span></div>';
+}
+
+/* ================= chart frame helper ================= */
+function frame(g,cv,m){
+  clear(g,cv,C("bench"));
+  return {l:m.l,r:cv._w-m.r,t:m.t,b:cv._h-m.b,w:cv._w-m.l-m.r,h:cv._h-m.t-m.b};
+}
+function axisText(g,txt,x,y,align,base,col,size){
+  mono(g,size||9.5,400);g.fillStyle=col||C("muted");
+  g.textAlign=align||"center";g.textBaseline=base||"middle";g.fillText(txt,x,y);
+}
+
+/* ================= dial renderer ================= */
+function dialGeom(cv){const W=cv._w,H=cv._h;return {cx:W/2,cy:H/2,R:Math.min(W,H)*0.37};}
+function dialPt(d,angDeg,rad){const a=angDeg*D2R;return {x:d.cx+(rad===undefined?d.R:rad)*Math.sin(a),y:d.cy-(rad===undefined?d.R:rad)*Math.cos(a)};}
+function drawDial(g,cv,o){
+  const d=dialGeom(cv);
+  clear(g,cv,null);
+  /* face */
+  g.fillStyle=C("surface");g.globalAlpha=0.7;g.beginPath();g.arc(d.cx,d.cy,d.R,0,7);g.fill();g.globalAlpha=1;
+  /* cells (resolution) */
+  if(o.cells){
+    const n=Math.max(1,Math.floor(360/o.cells)), step=360/n;
+    for(let i=0;i<n;i++){
+      g.beginPath();
+      g.arc(d.cx,d.cy,d.R*1.06,(i*step-90)*D2R,((i+1)*step-90)*D2R);
+      g.arc(d.cx,d.cy,d.R*0.94,((i+1)*step-90)*D2R,(i*step-90)*D2R,true);
+      g.closePath();
+      g.fillStyle=i%2?hex(C("zero"),0.30):hex(C("zero"),0.08);g.fill();
+    }
+  }
+  /* ring */
+  g.strokeStyle=hex(C("sphere"),0.55);g.lineWidth=1.2;g.beginPath();g.arc(d.cx,d.cy,d.R,0,7);g.stroke();
+  /* ticks */
+  if(o.ticks&&o.ticks>0&&o.ticks<=128){
+    for(let i=0;i<o.ticks;i++){
+      const a=i*360/o.ticks, p1=dialPt(d,a,d.R*0.9), p2=dialPt(d,a,d.R*1.0);
+      line(g,p1.x,p1.y,p2.x,p2.y,hex(C("ink"),0.7),o.ticks>24?1:1.6);
+    }
+  }else if(o.ticks>128){
+    g.strokeStyle=hex(C("ink"),0.5);g.lineWidth=5;g.beginPath();g.arc(d.cx,d.cy,d.R*0.95,0,7);g.stroke();
+  }
+  /* fuzz wedge */
+  if(o.fuzz&&o.pointer!==null&&o.pointer!==undefined){
+    const a0=(o.pointer-o.fuzz/2-90)*D2R,a1=(o.pointer+o.fuzz/2-90)*D2R;
+    g.beginPath();g.moveTo(d.cx,d.cy);g.arc(d.cx,d.cy,d.R,a0,a1);g.closePath();
+    g.fillStyle=hex(C("one"),0.22);g.fill();
+  }
+  /* labels */
+  if(o.labels){
+    mono(g,11,500);g.textAlign="center";g.textBaseline="middle";
+    const L=o.labels, r=d.R*1.22;
+    if(L.t){g.fillStyle=L.tc||C("zero");const p=dialPt(d,0,r);g.fillText(L.t,p.x,p.y);}
+    if(L.b){g.fillStyle=L.bc||C("one");const p=dialPt(d,180,r);g.fillText(L.b,p.x,p.y);}
+    if(L.r){g.fillStyle=C("muted");const p=dialPt(d,90,r);g.fillText(L.r,p.x,p.y);}
+    if(L.l){g.fillStyle=C("muted");const p=dialPt(d,270,r);g.fillText(L.l,p.x,p.y);}
+  }
+  if(o.extra)o.extra(g,d);
+  /* pointer(s) */
+  const ptrs=o.pointers||(o.pointer!==null&&o.pointer!==undefined?[{a:o.pointer,c:o.pointerColor}]:[]);
+  ptrs.forEach(function(p){
+    const col=p.c||C("ink"), tip=dialPt(d,p.a,d.R*0.86);
+    g.strokeStyle=col;g.lineWidth=p.w||2.6;g.lineCap="round";
+    g.beginPath();g.moveTo(d.cx,d.cy);g.lineTo(tip.x,tip.y);g.stroke();g.lineCap="butt";
+    g.fillStyle=col;g.beginPath();g.arc(tip.x,tip.y,4.2,0,7);g.fill();
+    if(p.label){mono(g,10,500);g.fillStyle=col;g.textAlign="center";g.textBaseline="middle";
+      const q=dialPt(d,p.a,d.R*1.13);g.fillText(p.label,q.x,q.y);}
+  });
+  g.fillStyle=C("ink");g.beginPath();g.arc(d.cx,d.cy,3.2,0,7);g.fill();
+  if(o.cap){mono(g,9.5,500);g.fillStyle=C("faint");g.textAlign="left";g.textBaseline="top";g.fillText(o.cap,8,7);}
+}
+function dialClick(cv,fn){
+  const d=()=>dialGeom(cv);
+  let down=false;
+  function ang(e){
+    const r=cv.getBoundingClientRect(), sx=cv._w/r.width, sy=cv._h/r.height;
+    const x=(e.clientX-r.left)*sx-d().cx, y=(e.clientY-r.top)*sy-d().cy;
+    return ((Math.atan2(x,-y)*R2D)+360)%360;
+  }
+  cv.style.cursor="crosshair";
+  cv.addEventListener("pointerdown",e=>{down=true;cv.setPointerCapture(e.pointerId);fn(ang(e));});
+  cv.addEventListener("pointermove",e=>{if(down)fn(ang(e));});
+  const up=()=>{down=false;};
+  cv.addEventListener("pointerup",up);cv.addEventListener("pointercancel",up);
+}
+const p0of=thDeg=>Math.pow(Math.cos(thDeg*D2R/2),2);
+
+
+/* ================================================================
+   QUICK CHECKS - answer first, then feedback and the solution
+   quizEngine(bank, storageKey) renders every .quiz[data-q] mount
+   ================================================================ */
+function quizEngine(QUIZ,KEY){
+  let state={};
+  try{state=JSON.parse(localStorage.getItem(KEY)||"{}")||{};}catch(e){state={};}
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){}}
+  function st(id){return state[id]||(state[id]={tries:0,done:false,first:null,solved:false});}
+
+  function parseNum(s){
+    s=String(s||"").trim().replace(/,/g,"").replace(/\s+/g,"").replace(/°|%|ns$/g,"");
+    if(!s)return NaN;
+    if(/^-?[\d.]+$/.test(s))return parseFloat(s);
+    if(/^[\d.^*+\-/()]+$/.test(s)){
+      try{const v=Function('"use strict";return ('+s.replace(/\^/g,"**")+")")();return typeof v==="number"&&isFinite(v)?v:NaN;}catch(e){return NaN;}
+    }
+    return NaN;
+  }
+
+  function render(Q,mount){
+    const S=st(Q.id);
+    mount.innerHTML="";
+    const head=document.createElement("div");head.className="qh";
+    head.innerHTML='<span>Quick check · section '+Q.sec+'</span><span class="st" id="'+Q.id+'st"></span>';
+    const qt=document.createElement("div");qt.className="qt";qt.innerHTML=Q.q;
+    mount.appendChild(head);mount.appendChild(qt);
+    const fb=document.createElement("div");fb.className="fb";fb.hidden=true;
+    const acts=document.createElement("div");acts.className="acts";
+    const sol=document.createElement("div");sol.className="sol";sol.hidden=true;sol.innerHTML="<b>Solution.</b> "+Q.sol;
+    const showSol=document.createElement("button");showSol.className="btn ghost";showSol.textContent="Show solution";
+    const again=document.createElement("button");again.className="btn ghost";again.textContent="Try again";again.hidden=true;
+    let inputs=[];
+
+    function status(){
+      const el=document.getElementById(Q.id+"st");
+      if(!el)return;
+      el.textContent=S.done?(S.first?"correct first time":"correct after "+S.tries+(S.tries===1?" try":" tries")):S.solved?"solution shown":(S.tries?S.tries+(S.tries===1?" try":" tries"):"");
+      tally();
+    }
+    function finish(correct,msg){
+      S.tries++;
+      if(correct&&!S.done){S.done=true;if(S.first===null)S.first=(S.tries===1);}
+      if(!correct&&S.first===null)S.first=false;
+      save();
+      fb.hidden=false;fb.className="fb "+(correct?"ok":"no");
+      fb.innerHTML=(correct?"<b>Correct.</b> ":"<b>Not quite.</b> ")+msg;
+      if(correct){sol.hidden=false;showSol.hidden=true;again.hidden=true;inputs.forEach(i=>i.disabled=true);}
+      else{again.hidden=false;}
+      status();
+    }
+    function reveal(){S.solved=true;save();sol.hidden=false;showSol.hidden=true;status();}
+
+    if(Q.type==="mc"){
+      const opts=document.createElement("div");opts.className="opts";
+      Q.opts.forEach(function(o,i){
+        const b=document.createElement("button");b.className="opt";b.type="button";
+        b.innerHTML='<span class="L">'+"abcd"[i]+'</span><span>'+o[0]+'</span>';
+        b.onclick=function(){
+          if(S.done)return;
+          [].forEach.call(opts.children,c=>c.classList.remove("wrong"));
+          const correct=(i===Q.ans);
+          b.classList.add(correct?"right":"wrong");
+          if(correct){[].forEach.call(opts.children,c=>c.disabled=true);}
+          finish(correct,correct?"":o[1]);
+        };
+        opts.appendChild(b);inputs.push(b);
+      });
+      mount.appendChild(opts);
+      again.onclick=()=>{[].forEach.call(opts.children,c=>c.classList.remove("wrong"));fb.hidden=true;again.hidden=true;};
+    }else{
+      const row=document.createElement("div");row.className="num";
+      const inp=document.createElement("input");inp.type="text";inp.inputMode="decimal";inp.placeholder="your answer";inp.id=Q.id+"in";inp.setAttribute("aria-label","answer for "+Q.id);
+      const unit=document.createElement("span");unit.className="u";unit.textContent=Q.unit;
+      const chk=document.createElement("button");chk.className="btn";chk.textContent="Check";
+      function submit(){
+        if(S.done)return;
+        const v=parseNum(inp.value);
+        if(isNaN(v)){fb.hidden=false;fb.className="fb no";fb.innerHTML="Enter a number. Powers like <b>2^7</b> are fine.";return;}
+        if(Q.ok(v))finish(true,"");
+        else if(Q.near&&Q.near(v))finish(true,Q.nearMsg||"Close enough.");
+        else finish(false,Q.hint(v));
+      }
+      chk.onclick=submit;inp.addEventListener("keydown",e=>{if(e.key==="Enter")submit();});
+      row.appendChild(inp);row.appendChild(unit);row.appendChild(chk);
+      mount.appendChild(row);inputs.push(inp,chk);
+      again.onclick=()=>{fb.hidden=true;again.hidden=true;inp.focus();};
+    }
+    showSol.onclick=reveal;
+    acts.appendChild(again);acts.appendChild(showSol);
+    mount.appendChild(fb);mount.appendChild(acts);mount.appendChild(sol);
+    if(S.done){sol.hidden=false;showSol.hidden=true;inputs.forEach(i=>i.disabled=true);
+      if(Q.type==="mc"){const b=mount.querySelectorAll(".opt")[Q.ans];if(b)b.classList.add("right");}
+      fb.hidden=false;fb.className="fb ok";fb.innerHTML="<b>Correct.</b> Answered earlier.";}
+    else if(S.solved){sol.hidden=false;showSol.hidden=true;}
+    status();
+  }
+  function tally(){
+    const el=document.getElementById("quizTally");if(!el)return;
+    const done=QUIZ.filter(Q=>st(Q.id).done).length, first=QUIZ.filter(Q=>st(Q.id).done&&st(Q.id).first).length;
+    el.className="verdict "+(done===QUIZ.length?"good":"");
+    el.innerHTML="<b>Your quick checks.</b> "+done+" of "+QUIZ.length+" answered correctly"+(done?", "+first+" on the first try":"")+"."+
+      (done<QUIZ.length?" The unanswered ones are back in sections "+QUIZ.filter(Q=>!st(Q.id).done).map(Q=>Q.sec).join(", ")+".":" Every section's question is done.")+
+      ' <button class="btn ghost" id="quizReset" style="margin-left:8px">Reset</button>';
+    const r=document.getElementById("quizReset");
+    if(r)r.onclick=()=>{state={};save();QUIZ.forEach(Q=>{const m=document.querySelector('.quiz[data-q="'+Q.id+'"]');if(m)render(Q,m);});tally();};
+  }
+  QUIZ.forEach(Q=>{const m=document.querySelector('.quiz[data-q="'+Q.id+'"]');if(m)render(Q,m);});
+  tally();
+}
+
+/* ================= helpers for page 3 ================= */
+const P0=ang=>(1+Math.cos(ang))/2;                    /* ang in radians */
+function fringeChart(g,cv,o){
+  const A=frame(g,cv,{l:40,r:16,t:22,b:34});
+  const X=t=>A.l+A.w*t/o.tmax,Y=v=>A.b-A.h*v;
+  [0,0.5,1].forEach(v=>{line(g,A.l,Y(v),A.r,Y(v),C("grid"),1);axisText(g,Math.round(100*v)+"%",A.l-6,Y(v),"right","middle",C("faint"),9);});
+  for(let k=0;k<=4;k++)axisText(g,Math.round(o.tmax*k/4)+(k===4?" "+(o.unit||""):""),X(o.tmax*k/4),A.b+12,"center","middle",C("faint"),9);
+  (o.series||[]).forEach(s=>{g.strokeStyle=s.col;g.lineWidth=s.w||2;if(s.dash)g.setLineDash(s.dash);g.beginPath();
+    for(let i=0;i<=300;i++){const t=o.tmax*i/300,x=X(t),y=Y(Math.max(0,Math.min(1,s.f(t))));i?g.lineTo(x,y):g.moveTo(x,y);}g.stroke();g.setLineDash([]);
+    if(s.label){const t=o.tmax*(s.lx===undefined?0.85:s.lx);axisText(g,s.label,X(t),Y(s.f(t))-10,"center","middle",s.col,9);}});
+  if(o.mark!==undefined){g.setLineDash([3,3]);line(g,X(o.mark),A.t,X(o.mark),A.b,C("rule-strong"),1);g.setLineDash([]);
+    (o.series||[]).filter(s=>s.dot).forEach(s=>{const y=Y(s.f(o.mark));g.fillStyle=C("bench");g.beginPath();g.arc(X(o.mark),y,5.4,0,7);g.fill();g.fillStyle=s.col;g.beginPath();g.arc(X(o.mark),y,3.6,0,7);g.fill();});}
+  axisText(g,(o.title||"CHANCE OF READING 0").toUpperCase(),A.l,A.t-11,"left","middle",C("faint"),8.6);
+  axisText(g,o.xlabel||"wait time →",A.r,A.b+27,"right","middle",C("faint"),9);
+  return {X:X,Y:Y,A:A};
+}
+function clockDial(g,cv,angDeg,o){
+  o=o||{};
+  drawDial(g,cv,{ticks:12,pointers:[{a:angDeg,c:o.col||C("phase"),w:3}],cap:o.cap,
+    extra:function(gg,d){
+      if(o.trail){gg.strokeStyle=hex(o.col||C("phase"),0.35);gg.lineWidth=5;gg.beginPath();gg.arc(d.cx,d.cy,d.R*0.62,-Math.PI/2,(angDeg-90)*D2R,angDeg<0);gg.stroke();}
+      const s=dialPt(d,0,d.R*0.86);gg.strokeStyle=hex(C("muted"),0.7);gg.lineWidth=1.5;gg.setLineDash([4,3]);gg.beginPath();gg.moveTo(d.cx,d.cy);gg.lineTo(s.x,s.y);gg.stroke();gg.setLineDash([]);
+      mono(gg,9.5,500);gg.fillStyle=C("faint");gg.textAlign="center";gg.textBaseline="middle";const q=dialPt(d,0,d.R*1.14);gg.fillText("start",q.x,q.y);
+    }});
+}
+
+/* ================= hero ================= */
+(function(){
+  const cv=document.getElementById("heroDial"),g=setup(cv),cap=document.getElementById("heroCap");let a=0,t=0;
+  if(REDUCED){clockDial(g,cv,140,{trail:true});return;}
+  (function loop(){t+=1/60;const rate=90+70*Math.sin(t*0.5);a=(a+rate/60)%360;clockDial(g,cv,a,{trail:true});
+    cap.textContent=rate>130?"stronger field: the hand turns faster":rate<50?"weaker field: the hand turns slower":"seen from above, the arrow is a clock hand";requestAnimationFrame(loop);})();
+})();
+
+/* ================= 01 the clock ================= */
+(function(){
+  const cv=document.getElementById("ckDial"),g=setup(cv),B=document.getElementById("ckB");
+  let a=0,turns=0,playing=true;
+  function draw(){clockDial(g,cv,a%360,{trail:true});document.getElementById("ckBV").textContent=B.value+"%";
+    document.getElementById("ckread").innerHTML='<span class="k">turning rate</span>'+(+B.value*3.6).toFixed(0)+'° per second'+
+      '<br><span class="k">turns so far</span><span class="p">'+(a/360).toFixed(2)+'</span>'+
+      '<br><span class="k">double the field</span>double the rate. That is the rule.';}
+  document.getElementById("ckPlay").onclick=function(){playing=!playing;this.textContent=playing?"Pause":"Play";};
+  document.getElementById("ckReset").onclick=()=>{a=0;draw();};
+  B.oninput=draw;
+  if(REDUCED){playing=false;document.getElementById("ckPlay").textContent="Play";a=140;}
+  (function loop(){if(playing)a+=(+B.value*3.6)/60;draw();requestAnimationFrame(loop);})();
+})();
+
+/* ================= 02 stopwatch ================= */
+(function(){
+  const cv=document.getElementById("rmDial"),g=setup(cv),ch=document.getElementById("rmChart"),gc=setup(ch);
+  const B=document.getElementById("rmB"),T=document.getElementById("rmT");
+  const TMAX=100;const rate=b=>b*0.09;                 /* degrees per unit wait */
+  let last=null;
+  document.getElementById("rmCirc").innerHTML='<span class="ket">arrow up</span><span class="wire"></span><span class="op">tip sideways</span><span class="wire"></span><span class="op ph">wait, while the field turns it</span><span class="wire"></span><span class="op">tip back</span><span class="wire"></span><span class="mtr">look</span>';
+  function upd(){
+    const b=+B.value,t=+T.value,ang=rate(b)*t;
+    clockDial(g,cv,ang%360,{trail:true,cap:"turned "+Math.round(ang)+"°"});
+    fringeChart(gc,ch,{tmax:TMAX,mark:t,series:[{f:tt=>P0(rate(b)*tt*D2R),col:C("zero"),w:2.4,dot:true,label:"chance of 0",lx:0.12}]});
+    document.getElementById("rmBV").textContent=b;document.getElementById("rmTV").textContent=t;
+    const p=P0(ang*D2R);
+    document.getElementById("rmread").innerHTML='<span class="k">angle turned</span>'+Math.round(ang)+'° = '+(ang/360).toFixed(2)+' turns'+
+      '<br><span class="k">chance of reading 0</span>(1 + cos '+Math.round(ang%360)+'°) / 2 = <span class="z">'+Math.round(100*p)+'%</span>'+
+      (last!==null?'<br><span class="k">you ran it once and read</span><span class="'+(last?"o":"z")+'">'+last+'</span>':'');
+  }
+  document.getElementById("rmLook").onclick=()=>{const ang=rate(+B.value)*(+T.value);last=Math.random()<P0(ang*D2R)?0:1;const o=document.getElementById("rmOut");o.textContent=last;o.className="outcome "+(last?"o":"z");upd();};
+  B.oninput=T.oninput=()=>{last=null;const o=document.getElementById("rmOut");o.textContent="·";o.className="outcome";upd();};
+  redraws.push(upd);upd();
+})();
+
+/* ================= 03 counting ================= */
+(function(){
+  const cv=document.getElementById("esChart"),g=setup(cv);
+  const NS=[10,100,1000,10000];let N=100,hidden=0,runs=[];
+  const TW=30,rate=0.09;                                /* fixed wait; field maps to angle = rate*field*TW */
+  function newField(){hidden=25+Math.random()*30;runs=[];draw();}  /* keeps the fringe on a steep part */
+  const row=document.getElementById("esN");
+  NS.forEach(n=>{const b=document.createElement("button");b.className="btn gate"+(n===N?" on":"");b.textContent=n.toLocaleString();b.onclick=()=>{N=n;[].forEach.call(row.children,c=>c.classList.remove("on"));b.classList.add("on");draw();};row.appendChild(b);});
+  function run(){
+    const p=P0(rate*hidden*TW*D2R);let z=0;for(let i=0;i<N;i++)if(Math.random()<p)z++;
+    const ph=z/N,se=Math.sqrt(Math.max(ph*(1-ph),1e-4)/N);
+    const angOf=pp=>Math.acos(Math.max(-1,Math.min(1,2*pp-1)))*R2D;
+    const est=angOf(ph)/(rate*TW), lo=angOf(Math.min(1,ph+se))/(rate*TW), hi=angOf(Math.max(0,ph-se))/(rate*TW);
+    runs.push({N:N,est:est,lo:lo,hi:hi,z:z});if(runs.length>8)runs.shift();draw();
+  }
+  function draw(){
+    const A=frame(g,cv,{l:40,r:16,t:22,b:34});
+    const Bmin=10,Bmax=70,Y=b=>A.b-A.h*(b-Bmin)/(Bmax-Bmin);
+    [10,30,50,70].forEach(b=>{line(g,A.l,Y(b),A.r,Y(b),C("grid"),1);axisText(g,b+"",A.l-6,Y(b),"right","middle",C("faint"),9);});
+    const n=Math.max(runs.length,1),slot=A.w/8;
+    if(runs.length){g.setLineDash([5,4]);line(g,A.l,Y(hidden),A.r,Y(hidden),C("one"),1.4);g.setLineDash([]);axisText(g,"hidden field "+hidden.toFixed(1),A.r-4,Y(hidden)-9,"right","middle",C("one"),9);}
+    runs.forEach((r,i)=>{const x=A.l+slot*(i+0.5);
+      line(g,x,Y(Math.min(Bmax,r.hi)),x,Y(Math.max(Bmin,r.lo)),C("zero"),2);line(g,x-6,Y(Math.min(Bmax,r.hi)),x+6,Y(Math.min(Bmax,r.hi)),C("zero"),2);line(g,x-6,Y(Math.max(Bmin,r.lo)),x+6,Y(Math.max(Bmin,r.lo)),C("zero"),2);
+      g.fillStyle=C("zero");g.beginPath();g.arc(x,Y(Math.max(Bmin,Math.min(Bmax,r.est))),4,0,7);g.fill();
+      axisText(g,r.N>=1000?(r.N/1000)+"k":r.N+"",x,A.b+12,"center","middle",C("faint"),9);});
+    axisText(g,"FIELD ESTIMATE WITH ERROR BAR, ONE PER RUN",A.l,A.t-11,"left","middle",C("faint"),8.6);
+    axisText(g,"looks per run →",A.r,A.b+27,"right","middle",C("faint"),9);
+    if(!runs.length)axisText(g,"press Run and count",A.l+A.w/2,A.t+A.h/2,"center","middle",C("faint"),11);
+    const r=runs[runs.length-1];
+    document.getElementById("esread").innerHTML=r?
+      '<span class="k">last run</span>'+r.z.toLocaleString()+' zeros in '+r.N.toLocaleString()+' looks'+
+      '<br><span class="k">field estimate</span><span class="z">'+r.est.toFixed(1)+'</span> ± '+((r.hi-r.lo)/2).toFixed(1)+
+      '<br><span class="k">hidden field</span>'+hidden.toFixed(1)+
+      '<br><span class="k">rule of thumb</span>error ≈ 1 / (2√'+r.N.toLocaleString()+') = '+(100/(2*Math.sqrt(r.N))).toFixed(1)+'% on the chance'
+      :'<span class="k">status</span>a field is hidden. Pick a number of looks and run.';
+  }
+  document.getElementById("esRun").onclick=run;document.getElementById("esNew").onclick=newField;
+  redraws.push(draw);newField();
+})();
+
+/* ================= 04 forgetting ================= */
+(function(){
+  const cv=document.getElementById("dcChart"),g=setup(cv),NZ=document.getElementById("dcNz");
+  const TMAX=100,rate=0.09*40;
+  function upd(){
+    const nz=+NZ.value/100,T2=nz<0.01?1e9:12/nz;        /* coherence time in wait units */
+    const best=T2/2;
+    fringeChart(g,cv,{tmax:TMAX,mark:best<TMAX?best:undefined,series:[
+      {f:t=>0.5+0.5*Math.exp(-t/T2),col:C("phase"),w:1.2,dash:[4,3],label:"how big the swings can be",lx:0.78},
+      {f:t=>0.5-0.5*Math.exp(-t/T2),col:C("phase"),w:1.2,dash:[4,3]},
+      {f:t=>0.5*(1-Math.exp(-t/T2)*Math.cos(rate*t*D2R)),col:C("one"),w:2.4}]});
+    document.getElementById("dcNzV").textContent=NZ.value+"%";
+    document.getElementById("dcread").innerHTML='<span class="k">the swings fade after about</span>'+(T2>1e8?"never, no noise":T2.toFixed(0)+" wait units")+
+      '<br><span class="k">best waiting time for a sensor</span><span class="p">'+(T2>1e8?"as long as you like":best.toFixed(0)+" wait units")+'</span>'+
+      '<br><span class="k">why not longer</span>more angle, but a shallower swing. Half the fade time is the sweet spot.';
+  }
+  NZ.oninput=upd;redraws.push(upd);upd();
+})();
+
+/* ================= quick checks ================= */
+quizEngine([
+  {id:"q1",sec:"01",type:"mc",q:"You double the field around a qubit. What happens to its clock hand?",
+   opts:[["It turns twice as fast",null],["It swings to line up with the field and stops","That is a compass needle. A qubit's arrow does not settle. It keeps going round."],["It turns at the same speed, but points somewhere else","The field sets the speed of turning. Where the hand points is set by how long it has been turning."],["It stops turning","A field is what makes it turn. More field, more turning."]],
+   ans:0,sol:"<b>Twice as fast.</b> The turning rate is a fixed number times the field. Doubling the field doubles the rate. This is the rule that makes a qubit a ruler for fields."},
+  {id:"q2",sec:"02",type:"num",unit:"percent",q:"You wait exactly long enough for the hand to make half a turn, 180 degrees. Then tip back and look. What is the chance, in units of percent, of reading 0?",
+   ok:v=>v<=1,
+   hint:v=>v===50?"50% is a quarter turn, 90 degrees, where cos is zero. Half a turn is 180 degrees."
+          :v===100?"100% is for no turn at all, or a full turn. Half a turn is the opposite case."
+          :"Use (1 + cos 180°) / 2. What is cos 180°?",
+   sol:"cos 180° = −1, so (1 + (−1)) / 2 = <b>0%</b>. After half a turn the hand points opposite to where it started, and tipping back sends it straight down. You read 1 every time."},
+  {id:"q3",sec:"03",type:"num",unit:"times better",q:"You had 100 looks. Now you take 10,000. How many times smaller is the error on the chance?",
+   ok:v=>v>=9.5&&v<=10.5,
+   hint:v=>v===100?"That would be true if the error shrank in proportion to the looks. It shrinks with the square root."
+          :v===2?"More than that. 10,000 is a hundred times 100. Take the square root of a hundred."
+          :"The error shrinks with the square root of the number of looks. 10,000 / 100 = 100, and √100 = ?",
+   sol:"A hundred times the looks, and the square root of a hundred is <b>10</b>. So ten times better. This is why quantum sensors run the experiment millions of times a second: every factor of 100 in speed buys only a factor of 10 in precision."},
+  {id:"q4",sec:"04",type:"mc",q:"The surroundings get noisier, so the swings fade sooner. What should a sensor designer do to the waiting time?",
+   opts:[["Make it shorter",null],["Make it longer, to collect more angle","More angle helps only while the swings are still visible. With more noise they fade sooner, so a long wait reads a flat line."],["Leave it the same","The best wait is half the fade time. If the fade time drops, so does the best wait."],["Wait until the swings have completely faded","At that point the chance is 50% no matter what the field is, and the sensor reads nothing."]],
+   ans:0,sol:"<b>Shorter.</b> The best waiting time is about half the time it takes the swings to fade. More noise means faster fading, so a shorter wait. The real fix is to make the surroundings quieter, which is a materials problem."}
+],"hs3-quiz-v1");
+
+tocBuild();
+
+})();
+</script>
+
+</body>
+</html>

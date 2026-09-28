@@ -1,0 +1,1351 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="High-school page 1 of 3: switches, coins, the qubit as an arrow with a height rule, why looking changes it, turning it, and the hidden direction.">
+<style>:root{color-scheme:light dark}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+<title>From a Bit to a Qubit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<style>
+:root{
+  --ground:#F2F4F4; --surface:#FFFFFF; --surface-2:#E8ECED; --bench:#FAFCFC;
+  --ink:#101619; --ink-2:#38464B; --muted:#5B6A70; --faint:#8C9BA1;
+  --rule:#D5DDDE; --rule-strong:#B6C3C5;
+  --zero:#00819F; --one:#AA6609; --phase:#7448B1;
+  --zero-soft:rgba(0,129,159,.13); --one-soft:rgba(170,102,9,.13); --phase-soft:rgba(116,72,177,.13);
+  --grid:rgba(16,22,25,.09); --sphere:rgba(16,22,25,.55);
+  --shade:rgba(0,129,159,.05);
+  --shadow:0 1px 2px rgba(16,22,25,.04), 0 10px 30px -18px rgba(16,22,25,.30);
+  --sel:rgba(0,129,159,.16);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ground:#0D1214; --surface:#141B1E; --surface-2:#1C2528; --bench:#101A1D;
+    --ink:#E4EDEF; --ink-2:#BAC8CC; --muted:#8FA1A7; --faint:#6B7B81;
+    --rule:#243033; --rule-strong:#35464B;
+    --zero:#1E9FA5; --one:#B97830; --phase:#906FC6;
+    --zero-soft:rgba(30,159,165,.15); --one-soft:rgba(185,120,48,.16); --phase-soft:rgba(144,111,198,.16);
+    --grid:rgba(228,237,239,.10); --sphere:rgba(228,237,239,.50);
+    --shade:rgba(30,159,165,.05);
+    --shadow:0 1px 2px rgba(0,0,0,.35), 0 12px 34px -20px rgba(0,0,0,.8);
+    --sel:rgba(30,159,165,.18);
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#0D1214; --surface:#141B1E; --surface-2:#1C2528; --bench:#101A1D;
+  --ink:#E4EDEF; --ink-2:#BAC8CC; --muted:#8FA1A7; --faint:#6B7B81;
+  --rule:#243033; --rule-strong:#35464B;
+  --zero:#1E9FA5; --one:#B97830; --phase:#906FC6;
+  --zero-soft:rgba(30,159,165,.15); --one-soft:rgba(185,120,48,.16); --phase-soft:rgba(144,111,198,.16);
+  --grid:rgba(228,237,239,.10); --sphere:rgba(228,237,239,.50);
+  --shade:rgba(30,159,165,.05);
+  --shadow:0 1px 2px rgba(0,0,0,.35), 0 12px 34px -20px rgba(0,0,0,.8);
+  --sel:rgba(30,159,165,.18);
+}
+
+*{box-sizing:border-box}
+body{
+  background:var(--ground); color:var(--ink);
+  font-family:"Source Serif 4","Iowan Old Style",Georgia,serif;
+  font-size:17px; line-height:1.62;
+  margin:0; padding-inline:20px; padding-block:0;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1080px;margin:0 auto}
+.prose{max-width:66ch}
+h1,h2,h3,h4,.mono,.eyebrow,.btn,label,th,.tab{font-family:Archivo,"Helvetica Neue",Arial,sans-serif}
+.mono,.eq,.num,code,.eyebrow,.tag,kbd{font-family:"IBM Plex Mono",ui-monospace,"SF Mono",Menlo,monospace}
+h1{font-size:clamp(2.1rem,5.4vw,3.3rem);line-height:1.04;font-weight:700;letter-spacing:-.024em;margin:0;text-wrap:balance}
+h2{font-size:clamp(1.5rem,3.1vw,2.05rem);line-height:1.14;font-weight:600;letter-spacing:-.02em;margin:0;text-wrap:balance}
+h3{font-size:1.12rem;font-weight:600;letter-spacing:-.008em;margin:0 0 .35em;text-wrap:balance}
+h4{font-size:.78rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;margin:0;color:var(--muted)}
+p{margin:0 0 1.05em}
+a{color:inherit;text-underline-offset:3px;text-decoration-color:var(--rule-strong)}
+strong{font-weight:600}
+em{font-style:italic}
+:focus-visible{outline:2px solid var(--zero);outline-offset:2px;border-radius:2px}
+
+/* ---------- masthead ---------- */
+.top{
+  position:sticky;top:0;z-index:40;background:color-mix(in srgb,var(--ground) 88%,transparent);
+  backdrop-filter:blur(10px);border-bottom:1px solid var(--rule);
+  margin-inline:-20px;padding-inline:20px;
+}
+.topin{max-width:1080px;margin:0 auto;display:flex;align-items:center;gap:18px;height:46px}
+.brand{font-family:"IBM Plex Mono",monospace;font-size:.68rem;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);white-space:nowrap;flex:0 1 auto;min-width:0;max-width:52%;overflow:hidden;text-overflow:ellipsis}
+.brand b{color:var(--ink);font-weight:500}
+.tocbar{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none;flex:1;margin-left:auto}
+.tocbar::-webkit-scrollbar{display:none}
+.tocbar a{
+  font-family:"IBM Plex Mono",monospace;font-size:.7rem;color:var(--muted);text-decoration:none;
+  padding:4px 7px;border-radius:3px;white-space:nowrap;transition:background .15s,color .15s;
+}
+.tocbar a:hover{background:var(--surface-2);color:var(--ink)}
+.tocbar a.on{color:var(--ink);background:var(--sel)}
+
+/* ---------- hero ---------- */
+.hero{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:44px;align-items:center;padding-block:64px 52px}
+.kicker{font-family:"IBM Plex Mono",monospace;font-size:.7rem;letter-spacing:.19em;text-transform:uppercase;color:var(--zero);margin-bottom:20px}
+.stand{font-size:1.16rem;color:var(--ink-2);margin-top:22px;max-width:46ch}
+.herofig{position:relative;display:flex;flex-direction:column;align-items:center;gap:10px}
+.herohint{font-family:"IBM Plex Mono",monospace;font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;color:var(--faint)}
+.claims{display:flex;flex-wrap:wrap;gap:0;margin-top:30px;border-top:1px solid var(--rule)}
+.claim{flex:1 1 210px;padding:15px 20px 15px 0;border-right:1px solid var(--rule)}
+.claim:last-child{border-right:none}
+.claim .n{font-family:"IBM Plex Mono",monospace;font-size:.66rem;letter-spacing:.13em;color:var(--faint);display:block;margin-bottom:5px}
+.claim .t{font-size:.95rem;line-height:1.42;color:var(--ink-2)}
+
+/* ---------- sections ---------- */
+section{padding-block:26px 46px;scroll-margin-top:60px}
+.shead{display:grid;grid-template-columns:56px minmax(0,1fr);gap:0;align-items:start;margin-bottom:22px;border-top:2px solid var(--ink);padding-top:14px}
+.snum{font-family:"IBM Plex Mono",monospace;font-size:.8rem;font-weight:500;color:var(--zero);padding-top:.25em}
+.sdek{color:var(--muted);font-size:1.02rem;margin-top:.5em;max-width:62ch}
+.body{display:grid;grid-template-columns:56px minmax(0,1fr);gap:0}
+.body > .col{min-width:0}
+
+/* ---------- bench (interactive panel) ---------- */
+.bench{
+  background:var(--bench);border:1px solid var(--rule);border-radius:4px;
+  margin:26px 0;box-shadow:var(--shadow);overflow:hidden;
+}
+.blab{
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+  padding:9px 16px;border-bottom:1px solid var(--rule);background:var(--surface-2);
+  font-family:"IBM Plex Mono",monospace;font-size:.66rem;letter-spacing:.13em;text-transform:uppercase;color:var(--muted);
+}
+.blab .dot{width:6px;height:6px;border-radius:50%;background:var(--zero);flex:none}
+.blab b{color:var(--ink);font-weight:500;letter-spacing:.09em}
+.bbody{padding:18px 16px}
+.bfoot{padding:11px 16px;border-top:1px solid var(--rule);background:var(--surface-2);font-size:.9rem;color:var(--muted);line-height:1.5}
+.bfoot b{color:var(--ink-2)}
+
+.row{display:flex;gap:18px;flex-wrap:wrap;align-items:flex-start}
+.row > *{min-width:0}
+.grow{flex:1 1 280px}
+.stack{display:flex;flex-direction:column;gap:12px}
+.stack > .ctrl{flex:0 0 auto}
+
+/* ---------- controls ---------- */
+.ctrls{display:flex;flex-wrap:wrap;gap:14px 22px;align-items:flex-end}
+.ctrl{display:flex;flex-direction:column;gap:5px;flex:1 1 170px;min-width:150px}
+.ctrl > label{font-family:"IBM Plex Mono",monospace;font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);display:flex;justify-content:space-between;gap:8px}
+.ctrl > label .v{color:var(--ink);font-variant-numeric:tabular-nums}
+input[type=range]{
+  -webkit-appearance:none;appearance:none;width:100%;height:18px;background:transparent;margin:0;cursor:pointer;
+}
+input[type=range]::-webkit-slider-runnable-track{height:3px;background:var(--rule-strong);border-radius:2px}
+input[type=range]::-moz-range-track{height:3px;background:var(--rule-strong);border-radius:2px}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:15px;height:15px;border-radius:50%;background:var(--zero);margin-top:-6px;border:2px solid var(--bench)}
+input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;background:var(--zero);border:2px solid var(--bench)}
+.btn{
+  font-size:.78rem;font-weight:600;letter-spacing:.01em;padding:6px 11px;border-radius:3px;
+  background:var(--surface);color:var(--ink);border:1px solid var(--rule-strong);cursor:pointer;
+  transition:background .13s,border-color .13s,transform .06s;
+}
+.btn:hover{background:var(--surface-2);border-color:var(--ink-2)}
+.btn:active{transform:translateY(1px)}
+.btn.on{background:var(--zero);border-color:var(--zero);color:#fff}
+.btn.gate{font-family:"IBM Plex Mono",monospace;font-weight:500;min-width:36px;text-align:center}
+.btn.ghost{background:transparent;border-style:dashed}
+.btn.wide{width:100%}
+.btnrow{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.btnrow .sep{width:1px;align-self:stretch;background:var(--rule);margin-inline:4px}
+.seg{display:inline-flex;border:1px solid var(--rule-strong);border-radius:3px;overflow:hidden}
+.seg button{font-family:"IBM Plex Mono",monospace;font-size:.72rem;padding:5px 10px;background:var(--surface);color:var(--muted);border:none;border-right:1px solid var(--rule);cursor:pointer}
+.seg button:last-child{border-right:none}
+.seg button.on{background:var(--zero);color:#fff}
+.swrap{display:flex;align-items:center;gap:7px;font-family:"IBM Plex Mono",monospace;font-size:.72rem;color:var(--muted);cursor:pointer;user-select:none}
+input[type=checkbox]{accent-color:var(--zero);width:15px;height:15px;cursor:pointer}
+
+/* ---------- canvas ---------- */
+canvas{display:block;max-width:100%;touch-action:pan-y}
+.cvwrap{display:flex;flex-direction:column;align-items:center;gap:6px}
+.cvcap{font-family:"IBM Plex Mono",monospace;font-size:.64rem;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);text-align:center}
+
+/* ---------- readouts ---------- */
+.read{font-family:"IBM Plex Mono",monospace;font-size:.8rem;line-height:1.85;font-variant-numeric:tabular-nums}
+.read .k{color:var(--muted)}
+.read .z{color:var(--zero)}
+.read .o{color:var(--one)}
+.read .p{color:var(--phase)}
+.pbar{display:flex;flex-direction:column;gap:7px;margin-top:2px}
+.pb{display:grid;grid-template-columns:58px minmax(0,1fr) 52px;gap:9px;align-items:center;font-family:"IBM Plex Mono",monospace;font-size:.73rem;font-variant-numeric:tabular-nums}
+.pb .track{height:11px;background:var(--surface-2);border-radius:2px;overflow:hidden}
+.pb .fill{height:100%;border-radius:2px;transition:width .22s ease}
+.pb .lbl{color:var(--muted)}
+.pb .val{text-align:right;color:var(--ink-2)}
+
+/* ---------- tables ---------- */
+.tbl{width:100%;border-collapse:collapse;font-family:"IBM Plex Mono",monospace;font-size:.76rem;font-variant-numeric:tabular-nums}
+.tbl th{font-family:Archivo,sans-serif;font-size:.64rem;letter-spacing:.11em;text-transform:uppercase;color:var(--muted);font-weight:600;text-align:left;padding:6px 9px;border-bottom:1px solid var(--rule-strong)}
+.tbl td{padding:5px 9px;border-bottom:1px solid var(--rule);color:var(--ink-2)}
+.tbl tr:last-child td{border-bottom:none}
+.tbl td.hi{background:var(--zero-soft);color:var(--ink)}
+.tbl td.lo{color:var(--faint)}
+.tbl .out{color:var(--ink);font-weight:500}
+.tblscroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+
+/* ---------- equations & notes ---------- */
+.eq{
+  display:block;font-size:.88rem;line-height:1.9;color:var(--ink);
+  background:var(--surface);border-left:2px solid var(--zero);
+  padding:11px 15px;margin:16px 0;border-radius:0 3px 3px 0;overflow-x:auto;white-space:nowrap;
+}
+.eq .c{color:var(--muted)}
+.inl{font-family:"IBM Plex Mono",monospace;font-size:.88em;background:var(--surface-2);padding:.08em .32em;border-radius:2px}
+.note{border-left:2px solid var(--rule-strong);padding:2px 0 2px 16px;margin:18px 0;color:var(--muted);font-size:.96rem}
+.note b{color:var(--ink-2)}
+details.math{margin:16px 0;border:1px solid var(--rule);border-radius:3px;background:var(--surface);overflow:hidden}
+details.math > summary{
+  cursor:pointer;padding:8px 14px;font-family:"IBM Plex Mono",monospace;font-size:.7rem;
+  letter-spacing:.1em;text-transform:uppercase;color:var(--muted);list-style:none;
+  display:flex;align-items:center;gap:8px;
+}
+details.math > summary::-webkit-details-marker{display:none}
+details.math > summary::before{content:"+";color:var(--zero);font-weight:600}
+details.math[open] > summary::before{content:"\2212"}
+details.math > summary:hover{color:var(--ink)}
+.mathbody{padding:2px 16px 14px;font-size:.95rem;border-top:1px solid var(--rule)}
+.mathbody .eq{background:var(--bench);margin:12px 0}
+.matrix{display:inline-grid;grid-template-columns:repeat(2,minmax(52px,auto));gap:2px 12px;font-family:"IBM Plex Mono",monospace;font-size:.8rem;
+  border-left:2px solid var(--ink-2);border-right:2px solid var(--ink-2);padding:6px 10px;text-align:right;font-variant-numeric:tabular-nums}
+.kv{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 14px;font-family:"IBM Plex Mono",monospace;font-size:.76rem;font-variant-numeric:tabular-nums}
+.kv dt{color:var(--muted)}
+.kv dd{margin:0;color:var(--ink)}
+.verdict{font-family:"IBM Plex Mono",monospace;font-size:.78rem;line-height:1.7;padding:9px 12px;border-radius:3px;background:var(--surface);border:1px solid var(--rule)}
+.verdict.bad{border-left:3px solid var(--one)}
+.verdict.good{border-left:3px solid var(--zero)}
+.tag{display:inline-block;font-size:.63rem;letter-spacing:.11em;text-transform:uppercase;padding:2px 6px;border-radius:2px;background:var(--surface-2);color:var(--muted)}
+.tag.z{background:var(--zero-soft);color:var(--zero)}
+.tag.o{background:var(--one-soft);color:var(--one)}
+.tag.p{background:var(--phase-soft);color:var(--phase)}
+.legend{display:flex;flex-wrap:wrap;gap:5px 16px;font-family:"IBM Plex Mono",monospace;font-size:.68rem;color:var(--muted);margin-top:9px}
+.legend span{display:flex;align-items:center;gap:6px}
+.legend i{width:11px;height:11px;border-radius:2px;display:block;flex:none}
+
+/* ---------- circuit strip ---------- */
+.circ{display:flex;align-items:center;gap:0;flex-wrap:wrap;font-family:"IBM Plex Mono",monospace;font-size:.76rem;
+  padding:9px 12px;background:var(--surface);border:1px solid var(--rule);border-radius:3px;min-height:42px}
+.circ .wire{height:1px;background:var(--rule-strong);flex:1 0 14px;min-width:14px}
+.circ .op{border:1px solid var(--ink-2);background:var(--bench);padding:2px 8px;border-radius:2px;color:var(--ink);white-space:nowrap}
+.circ .op.ph{border-color:var(--phase);color:var(--phase)}
+.circ .ket{color:var(--muted);white-space:nowrap}
+.circ .mtr{border:1px solid var(--zero);color:var(--zero);padding:2px 8px;border-radius:2px}
+
+/* ---------- closing ---------- */
+.roles{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:0;border-top:1px solid var(--rule);margin-top:20px}
+.role{padding:16px 20px 18px 0;border-bottom:1px solid var(--rule)}
+.role h5{font-family:Archivo,sans-serif;font-size:.95rem;font-weight:600;margin:0 0 5px;color:var(--ink)}
+.role p{font-size:.92rem;color:var(--muted);margin:0;line-height:1.5}
+.role .n{font-family:"IBM Plex Mono",monospace;font-size:.62rem;letter-spacing:.12em;color:var(--zero);display:block;margin-bottom:7px}
+footer{border-top:2px solid var(--ink);margin-top:40px;padding:20px 0 60px;font-family:"IBM Plex Mono",monospace;font-size:.7rem;color:var(--faint);line-height:1.8}
+
+@media (max-width:880px){
+  .hero{grid-template-columns:1fr;gap:30px;padding-block:40px 34px}
+  .shead,.body{grid-template-columns:1fr}
+  .snum{margin-bottom:6px;padding-top:0}
+  .claim{border-right:none;border-bottom:1px solid var(--rule);padding-right:0}
+  .claim:last-child{border-bottom:none}
+  body{font-size:16.5px}
+}
+@media (prefers-reduced-motion:reduce){
+  *{animation-duration:.001ms !important;transition-duration:.001ms !important}
+}
+</style>
+<style>
+/* ---- undergraduate module: lighter density, larger type, dial components ---- */
+body{font-size:18px;line-height:1.6}
+.prose{max-width:62ch}
+h1{font-size:clamp(2.2rem,5.8vw,3.5rem)}
+.hero{grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);padding-block:56px 40px}
+.assume{border:1px solid var(--rule);background:var(--surface);border-radius:4px;padding:16px 20px;margin-top:26px}
+.assume h4{margin-bottom:10px}
+.assume ol{margin:0;padding-left:1.2em;font-size:.98rem;color:var(--ink-2)}
+.assume li{margin:5px 0}
+.assume li b{color:var(--ink)}
+.msg{font-family:Archivo,sans-serif;font-weight:600;font-size:1.22rem;line-height:1.35;letter-spacing:-.012em;color:var(--ink);margin:6px 0 18px;text-wrap:balance}
+.toggles{display:flex;gap:8px;flex-wrap:wrap}
+.tg{width:54px;height:76px;border:1px solid var(--rule-strong);border-radius:5px;background:var(--surface);cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:7px 0;font-family:"IBM Plex Mono",monospace;font-size:.7rem;color:var(--muted);transition:background .12s}
+.tg .knob{width:30px;height:30px;border-radius:50%;background:var(--surface-2);border:1px solid var(--rule-strong);transition:transform .15s,background .15s}
+.tg.on{background:var(--zero-soft);border-color:var(--zero)}
+.tg.on .knob{background:var(--zero);border-color:var(--zero)}
+.tg .val{font-size:1.1rem;font-weight:600;color:var(--ink)}
+.bigread{font-family:"IBM Plex Mono",monospace;font-size:1.05rem;line-height:1.7;font-variant-numeric:tabular-nums}
+.bigread .k{color:var(--muted);font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;display:block}
+.bigread .z{color:var(--zero)}.bigread .o{color:var(--one)}.bigread .p{color:var(--phase)}
+.outcome{display:inline-flex;align-items:center;justify-content:center;width:64px;height:64px;border-radius:6px;font-family:"IBM Plex Mono",monospace;font-size:2rem;font-weight:600;background:var(--surface-2);color:var(--faint);border:1px solid var(--rule)}
+.outcome.z{background:var(--zero-soft);color:var(--zero);border-color:var(--zero)}
+.outcome.o{background:var(--one-soft);color:var(--one);border-color:var(--one)}
+.roundlog{font-family:"IBM Plex Mono",monospace;font-size:.72rem;line-height:1.7;color:var(--muted);border-top:1px solid var(--rule);padding-top:8px;margin-top:6px}
+.roundlog b{color:var(--ink-2);font-weight:500}
+.roundlog .hit{color:var(--zero)}.roundlog .miss{color:var(--one)}
+details.quick{margin:18px 0 0;border-left:2px solid var(--zero);background:var(--surface);border-radius:0 3px 3px 0}
+details.quick>summary{cursor:pointer;padding:9px 14px;font-family:Archivo,sans-serif;font-weight:600;font-size:.9rem;color:var(--ink-2);list-style:none;display:flex;gap:8px;align-items:center}
+details.quick>summary::-webkit-details-marker{display:none}
+details.quick>summary::before{content:"?";font-family:"IBM Plex Mono",monospace;color:var(--zero);font-weight:600}
+details.quick>.a{padding:0 14px 12px;font-size:.98rem;color:var(--ink-2)}
+.sdtable td.on,.sdtable th.on{background:var(--zero-soft)}
+.answer{border-top:2px solid var(--ink);margin-top:10px}
+.answer .line{display:grid;grid-template-columns:150px minmax(0,1fr);gap:16px;padding:14px 0;border-bottom:1px solid var(--rule);align-items:baseline}
+.answer .q{font-family:"IBM Plex Mono",monospace;font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.answer .v{font-family:Archivo,sans-serif;font-weight:600;font-size:1.15rem;color:var(--ink);letter-spacing:-.01em}
+.answer .v small{display:block;font-family:"Source Serif 4",serif;font-weight:400;font-size:.95rem;color:var(--muted);margin-top:3px}
+@media (max-width:880px){.answer .line{grid-template-columns:1fr;gap:4px}}
+</style>
+<style>
+/* ---- quick checks with an answer box ---- */
+.quiz{margin:18px 0 0;border:1px solid var(--rule);border-left:2px solid var(--zero);background:var(--surface);border-radius:0 3px 3px 0;padding:12px 16px 14px}
+.quiz .qh{font-family:"IBM Plex Mono",monospace;font-size:.64rem;letter-spacing:.12em;text-transform:uppercase;color:var(--zero);margin-bottom:6px;display:flex;justify-content:space-between;gap:10px}
+.quiz .qh .st{color:var(--muted)}
+.quiz .qt{font-family:Archivo,sans-serif;font-weight:600;font-size:.98rem;line-height:1.4;color:var(--ink);margin-bottom:11px;text-wrap:balance}
+.quiz .opts{display:flex;flex-direction:column;gap:6px}
+.quiz .opt{display:flex;gap:10px;align-items:flex-start;text-align:left;padding:8px 11px;border:1px solid var(--rule-strong);border-radius:3px;background:var(--bench);cursor:pointer;font-family:"Source Serif 4",Georgia,serif;font-size:.95rem;line-height:1.45;color:var(--ink-2);transition:border-color .12s,background .12s}
+.quiz .opt:hover{border-color:var(--ink-2)}
+.quiz .opt .L{font-family:"IBM Plex Mono",monospace;font-size:.7rem;color:var(--muted);padding-top:3px;min-width:14px;flex:none}
+.quiz .opt.right{border-color:var(--zero);background:var(--zero-soft);color:var(--ink)}
+.quiz .opt.wrong{border-color:var(--one);background:var(--one-soft)}
+.quiz .opt:disabled{cursor:default}
+.quiz .num{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.quiz .num .u{font-family:"IBM Plex Mono",monospace;font-size:.78rem;color:var(--muted)}
+.quiz input[type=text]{font-family:"IBM Plex Mono",monospace;font-size:.95rem;padding:6px 10px;border:1px solid var(--rule-strong);border-radius:3px;background:var(--bench);color:var(--ink);width:150px}
+.quiz input[type=text]:disabled{color:var(--muted)}
+.quiz .fb{margin-top:10px;padding:9px 12px;border-radius:3px;font-size:.95rem;line-height:1.5;color:var(--ink-2);border-left:3px solid var(--rule-strong);background:var(--bench)}
+.quiz .fb.ok{border-left-color:var(--zero)}
+.quiz .fb.no{border-left-color:var(--one)}
+.quiz .fb b{color:var(--ink)}
+.quiz .acts{margin-top:9px;display:flex;gap:6px;flex-wrap:wrap}
+.quiz .sol{margin-top:10px;font-size:.95rem;line-height:1.5;color:var(--ink-2);border-top:1px solid var(--rule);padding-top:9px}
+.quiz .sol b{color:var(--ink)}
+</style>
+<style>
+/* ---- high-school modules: friendlier density ---- */
+body{font-size:18.5px;line-height:1.62}
+.prose{max-width:60ch}
+h2{font-size:clamp(1.55rem,3.2vw,2.1rem)}
+.msg{font-size:1.28rem}
+.sdek{font-size:1.04rem}
+.bench .bbody{padding:20px 18px}
+.btn{font-size:.84rem;padding:8px 13px}
+.btn.big{font-size:.95rem;padding:10px 16px}
+.ctrl > label{font-size:.7rem}
+input[type=range]::-webkit-slider-thumb{width:18px;height:18px;margin-top:-7.5px}
+input[type=range]::-moz-range-thumb{width:16px;height:16px}
+.series{font-family:"IBM Plex Mono",monospace;font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);margin-bottom:14px}
+.series b{color:var(--zero);font-weight:500}
+.hook{display:grid;grid-template-columns:auto minmax(0,1fr);gap:14px 18px;align-items:start;border:1px solid var(--rule);border-left:3px solid var(--one);background:var(--surface);border-radius:0 4px 4px 0;padding:16px 20px;margin:24px 0}
+.hook .hk{font-family:"IBM Plex Mono",monospace;font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;color:var(--one);padding-top:4px;white-space:nowrap}
+.hook p{margin:0;font-size:1.02rem;color:var(--ink-2)}
+.hook p b{color:var(--ink)}
+.home{border:1px solid var(--rule);border-radius:4px;background:var(--surface);margin:26px 0;overflow:hidden}
+.home .hh{padding:10px 18px;background:var(--surface-2);border-bottom:1px solid var(--rule);font-family:"IBM Plex Mono",monospace;font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.home .hh b{color:var(--ink);font-weight:500}
+.home .hb{padding:16px 18px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.6fr);gap:18px}
+.home h5{font-family:Archivo,sans-serif;font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 0 6px}
+.home ul,.home ol{margin:0;padding-left:1.15em;font-size:.98rem;color:var(--ink-2)}
+.home li{margin:4px 0}
+.home .why{grid-column:1/-1;font-size:.98rem;color:var(--ink-2);border-top:1px solid var(--rule);padding-top:12px}
+.home .why b{color:var(--ink)}
+@media (max-width:700px){.home .hb{grid-template-columns:1fr}.hook{grid-template-columns:1fr;gap:6px}}
+details.teacher{margin:14px 0 0;border:1px dashed var(--rule-strong);border-radius:3px;background:transparent}
+details.teacher>summary{cursor:pointer;padding:7px 12px;font-family:"IBM Plex Mono",monospace;font-size:.66rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);list-style:none;display:flex;gap:8px;align-items:center}
+details.teacher>summary::-webkit-details-marker{display:none}
+details.teacher>summary::before{content:"+";color:var(--phase);font-weight:600}
+details.teacher[open]>summary::before{content:"\2212"}
+details.teacher>.tb{padding:2px 14px 12px;font-size:.93rem;line-height:1.55;color:var(--ink-2);border-top:1px dashed var(--rule)}
+details.teacher>.tb b{color:var(--ink)}
+.coinrow{display:flex;flex-wrap:wrap;gap:5px}
+.coin{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:"IBM Plex Mono",monospace;font-size:.7rem;font-weight:600;color:#fff;background:var(--faint)}
+.coin.z{background:var(--zero)}.coin.o{background:var(--one)}
+.bigpct{font-family:Archivo,sans-serif;font-weight:700;font-size:2.4rem;letter-spacing:-.02em;line-height:1;color:var(--ink);font-variant-numeric:tabular-nums}
+.bigpct small{font-family:"IBM Plex Mono",monospace;font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);display:block;margin-top:6px;font-weight:400}
+.uses{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.use{border:1px solid var(--rule);border-radius:4px;background:var(--surface);padding:14px 16px}
+.use b{display:block;font-family:Archivo,sans-serif;font-size:.98rem;color:var(--ink);margin-bottom:4px}
+.use small{display:block;font-size:.92rem;color:var(--muted);line-height:1.45}
+.use .n{font-family:"IBM Plex Mono",monospace;font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;color:var(--zero);display:block;margin-bottom:6px}
+.stepper{display:flex;gap:6px;flex-wrap:wrap}
+.stepper button{flex:1 1 90px}
+</style>
+<div class="top">
+  <div class="topin">
+    <div class="brand"><b>From a Bit to a Qubit</b> &nbsp;/&nbsp; high school</div>
+    <nav class="tocbar" id="toc" aria-label="Sections"></nav>
+  </div>
+</div>
+
+<div class="wrap">
+
+<header class="hero">
+  <div>
+    <div class="series"><b>Quantum for high school</b> · page 1 of 3</div>
+    <div class="kicker">Start with something you already know</div>
+    <h1>From a bit to a qubit</h1>
+    <p class="stand">Every photo, song, and message on your phone is stored as bits. A bit is a switch that is either off or on. A qubit is the quantum version, and it is not a switch. It is an arrow. This page shows you the arrow, how to read it, and why reading it is the strange part.</p>
+    <div class="assume">
+      <h4>What you need to know already</h4>
+      <ol>
+        <li><b>Counting in twos.</b> If you know that four switches can be set 16 different ways, you are fine.</li>
+        <li><b>A coin flip.</b> Heads half the time, tails half the time, and you cannot say which before you look.</li>
+        <li><b>Angles.</b> We will use one idea from trigonometry, that the cosine of an angle tells you how high a tilted arrow reaches. If you have not met cosine yet, the page still works. Just read the height off the ruler.</li>
+      </ol>
+    </div>
+  </div>
+  <div class="herofig">
+    <div class="cvwrap">
+      <canvas id="heroSphere" width="330" height="330" aria-label="An arrow on a sphere, slowly turning"></canvas>
+      <div class="herohint">this is a qubit · drag to look around</div>
+    </div>
+  </div>
+</header>
+
+<!-- ============ 1 ============ -->
+<section id="s1" data-title="01 Switches">
+  <div class="shead">
+    <div class="snum">01</div>
+    <div>
+      <h2>A bit is a switch</h2>
+      <p class="sdek">Off or on. Zero or one. That is all a bit is, and your phone has about a trillion of them.</p>
+    </div>
+  </div>
+  <div class="body"><div></div><div class="col">
+    <div class="prose">
+      <p class="msg">Four switches can be set in 16 ways. Add one switch and the number doubles.</p>
+      <p>Flip the switches below. The row of zeros and ones is called a binary number, and the readout shows what it stands for in ordinary counting. Every letter you type and every pixel in a photo is stored as a pattern like this.</p>
+    </div>
+    <div class="bench">
+      <div class="blab"><span class="dot"></span><b>Try it</b> &nbsp;Four switches</div>
+      <div class="bbody">
+        <div class="row" style="align-items:center">
+          <div class="toggles" id="reg"></div>
+          <div class="grow bigread" id="regread" style="flex:1 1 240px"></div>
+          <div class="grow" style="flex:1 1 220px">
+            <h4 style="margin-bottom:8px">Patterns you can make</h4>
+            <div class="tblscroll"><table class="tbl" id="pattbl"></table></div>
+          </div>
+        </div>
+      </div>
+      <div class="bfoot"><b>Why doubling matters.</b> Ten switches give 1024 patterns. Twenty give about a million. Forty give about a trillion. Bits are cheap, and computers get their power from having enormous numbers of them.</div>
+    </div>
+    <details class="teacher"><summary>For teachers</summary><div class="tb">This section establishes n bits ↔ 2<sup>n</sup> states, which is the baseline that section 06 and page 2 contrast against. The binary-to-decimal readout is optional. What matters is the doubling rule, since students will need it when the page claims that n qubits require 2<sup>n</sup> numbers to describe. No probabilistic content yet; the switches are deterministic on purpose.</div></details>
+    <div class="quiz" data-q="q1"></div>
+  </div></div>
+</section>
+
+<!-- ============ 2 ============ -->
+<section id="s2" data-title="02 Coins">
+  <div class="shead">
+    <div class="snum">02</div>
+    <div>
+      <h2>A coin is a bit you have not looked at yet</h2>
+      <p class="sdek">Before you look, a spinning coin is neither heads nor tails. After you look, it is one of them. Keep that sentence. It is most of quantum mechanics.</p>
+    </div>
+  </div>
+  <div class="body"><div></div><div class="col">
+    <div class="prose">
+      <p class="msg">One flip tells you almost nothing. A hundred flips tell you the odds.</p>
+      <p>This coin can be weighted. Slide the weight, flip it once, then flip it a hundred times. Notice that a single flip never tells you the weight. Only the pile of results does. Heads is 0 and tails is 1 from here on.</p>
+    </div>
+    <div class="bench">
+      <div class="blab"><span class="dot"></span><b>Try it</b> &nbsp;A weighted coin</div>
+      <div class="bbody">
+        <div class="row" style="align-items:center">
+          <div class="grow stack" style="flex:1 1 260px">
+            <div class="ctrl"><label for="cnW">Chance of heads (0) <span class="v" id="cnWV"></span></label><input type="range" id="cnW" min="0" max="100" value="70" step="1"></div>
+            <div class="row" style="align-items:center;gap:14px">
+              <button class="btn big" id="cnOne">Flip once</button>
+              <div class="outcome" id="cnOut">·</div>
+              <button class="btn ghost" id="cnMany">Flip 100 times</button>
+            </div>
+            <div class="bigread" id="cnread"></div>
+          </div>
+          <div class="grow" style="flex:1 1 300px">
+            <h4 style="margin-bottom:8px">The last 100 flips</h4>
+            <div class="coinrow" id="cnRow"></div>
+            <div class="pbar" id="cnbars" style="margin-top:14px"></div>
+          </div>
+        </div>
+      </div>
+      <div class="bfoot"><b>Two different things.</b> The weight of the coin is a number between 0 and 100 percent. The result of a flip is a 0 or a 1. A qubit is like the weight. Looking at a qubit is like the flip.</div>
+    </div>
+    <details class="teacher"><summary>For teachers</summary><div class="tb">A Bernoulli trial with bias p. The point to land is the separation between the parameter (p, continuous, never directly observed) and the outcome (0 or 1). The Bloch vector's height in the next section plays the role of p. The row of a hundred coins also seeds the idea, used on page 3, that estimating p to precision ε costs about 1/ε² trials.</div></details>
+  </div></div>
+</section>
+
+<!-- ============ 3 ============ -->
+<section id="s3" data-title="03 The arrow">
+  <div class="shead">
+    <div class="snum">03</div>
+    <div>
+      <h2>A qubit is an arrow</h2>
+      <p class="sdek">Straight up means 0. Straight down means 1. Anywhere in between is a qubit, and the height of the arrow tip sets the odds.</p>
+    </div>
+  </div>
+  <div class="body"><div></div><div class="col">
+    <div class="prose">
+      <p class="msg">The height of the tip, on a ruler from −1 to +1, tells you the chance of reading 0.</p>
+      <div class="eq">chance of 0 = (1 + height) / 2<br><span class="c">and, if you know cosine,</span><br>height = cos(tilt from straight up)</div>
+      <p>Tilt the arrow. When it points straight up the height is +1 and the chance of 0 is 100 percent. Straight down, the height is −1 and the chance of 0 is zero. Sideways, the height is 0 and it is a fair coin. The arrow lives on a sphere, and you can drag the sphere to see it from any side.</p>
+      <div class="note"><b>Why is 0 at the top?</b> Because 0 is the qubit's resting state, the one with the lowest energy, and physicists draw the resting state at the top. Every textbook and every real quantum computer does it this way, so this page does too. If you know digital electronics, where 0 is the low voltage and 1 is the high one, this feels backwards for about a day. Then it stops.</div>
+    </div>
+    <div class="bench">
+      <div class="blab"><span class="dot"></span><b>Try it</b> &nbsp;The arrow and its ruler</div>
+      <div class="bbody">
+        <div class="row" style="align-items:center">
+          <div class="cvwrap" style="flex:0 0 auto">
+            <canvas id="arSphere" width="270" height="270" aria-label="The qubit arrow on a sphere"></canvas>
+            <div class="cvcap">drag to look around</div>
+          </div>
+          <div class="cvwrap" style="flex:0 0 auto">
+            <canvas id="arRuler" width="110" height="270" aria-label="A ruler from minus one to plus one showing the height of the arrow tip"></canvas>
+            <div class="cvcap">height of the tip</div>
+          </div>
+          <div class="grow stack" style="flex:1 1 240px">
+            <div class="ctrl"><label for="arTh">Tilt from straight up <span class="v" id="arThV"></span></label><input type="range" id="arTh" min="0" max="180" value="50" step="1"></div>
+            <div class="bigpct" id="arPct">75%<small>chance of reading 0</small></div>
+            <div class="pbar" id="arbars"></div>
+            <div class="btnrow" id="arPresets"></div>
+          </div>
+        </div>
+      </div>
+      <div class="bfoot"><b>Not a picture of a spinning thing.</b> The arrow is a way of drawing the odds. A real qubit might be a single electron, an atom, or a tiny loop of wire colder than deep space. In every case the same arrow describes it.</div>
+    </div>
+    <details class="teacher"><summary>For teachers</summary><div class="tb">This is the Bloch sphere with the phase suppressed until section 06. The height rule P(0) = (1 + cos θ)/2 is exactly cos²(θ/2) by the half-angle identity, and is chosen because it needs no half angle and can be read off a ruler. The state is |ψ⟩ = cos(θ/2)|0⟩ + sin(θ/2)|1⟩ with real amplitudes. The word "sphere" rather than "circle" is deliberate, so that the second angle has somewhere to go later. The pole convention is the universal one: |0⟩ is the +1 eigenstate of Z and sits at the north pole. For a spin qubit |0⟩ = |↑⟩; for superconducting, trapped-ion, and most other qubits it is the ground state. Students coming from digital logic expect 1 to be "high," and the note above heads that off.</div></details>
+    <div class="quiz" data-q="q2"></div>
+  </div></div>
+</section>
+
+<!-- ============ 4 ============ -->
+<section id="s4" data-title="04 Looking">
+  <div class="shead">
+    <div class="snum">04</div>
+    <div>
+      <h2>Looking changes the arrow</h2>
+      <p class="sdek">This is the part that is truly different from a coin. When you read a qubit, the arrow jumps to straight up or straight down, and it stays there.</p>
+    </div>
+  </div>
+  <div class="body"><div></div><div class="col">
+    <div class="prose">
+      <p class="msg">You never see the tilt. You see a 0 or a 1, and afterwards the arrow points that way.</p>
+      <p>Set a tilt, then press Look. The arrow snaps to one of the poles, with the odds from the height rule. Press Look again and you get the same answer every time, because the arrow is now at a pole. To get a tilted arrow back you have to prepare it again. That is what Reset does.</p>
+    </div>
+    <div class="bench">
+      <div class="blab"><span class="dot"></span><b>Try it</b> &nbsp;Prepare, look, look again</div>
+      <div class="bbody">
+        <div class="row" style="align-items:center">
+          <div class="cvwrap" style="flex:0 0 auto">
+            <canvas id="lkSphere" width="270" height="270" aria-label="The qubit arrow, which snaps to a pole when looked at"></canvas>
+            <div class="cvcap" id="lkCap">prepared, not yet looked at</div>
+          </div>
+          <div class="grow stack" style="flex:1 1 260px">
+            <div class="ctrl"><label for="lkTh">Tilt to prepare <span class="v" id="lkThV"></span></label><input type="range" id="lkTh" min="0" max="180" value="70" step="1"></div>
+            <div class="row" style="align-items:center;gap:14px">
+              <button class="btn big" id="lkLook">Look</button>
+              <div class="outcome" id="lkOut">·</div>
+              <button class="btn ghost" id="lkReset">Reset the arrow</button>
+            </div>
+            <button class="btn ghost" id="lkMany">Prepare and look, 200 times</button>
+            <div class="bigread" id="lkread"></div>
+          </div>
+        </div>
+      </div>
+      <div class="bfoot"><b>The rule in one line.</b> Before you look, a qubit can be anywhere on the sphere. The moment you look, it becomes an ordinary bit. Everything clever a quantum computer does happens before anyone looks.</div>
+    </div>
+    <details class="teacher"><summary>For teachers</summary><div class="tb">The projective measurement postulate, presented as a game mechanic rather than a mystery. Two things students commonly get wrong are addressed by the two buttons: a repeated measurement gives the same result (the state has collapsed onto an eigenstate), and the statistics of many prepare-and-measure cycles recover the height rule. Avoid the phrase "the qubit is 0 and 1 at the same time." The arrow picture makes it unnecessary.</div></details>
+    <div class="quiz" data-q="q3"></div>
+  </div></div>
+</section>
+
+<!-- ============ 5 ============ -->
+<section id="s5" data-title="05 Turning">
+  <div class="shead">
+    <div class="snum">05</div>
+    <div>
+      <h2>Computing means turning the arrow</h2>
+      <p class="sdek">A normal computer flips switches. A quantum computer turns arrows. Here are the three turns that matter most.</p>
+    </div>
+  </div>
+  <div class="body"><div></div><div class="col">
+    <div class="prose">
+      <p class="msg">Every operation a quantum computer can do to one qubit is a rotation of the sphere.</p>
+      <p>Press the buttons and watch. Each one is a turn around some axis, and the dashed line shows the axis while the turn happens.</p>
+      <p><b>Flip</b> is a half turn around a sideways axis. It turns the arrow upside down, which is the quantum version of NOT. <b>Quarter turn</b> is a quarter turn around the vertical axis. It changes where the arrow points around the sphere but not how high it is, so the odds do not change. <b>Tip sideways</b> is the odd one. It is a half turn around a <em>tilted</em> axis, the one that sits halfway between straight up and "toward you". A half turn around that axis swaps up with toward-you. So an arrow that points up ends up pointing toward you, flat on the equator, and a certain 0 becomes a fair coin. Do a turn, then look, and the odds follow the new height.</p>
+    </div>
+    <div class="bench">
+      <div class="blab"><span class="dot"></span><b>Try it</b> &nbsp;Three turns</div>
+      <div class="bbody">
+        <div class="row" style="align-items:center">
+          <div class="cvwrap" style="flex:0 0 auto">
+            <canvas id="gtSphere" width="290" height="290" aria-label="The qubit arrow being rotated by gates"></canvas>
+            <div class="cvcap">the dashed line is the axis of the turn</div>
+          </div>
+          <div class="grow stack" style="flex:1 1 260px">
+            <div class="stepper">
+              <button class="btn big" id="gtX">Flip</button>
+              <button class="btn big" id="gtH">Tip sideways</button>
+              <button class="btn big" id="gtZ">Quarter turn</button>
+            </div>
+            <div class="btnrow"><button class="btn ghost" id="gtUndo">Undo</button><button class="btn ghost" id="gtReset">Back to 0</button><button class="btn" id="gtLook">Look</button></div>
+            <div class="circ" id="gtCirc"></div>
+            <div class="bigpct" id="gtPct">100%<small>chance of reading 0</small></div>
+          </div>
+        </div>
+      </div>
+      <div class="bfoot"><b>A puzzle to try.</b> Start at 0. Tip sideways, then tip sideways again. The arrow comes back to 0, because two half turns around the same axis make a full turn. Now start at 0 again and do tip sideways, quarter turn, quarter turn, tip sideways. Look. You get 1 every time. The two quarter turns in the middle never changed the odds, and yet the answer changed from 0 to 1. Something a look cannot see happened in between. The next section shows what.</div>
+    </div>
+    <details class="teacher"><summary>For teachers</summary><div class="tb">Flip is the Pauli X gate (a π rotation about x). Tip sideways is the Hadamard (a π rotation about the axis halfway between x and z, which carries a pole to the equator). Quarter turn is the S gate (a π/2 rotation about z). Two S gates make a Z, and H·Z·H = X, which is the puzzle in the footer. All single-qubit gates are rotations because they must preserve the length of the state vector. The circuit strip records the sequence in the usual left-to-right notation.</div></details>
+  </div></div>
+</section>
+
+<!-- ============ 6 ============ -->
+<section id="s6" data-title="06 Hidden">
+  <div class="shead">
+    <div class="snum">06</div>
+    <div>
+      <h2>The direction you cannot see</h2>
+      <p class="sdek">Two arrows can have exactly the same height and still be different arrows. Looking cannot tell them apart. Turning can.</p>
+    </div>
+  </div>
+  <div class="body"><div></div><div class="col">
+    <div class="prose">
+      <p class="msg">The arrow can point toward you or away from you, and the odds do not change. This hidden direction is where quantum computing lives.</p>
+      <p>The slider below sets the hidden direction of a second arrow. Both arrows lie flat on the equator, so both have height 0 and both read 0 half the time. Looking cannot tell them apart, no matter how many times you look. Are they really different, or is the hidden direction just a story?</p>
+      <p>Here is the experiment that settles it. Apply the same "tip sideways" from section 05 to both arrows, then look. Remember what that turn is: a half turn around the tilted axis halfway between up and toward-you, and it swaps those two directions. So the arrow that points toward you ends up straight up, a certain 0. The arrow that points away from you ends up straight down, a certain 1. Same height before, opposite heights after. The hidden direction was real, and one turn made it visible.</p>
+    </div>
+    <div class="bench">
+      <div class="blab"><span class="dot"></span><b>Try it</b> &nbsp;Same odds, different arrow</div>
+      <div class="bbody">
+        <div class="row" style="align-items:center">
+          <div class="cvwrap" style="flex:0 0 auto">
+            <canvas id="hdSphere" width="290" height="290" aria-label="Two arrows with the same height but different hidden direction"></canvas>
+            <div class="cvcap" id="hdCap">both arrows flat, before the tip · drag to look around</div>
+          </div>
+          <div class="grow stack" style="flex:1 1 260px">
+            <div class="ctrl"><label for="hdPh">Hidden direction of the second arrow <span class="v" id="hdPhV"></span></label><input type="range" id="hdPh" min="0" max="360" value="180" step="1"></div>
+            <div class="row" style="gap:18px">
+              <div class="bigpct" id="hdA">50%<small>arrow A reads 0</small></div>
+              <div class="bigpct" id="hdB">50%<small>arrow B reads 0</small></div>
+            </div>
+            <button class="btn big" id="hdTip">Tip both sideways, then look</button>
+            <button class="btn ghost" id="hdLook" hidden>Look at both</button>
+            <div class="bigread" id="hdread"></div>
+          </div>
+        </div>
+      </div>
+      <div class="bfoot"><b>Back to the puzzle from section 05.</b> After the first tip the arrow lies flat, pointing toward you. Two quarter turns around the vertical axis spin it halfway round, so it now points away from you. Same height, same odds, but it is now arrow B from this bench. The second tip swaps away-from-you with straight down, and that is why you read 1 every time. Without the quarter turns it is arrow A, the second tip sends it back up, and you read 0.<br><br><b>Why only "toward" and "away" get separated.</b> The tilted axis swaps up with toward-you, and leaves left and right alone. So an arrow pointing left or right stays flat after the tip and still reads like a coin. Set the second arrow to 90° and try it. Only the toward-or-away part of the hidden direction turns into height. Physicists call the hidden direction the phase, and this experiment is how they check it is there.</div>
+    </div>
+    <details class="teacher"><summary>For teachers</summary><div class="tb">The azimuthal angle φ, the relative phase between the two amplitudes. |+⟩ and |−⟩ are indistinguishable under a Z-basis measurement and become |0⟩ and |1⟩ after a Hadamard. This is the entire mechanism behind interference on page 2, so it is worth slowing down here. Students should leave with the picture that a measurement reads latitude only, and that longitude is accessed by rotating first.</div></details>
+    <div class="quiz" data-q="q4"></div>
+  </div></div>
+</section>
+
+<!-- ============ hook + home ============ -->
+<section id="s7" data-title="07 So what">
+  <div class="shead">
+    <div class="snum">07</div>
+    <div>
+      <h2>Where qubits live, and why anyone bothers</h2>
+    </div>
+  </div>
+  <div class="body"><div></div><div class="col">
+    <div class="uses">
+      <div class="use"><span class="n">A single atom</span><b>Trapped ions</b><small>One charged atom held in place by electric fields, in a vacuum. Its arrow is set and turned with laser pulses.</small></div>
+      <div class="use"><span class="n">A defect in a crystal</span><b>Diamond</b><small>A missing carbon atom next to a nitrogen atom leaves an electron whose arrow can be read with light, even at room temperature.</small></div>
+      <div class="use"><span class="n">A loop of wire</span><b>Superconducting circuits</b><small>A tiny circuit cooled to a hundredth of a degree above absolute zero, where electric current can point two ways at once.</small></div>
+      <div class="use"><span class="n">A molecule</span><b>Molecular spins</b><small>Chemists can build molecules with one unpaired electron and tune the surroundings so its arrow keeps its direction longer.</small></div>
+    </div>
+    <div class="hook">
+      <div class="hk">Why this matters</div>
+      <p><b>A qubit is a bit with a direction, and direction is what waves have.</b> Because of that, a machine built from qubits can make wrong answers cancel out the way sound waves cancel in noise-cancelling headphones. That is what page 2 is about. And because the arrow turns at a rate set by the field around it, a single qubit is also a sensor, which is page 3. Both ideas rest on the hidden direction you just saw.</p>
+    </div>
+    <div class="home">
+      <div class="hh"><b>Try this at home</b> &nbsp;two experiments, no lab needed</div>
+      <div class="hb">
+        <div><h5>You need</h5><ul><li>A coin</li><li>Paper and a pen</li><li>Polarized sunglasses</li><li>A phone or laptop screen</li></ul></div>
+        <div>
+          <h5>Experiment 1, the pile of flips</h5>
+          <ol><li>Flip the coin 10 times and count the heads. Write the number down.</li><li>Do it four more times. You will get numbers like 4, 6, 5, 7, 3.</li><li>Add them up. Out of 50 flips you will be close to 25, but no single group of 10 was reliably 5.</li></ol>
+          <h5 style="margin-top:12px">Experiment 2, the hidden direction of light</h5>
+          <ol><li>Look at a phone screen through polarized sunglasses.</li><li>Slowly rotate the glasses. At one angle the screen goes dark.</li><li>Light from the screen has a direction you cannot see with your eyes. The glasses are a "tip sideways" that makes it visible, exactly like section 06.</li></ol>
+        </div>
+        <div class="why"><b>Why these two.</b> The first shows that odds only show up in a pile of results, never in one result. The second shows that a hidden direction can be real and invisible at the same time, until you do the right turn.</div>
+      </div>
+    </div>
+    <div class="verdict" id="quizTally" style="margin-top:22px"></div>
+    <div class="prose" style="margin-top:22px">
+      <p>Next: <em>How a Quantum Computer Finds an Answer</em>, which takes the hidden direction and turns it into a search that finds one box out of four in a single try.</p>
+    </div>
+  </div></div>
+</section>
+
+<footer>
+  Page 1 of a three-page introduction to qubits for high-school students.<br>
+  All figures are computed live in the browser.
+</footer>
+</div>
+<style>canvas{height:auto}</style>
+<script>
+(function(){
+"use strict";
+const REDUCED=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+function norm3(a){const m=Math.hypot(a[0],a[1],a[2])||1;return [a[0]/m,a[1]/m,a[2]/m];}
+const D2R=Math.PI/180, R2D=180/Math.PI;
+const KS=[2,3,4,5,6,8,12,16,32,64];
+function gauss(){let u=0,v=0;while(u===0)u=Math.random();while(v===0)v=Math.random();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v);}
+function tocBuild(){
+  const toc=document.getElementById("toc");if(!toc)return;
+  const secs=[].slice.call(document.querySelectorAll("section[data-title]"));
+  secs.forEach(function(s){const a=document.createElement("a");a.href="#"+s.id;a.textContent=s.dataset.title;a.dataset.for=s.id;toc.appendChild(a);});
+  const links={};[].forEach.call(toc.children,a=>links[a.dataset.for]=a);
+  if("IntersectionObserver" in window){
+    const io=new IntersectionObserver(function(ents){ents.forEach(function(e){if(e.isIntersecting){
+      Object.keys(links).forEach(k=>links[k].classList.remove("on"));links[e.target.id].classList.add("on");}});},{rootMargin:"-45% 0px -50% 0px"});
+    secs.forEach(s=>io.observe(s));
+  }
+}
+/* ================= theme-aware colors ================= */
+const CV={};
+function readVars(){
+  const cs=getComputedStyle(document.documentElement);
+  ["--ink","--ink-2","--muted","--faint","--rule","--rule-strong","--zero","--one","--phase","--surface","--bench","--surface-2","--grid","--sphere"]
+    .forEach(k=>CV[k]=cs.getPropertyValue(k).trim());
+}
+readVars();
+const C=k=>CV["--"+k];
+const redraws=[];
+const redrawAll=()=>{readVars();redraws.forEach(f=>{try{f();}catch(e){}});};
+if(window.matchMedia){
+  const mq=window.matchMedia("(prefers-color-scheme: dark)");
+  (mq.addEventListener?mq.addEventListener("change",redrawAll):mq.addListener(redrawAll));
+}
+new MutationObserver(redrawAll).observe(document.documentElement,{attributes:true,attributeFilter:["data-theme"]});
+
+/* ================= canvas helpers ================= */
+function setup(cv){
+  const w=cv.width,h=cv.height,dpr=Math.min(window.devicePixelRatio||1,2);
+  cv.style.width=w+"px";cv.style.height=h+"px";
+  cv.width=Math.round(w*dpr);cv.height=Math.round(h*dpr);
+  const g=cv.getContext("2d");g.scale(dpr,dpr);
+  cv._w=w;cv._h=h;return g;
+}
+function clear(g,cv,bg){g.save();g.setTransform(1,0,0,1,0,0);g.clearRect(0,0,cv.width,cv.height);g.restore();
+  if(bg){g.fillStyle=bg;g.fillRect(0,0,cv._w,cv._h);} }
+function mono(g,size,weight){g.font=(weight||400)+" "+size+"px 'IBM Plex Mono', ui-monospace, monospace";}
+function dash(g,arr){g.setLineDash(arr||[]);}
+function line(g,x1,y1,x2,y2,col,w){g.strokeStyle=col;g.lineWidth=w||1;g.beginPath();g.moveTo(x1,y1);g.lineTo(x2,y2);g.stroke();}
+function rr(g,x,y,w,h,r){g.beginPath();
+  if(g.roundRect){g.roundRect(x,y,w,h,r);}else{g.rect(x,y,w,h);} }
+
+/* ================= Bloch sphere ================= */
+function Sphere(cv,opt){
+  opt=opt||{};
+  const g=setup(cv),W=cv._w,H=cv._h;
+  const S={az:opt.az!==undefined?opt.az:-0.72,el:opt.el!==undefined?opt.el:0.30,
+           r:[0,0,1],len:1,axis:null,axisT:0,cap:opt.cap,
+           labels:opt.labels!==false,small:!!opt.small,ghost:null};
+  const R=Math.min(W,H)*(opt.scale||0.345);
+  const cxp=W/2, cyp=H/2+(opt.dy||0);
+
+  function basis(){
+    const ca=Math.cos(S.az),sa=Math.sin(S.az),ce=Math.cos(S.el),se=Math.sin(S.el);
+    return {right:[-sa,ca,0],up:[-ca*se,-sa*se,ce],fwd:[ca*ce,sa*ce,se]};
+  }
+  function P(p,b){
+    const d=p[0]*b.fwd[0]+p[1]*b.fwd[1]+p[2]*b.fwd[2];
+    return {x:cxp+R*(p[0]*b.right[0]+p[1]*b.right[1]+p[2]*b.right[2]),
+            y:cyp-R*(p[0]*b.up[0]+p[1]*b.up[1]+p[2]*b.up[2]), d:d};
+  }
+  function circlePts(kind,a){
+    const pts=[];
+    for(let i=0;i<=96;i++){
+      const t=i/96*Math.PI*2;
+      if(kind==="lat"){const s=Math.sin(a);pts.push([s*Math.cos(t),s*Math.sin(t),Math.cos(a)]);}
+      else{pts.push([Math.sin(t)*Math.cos(a),Math.sin(t)*Math.sin(a),Math.cos(t)]);}
+    }
+    return pts;
+  }
+  function poly(pts,b,colFront,colBack,w){
+    for(let i=0;i<pts.length-1;i++){
+      const p1=P(pts[i],b),p2=P(pts[i+1],b);
+      const front=(p1.d+p2.d)/2>0;
+      g.strokeStyle=front?colFront:colBack;g.lineWidth=w||1;
+      g.beginPath();g.moveTo(p1.x,p1.y);g.lineTo(p2.x,p2.y);g.stroke();
+    }
+  }
+  function arrow(from,to,col,b,w){
+    const a=P(from,b),c=P(to,b);
+    g.strokeStyle=col;g.lineWidth=w||2.4;g.lineCap="round";
+    g.beginPath();g.moveTo(a.x,a.y);g.lineTo(c.x,c.y);g.stroke();g.lineCap="butt";
+    const ang=Math.atan2(c.y-a.y,c.x-a.x),hl=9,hw=4.4;
+    g.fillStyle=col;g.beginPath();
+    g.moveTo(c.x,c.y);
+    g.lineTo(c.x-hl*Math.cos(ang-0.42),c.y-hl*Math.sin(ang-0.42));
+    g.lineTo(c.x-hl*Math.cos(ang+0.42),c.y-hl*Math.sin(ang+0.42));
+    g.closePath();g.fill();
+  }
+  function tag(p,txt,col,b,off){
+    const q=P(p,b);mono(g,S.small?9:10.5,500);g.fillStyle=col;
+    g.textAlign="center";g.textBaseline="middle";
+    g.fillText(txt,q.x+(off?off[0]:0),q.y+(off?off[1]:0));
+  }
+
+  S.draw=function(){
+    const b=basis();
+    clear(g,cv,null);
+    /* ball */
+    g.fillStyle=C("surface");g.globalAlpha=0.55;
+    g.beginPath();g.arc(cxp,cyp,R,0,7);g.fill();g.globalAlpha=1;
+    /* equatorial disc */
+    const eq=circlePts("lat",Math.PI/2);
+    g.beginPath();
+    eq.forEach((p,i)=>{const q=P(p,b);i?g.lineTo(q.x,q.y):g.moveTo(q.x,q.y);});
+    g.closePath();g.fillStyle=C("zero");g.globalAlpha=0.055;g.fill();g.globalAlpha=1;
+
+    const back=hex(C("sphere"),0.16), front=hex(C("sphere"),0.42);
+    if(!S.small){
+      [Math.PI/4,Math.PI/2,3*Math.PI/4].forEach(a=>poly(circlePts("lat",a),b,front,back,a===Math.PI/2?1.25:0.8));
+      for(let k=0;k<4;k++)poly(circlePts("lon",k*Math.PI/4),b,hex(C("sphere"),0.26),hex(C("sphere"),0.10),0.8);
+    }else{
+      poly(circlePts("lat",Math.PI/2),b,front,back,1.1);
+      poly(circlePts("lon",0),b,hex(C("sphere"),0.2),hex(C("sphere"),0.08),0.8);
+      poly(circlePts("lon",Math.PI/2),b,hex(C("sphere"),0.2),hex(C("sphere"),0.08),0.8);
+    }
+    /* rim */
+    g.strokeStyle=hex(C("sphere"),0.5);g.lineWidth=1;g.beginPath();g.arc(cxp,cyp,R,0,7);g.stroke();
+
+    /* axes */
+    const AX=[[[1,0,0],"x"],[[0,1,0],"y"],[[0,0,1],"z"]];
+    AX.forEach(function(A){
+      const p1=P(A[0].map(v=>-v*1.14),b),p2=P(A[0].map(v=>v*1.14),b);
+      dash(g,[3,3]);line(g,p1.x,p1.y,p2.x,p2.y,hex(C("sphere"),0.35),1);dash(g);
+    });
+    if(S.labels){
+      tag([0,0,1.34],opt.pole0||"|0⟩",C("zero"),b);
+      tag([0,0,-1.34],opt.pole1||"|1⟩",C("one"),b);
+      if(!S.small&&!opt.noSide){
+        tag([1.3,0,0],opt.side||"|+⟩",C("muted"),b);
+        tag([-1.3,0,0],opt.side2||"|−⟩",C("muted"),b);
+        tag([0,1.3,0],opt.side3||"|i⟩",C("muted"),b);
+        tag([0,-1.3,0],opt.side4||"|−i⟩",C("muted"),b);
+      }
+    }
+
+    /* rotation axis being applied */
+    if(S.axis&&S.axisT>0.02){
+      const n=norm3(S.axis);
+      const p1=P(n.map(v=>-v*1.24),b),p2=P(n.map(v=>v*1.24),b);
+      g.globalAlpha=Math.min(1,S.axisT);
+      dash(g,[5,4]);line(g,p1.x,p1.y,p2.x,p2.y,C("phase"),1.8);dash(g);
+      g.globalAlpha=1;
+    }
+
+    const r=S.r,L=S.len;
+    const rv=[r[0]*L,r[1]*L,r[2]*L];
+
+    /* phase construction */
+    if(opt.showPhase&&L>0.02&&Math.hypot(rv[0],rv[1])>0.03){
+      const foot=[rv[0],rv[1],0];
+      dash(g,[2,3]);
+      const a=P(rv,b),f=P(foot,b),o=P([0,0,0],b);
+      line(g,a.x,a.y,f.x,f.y,hex(C("phase"),0.75),1);
+      line(g,o.x,o.y,f.x,f.y,hex(C("phase"),0.75),1);
+      dash(g);
+      const phi=Math.atan2(rv[1],rv[0]);
+      const arc=[];for(let i=0;i<=40;i++){const t=phi*i/40;arc.push([0.36*Math.cos(t),0.36*Math.sin(t),0]);}
+      g.strokeStyle=C("phase");g.lineWidth=1.6;g.beginPath();
+      arc.forEach((p,i)=>{const q=P(p,b);i?g.lineTo(q.x,q.y):g.moveTo(q.x,q.y);});g.stroke();
+      tag([0.52*Math.cos(phi/2),0.52*Math.sin(phi/2),0.04],"φ",C("phase"),b);
+      /* theta arc */
+      const st=Math.hypot(rv[0],rv[1]),ct=rv[2],th=Math.atan2(st,ct),ux=rv[0]/(st||1),uy=rv[1]/(st||1);
+      const arc2=[];for(let i=0;i<=40;i++){const t=th*i/40;arc2.push([0.5*Math.sin(t)*ux,0.5*Math.sin(t)*uy,0.5*Math.cos(t)]);}
+      g.strokeStyle=C("zero");g.lineWidth=1.6;g.beginPath();
+      arc2.forEach((p,i)=>{const q=P(p,b);i?g.lineTo(q.x,q.y):g.moveTo(q.x,q.y);});g.stroke();
+      tag([0.63*Math.sin(th/2)*ux,0.63*Math.sin(th/2)*uy,0.63*Math.cos(th/2)],"θ",C("zero"),b);
+    }
+
+    /* point cloud */
+    if(S.points&&S.points.length){
+      S.points.forEach(function(p){const q=P(p,b);g.fillStyle=hex(p[3]||C("zero"),q.d>0?0.8:0.22);g.beginPath();g.arc(q.x,q.y,2.1,0,7);g.fill();});
+    }
+    /* ghost (previous state) */
+    if(S.ghost){
+      g.globalAlpha=0.28;arrow([0,0,0],S.ghost,C("muted"),b,1.8);g.globalAlpha=1;
+    }
+
+    /* state vector */
+    if(S.noArrow){}else if(L<0.035){
+      const o=P([0,0,0],b);
+      g.fillStyle=C("muted");g.beginPath();g.arc(o.x,o.y,4,0,7);g.fill();
+      g.strokeStyle=hex(C("muted"),0.5);dash(g,[2,3]);g.lineWidth=1;
+      g.beginPath();g.arc(cxp,cyp,R*0.985,0,7);g.stroke();dash(g);
+      mono(g,S.small?9:9.5,500);g.fillStyle=C("muted");g.textAlign="center";g.textBaseline="middle";
+      g.fillText("no direction",cxp,cyp+19);
+    }else{
+      const col=rv[2]>=0?C("zero"):C("one");
+      arrow([0,0,0],rv,col,b,2.6);
+      if(L<0.985){
+        const q=P(rv,b);g.strokeStyle=hex(col,0.5);g.lineWidth=1;dash(g,[2,2]);
+        const e=P(r,b);g.beginPath();g.moveTo(q.x,q.y);g.lineTo(e.x,e.y);g.stroke();dash(g);
+      }
+    }
+    if(S.second){arrow([0,0,0],S.second.r,S.second.c||C("phase"),b,2.6);
+      if(S.second.label){tag(S.second.r.map(v=>v*1.18),S.second.label,S.second.c||C("phase"),b);}}
+    if(S.mainLabel){tag(rv.map(v=>v*1.18),S.mainLabel,rv[2]>=0?C("zero"):C("one"),b);}
+    if(S.cap){mono(g,9.5,500);g.fillStyle=C("faint");g.textAlign="left";g.textBaseline="top";g.fillText(S.cap,8,7);}
+  };
+
+  /* drag */
+  let drag=null;
+  cv.style.cursor="grab";
+  cv.addEventListener("pointerdown",e=>{drag={x:e.clientX,y:e.clientY,az:S.az,el:S.el};cv.setPointerCapture(e.pointerId);cv.style.cursor="grabbing";});
+  cv.addEventListener("pointermove",e=>{
+    if(!drag)return;
+    S.az=drag.az-(e.clientX-drag.x)*0.0115;
+    S.el=Math.max(-1.35,Math.min(1.35,drag.el+(e.clientY-drag.y)*0.0115));
+    S.draw();
+  });
+  const end=()=>{drag=null;cv.style.cursor="grab";};
+  cv.addEventListener("pointerup",end);cv.addEventListener("pointercancel",end);
+  redraws.push(()=>S.draw());
+  return S;
+}
+function hex(c,a){
+  c=(c||"#888").trim();
+  if(c[0]==="#"){
+    if(c.length===4)c="#"+c[1]+c[1]+c[2]+c[2]+c[3]+c[3];
+    const n=parseInt(c.slice(1),16);
+    return "rgba("+((n>>16)&255)+","+((n>>8)&255)+","+(n&255)+","+a+")";
+  }
+  if(c.indexOf("rgb")===0)return c.replace(/rgba?\(([^)]+)\)/,(m,p)=>{const v=p.split(",").map(s=>s.trim());return "rgba("+v[0]+","+v[1]+","+v[2]+","+a+")";});
+  return c;
+}
+
+/* ================= probability bars ================= */
+function bars(el,p0,p1){
+  el.innerHTML=
+   '<div class="pb"><span class="lbl">P(0)</span><span class="track"><span class="fill" style="width:'+(p0*100).toFixed(1)+'%;background:'+C("zero")+'"></span></span><span class="val">'+(p0*100).toFixed(1)+'%</span></div>'+
+   '<div class="pb"><span class="lbl">P(1)</span><span class="track"><span class="fill" style="width:'+(p1*100).toFixed(1)+'%;background:'+C("one")+'"></span></span><span class="val">'+(p1*100).toFixed(1)+'%</span></div>';
+}
+
+/* ================= chart frame helper ================= */
+function frame(g,cv,m){
+  clear(g,cv,C("bench"));
+  return {l:m.l,r:cv._w-m.r,t:m.t,b:cv._h-m.b,w:cv._w-m.l-m.r,h:cv._h-m.t-m.b};
+}
+function axisText(g,txt,x,y,align,base,col,size){
+  mono(g,size||9.5,400);g.fillStyle=col||C("muted");
+  g.textAlign=align||"center";g.textBaseline=base||"middle";g.fillText(txt,x,y);
+}
+
+/* ================= dial renderer ================= */
+function dialGeom(cv){const W=cv._w,H=cv._h;return {cx:W/2,cy:H/2,R:Math.min(W,H)*0.37};}
+function dialPt(d,angDeg,rad){const a=angDeg*D2R;return {x:d.cx+(rad===undefined?d.R:rad)*Math.sin(a),y:d.cy-(rad===undefined?d.R:rad)*Math.cos(a)};}
+function drawDial(g,cv,o){
+  const d=dialGeom(cv);
+  clear(g,cv,null);
+  /* face */
+  g.fillStyle=C("surface");g.globalAlpha=0.7;g.beginPath();g.arc(d.cx,d.cy,d.R,0,7);g.fill();g.globalAlpha=1;
+  /* cells (resolution) */
+  if(o.cells){
+    const n=Math.max(1,Math.floor(360/o.cells)), step=360/n;
+    for(let i=0;i<n;i++){
+      g.beginPath();
+      g.arc(d.cx,d.cy,d.R*1.06,(i*step-90)*D2R,((i+1)*step-90)*D2R);
+      g.arc(d.cx,d.cy,d.R*0.94,((i+1)*step-90)*D2R,(i*step-90)*D2R,true);
+      g.closePath();
+      g.fillStyle=i%2?hex(C("zero"),0.30):hex(C("zero"),0.08);g.fill();
+    }
+  }
+  /* ring */
+  g.strokeStyle=hex(C("sphere"),0.55);g.lineWidth=1.2;g.beginPath();g.arc(d.cx,d.cy,d.R,0,7);g.stroke();
+  /* ticks */
+  if(o.ticks&&o.ticks>0&&o.ticks<=128){
+    for(let i=0;i<o.ticks;i++){
+      const a=i*360/o.ticks, p1=dialPt(d,a,d.R*0.9), p2=dialPt(d,a,d.R*1.0);
+      line(g,p1.x,p1.y,p2.x,p2.y,hex(C("ink"),0.7),o.ticks>24?1:1.6);
+    }
+  }else if(o.ticks>128){
+    g.strokeStyle=hex(C("ink"),0.5);g.lineWidth=5;g.beginPath();g.arc(d.cx,d.cy,d.R*0.95,0,7);g.stroke();
+  }
+  /* fuzz wedge */
+  if(o.fuzz&&o.pointer!==null&&o.pointer!==undefined){
+    const a0=(o.pointer-o.fuzz/2-90)*D2R,a1=(o.pointer+o.fuzz/2-90)*D2R;
+    g.beginPath();g.moveTo(d.cx,d.cy);g.arc(d.cx,d.cy,d.R,a0,a1);g.closePath();
+    g.fillStyle=hex(C("one"),0.22);g.fill();
+  }
+  /* labels */
+  if(o.labels){
+    mono(g,11,500);g.textAlign="center";g.textBaseline="middle";
+    const L=o.labels, r=d.R*1.22;
+    if(L.t){g.fillStyle=L.tc||C("zero");const p=dialPt(d,0,r);g.fillText(L.t,p.x,p.y);}
+    if(L.b){g.fillStyle=L.bc||C("one");const p=dialPt(d,180,r);g.fillText(L.b,p.x,p.y);}
+    if(L.r){g.fillStyle=C("muted");const p=dialPt(d,90,r);g.fillText(L.r,p.x,p.y);}
+    if(L.l){g.fillStyle=C("muted");const p=dialPt(d,270,r);g.fillText(L.l,p.x,p.y);}
+  }
+  if(o.extra)o.extra(g,d);
+  /* pointer(s) */
+  const ptrs=o.pointers||(o.pointer!==null&&o.pointer!==undefined?[{a:o.pointer,c:o.pointerColor}]:[]);
+  ptrs.forEach(function(p){
+    const col=p.c||C("ink"), tip=dialPt(d,p.a,d.R*0.86);
+    g.strokeStyle=col;g.lineWidth=p.w||2.6;g.lineCap="round";
+    g.beginPath();g.moveTo(d.cx,d.cy);g.lineTo(tip.x,tip.y);g.stroke();g.lineCap="butt";
+    g.fillStyle=col;g.beginPath();g.arc(tip.x,tip.y,4.2,0,7);g.fill();
+    if(p.label){mono(g,10,500);g.fillStyle=col;g.textAlign="center";g.textBaseline="middle";
+      const q=dialPt(d,p.a,d.R*1.13);g.fillText(p.label,q.x,q.y);}
+  });
+  g.fillStyle=C("ink");g.beginPath();g.arc(d.cx,d.cy,3.2,0,7);g.fill();
+  if(o.cap){mono(g,9.5,500);g.fillStyle=C("faint");g.textAlign="left";g.textBaseline="top";g.fillText(o.cap,8,7);}
+}
+function dialClick(cv,fn){
+  const d=()=>dialGeom(cv);
+  let down=false;
+  function ang(e){
+    const r=cv.getBoundingClientRect(), sx=cv._w/r.width, sy=cv._h/r.height;
+    const x=(e.clientX-r.left)*sx-d().cx, y=(e.clientY-r.top)*sy-d().cy;
+    return ((Math.atan2(x,-y)*R2D)+360)%360;
+  }
+  cv.style.cursor="crosshair";
+  cv.addEventListener("pointerdown",e=>{down=true;cv.setPointerCapture(e.pointerId);fn(ang(e));});
+  cv.addEventListener("pointermove",e=>{if(down)fn(ang(e));});
+  const up=()=>{down=false;};
+  cv.addEventListener("pointerup",up);cv.addEventListener("pointercancel",up);
+}
+const p0of=thDeg=>Math.pow(Math.cos(thDeg*D2R/2),2);
+
+
+/* ================================================================
+   QUICK CHECKS - answer first, then feedback and the solution
+   quizEngine(bank, storageKey) renders every .quiz[data-q] mount
+   ================================================================ */
+function quizEngine(QUIZ,KEY){
+  let state={};
+  try{state=JSON.parse(localStorage.getItem(KEY)||"{}")||{};}catch(e){state={};}
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){}}
+  function st(id){return state[id]||(state[id]={tries:0,done:false,first:null,solved:false});}
+
+  function parseNum(s){
+    s=String(s||"").trim().replace(/,/g,"").replace(/\s+/g,"").replace(/°|%|ns$/g,"");
+    if(!s)return NaN;
+    if(/^-?[\d.]+$/.test(s))return parseFloat(s);
+    if(/^[\d.^*+\-/()]+$/.test(s)){
+      try{const v=Function('"use strict";return ('+s.replace(/\^/g,"**")+")")();return typeof v==="number"&&isFinite(v)?v:NaN;}catch(e){return NaN;}
+    }
+    return NaN;
+  }
+
+  function render(Q,mount){
+    const S=st(Q.id);
+    mount.innerHTML="";
+    const head=document.createElement("div");head.className="qh";
+    head.innerHTML='<span>Quick check · section '+Q.sec+'</span><span class="st" id="'+Q.id+'st"></span>';
+    const qt=document.createElement("div");qt.className="qt";qt.innerHTML=Q.q;
+    mount.appendChild(head);mount.appendChild(qt);
+    const fb=document.createElement("div");fb.className="fb";fb.hidden=true;
+    const acts=document.createElement("div");acts.className="acts";
+    const sol=document.createElement("div");sol.className="sol";sol.hidden=true;sol.innerHTML="<b>Solution.</b> "+Q.sol;
+    const showSol=document.createElement("button");showSol.className="btn ghost";showSol.textContent="Show solution";
+    const again=document.createElement("button");again.className="btn ghost";again.textContent="Try again";again.hidden=true;
+    let inputs=[];
+
+    function status(){
+      const el=document.getElementById(Q.id+"st");
+      if(!el)return;
+      el.textContent=S.done?(S.first?"correct first time":"correct after "+S.tries+(S.tries===1?" try":" tries")):S.solved?"solution shown":(S.tries?S.tries+(S.tries===1?" try":" tries"):"");
+      tally();
+    }
+    function finish(correct,msg){
+      S.tries++;
+      if(correct&&!S.done){S.done=true;if(S.first===null)S.first=(S.tries===1);}
+      if(!correct&&S.first===null)S.first=false;
+      save();
+      fb.hidden=false;fb.className="fb "+(correct?"ok":"no");
+      fb.innerHTML=(correct?"<b>Correct.</b> ":"<b>Not quite.</b> ")+msg;
+      if(correct){sol.hidden=false;showSol.hidden=true;again.hidden=true;inputs.forEach(i=>i.disabled=true);}
+      else{again.hidden=false;}
+      status();
+    }
+    function reveal(){S.solved=true;save();sol.hidden=false;showSol.hidden=true;status();}
+
+    if(Q.type==="mc"){
+      const opts=document.createElement("div");opts.className="opts";
+      Q.opts.forEach(function(o,i){
+        const b=document.createElement("button");b.className="opt";b.type="button";
+        b.innerHTML='<span class="L">'+"abcd"[i]+'</span><span>'+o[0]+'</span>';
+        b.onclick=function(){
+          if(S.done)return;
+          [].forEach.call(opts.children,c=>c.classList.remove("wrong"));
+          const correct=(i===Q.ans);
+          b.classList.add(correct?"right":"wrong");
+          if(correct){[].forEach.call(opts.children,c=>c.disabled=true);}
+          finish(correct,correct?"":o[1]);
+        };
+        opts.appendChild(b);inputs.push(b);
+      });
+      mount.appendChild(opts);
+      again.onclick=()=>{[].forEach.call(opts.children,c=>c.classList.remove("wrong"));fb.hidden=true;again.hidden=true;};
+    }else{
+      const row=document.createElement("div");row.className="num";
+      const inp=document.createElement("input");inp.type="text";inp.inputMode="decimal";inp.placeholder="your answer";inp.id=Q.id+"in";inp.setAttribute("aria-label","answer for "+Q.id);
+      const unit=document.createElement("span");unit.className="u";unit.textContent=Q.unit;
+      const chk=document.createElement("button");chk.className="btn";chk.textContent="Check";
+      function submit(){
+        if(S.done)return;
+        const v=parseNum(inp.value);
+        if(isNaN(v)){fb.hidden=false;fb.className="fb no";fb.innerHTML="Enter a number. Powers like <b>2^7</b> are fine.";return;}
+        if(Q.ok(v))finish(true,"");
+        else if(Q.near&&Q.near(v))finish(true,Q.nearMsg||"Close enough.");
+        else finish(false,Q.hint(v));
+      }
+      chk.onclick=submit;inp.addEventListener("keydown",e=>{if(e.key==="Enter")submit();});
+      row.appendChild(inp);row.appendChild(unit);row.appendChild(chk);
+      mount.appendChild(row);inputs.push(inp,chk);
+      again.onclick=()=>{fb.hidden=true;again.hidden=true;inp.focus();};
+    }
+    showSol.onclick=reveal;
+    acts.appendChild(again);acts.appendChild(showSol);
+    mount.appendChild(fb);mount.appendChild(acts);mount.appendChild(sol);
+    if(S.done){sol.hidden=false;showSol.hidden=true;inputs.forEach(i=>i.disabled=true);
+      if(Q.type==="mc"){const b=mount.querySelectorAll(".opt")[Q.ans];if(b)b.classList.add("right");}
+      fb.hidden=false;fb.className="fb ok";fb.innerHTML="<b>Correct.</b> Answered earlier.";}
+    else if(S.solved){sol.hidden=false;showSol.hidden=true;}
+    status();
+  }
+  function tally(){
+    const el=document.getElementById("quizTally");if(!el)return;
+    const done=QUIZ.filter(Q=>st(Q.id).done).length, first=QUIZ.filter(Q=>st(Q.id).done&&st(Q.id).first).length;
+    el.className="verdict "+(done===QUIZ.length?"good":"");
+    el.innerHTML="<b>Your quick checks.</b> "+done+" of "+QUIZ.length+" answered correctly"+(done?", "+first+" on the first try":"")+"."+
+      (done<QUIZ.length?" The unanswered ones are back in sections "+QUIZ.filter(Q=>!st(Q.id).done).map(Q=>Q.sec).join(", ")+".":" Every section's question is done.")+
+      ' <button class="btn ghost" id="quizReset" style="margin-left:8px">Reset</button>';
+    const r=document.getElementById("quizReset");
+    if(r)r.onclick=()=>{state={};save();QUIZ.forEach(Q=>{const m=document.querySelector('.quiz[data-q="'+Q.id+'"]');if(m)render(Q,m);});tally();};
+  }
+  QUIZ.forEach(Q=>{const m=document.querySelector('.quiz[data-q="'+Q.id+'"]');if(m)render(Q,m);});
+  tally();
+}
+
+/* ================= shared bits for page 1 ================= */
+function rotAxis(v,ax,ang){const n=norm3(ax),c=Math.cos(ang),s=Math.sin(ang),d=n[0]*v[0]+n[1]*v[1]+n[2]*v[2];
+  const cr=[n[1]*v[2]-n[2]*v[1],n[2]*v[0]-n[0]*v[2],n[0]*v[1]-n[1]*v[0]];
+  return [v[0]*c+cr[0]*s+n[0]*d*(1-c),v[1]*c+cr[1]*s+n[1]*d*(1-c),v[2]*c+cr[2]*s+n[2]*d*(1-c)];}
+const TIP_AXIS=[Math.SQRT1_2,0,Math.SQRT1_2];
+const p0h=h=>(1+h)/2;                                   /* height rule */
+function vecOf(thDeg,phDeg){const T=thDeg*D2R,P=(phDeg||0)*D2R;return [Math.sin(T)*Math.cos(P),Math.sin(T)*Math.sin(P),Math.cos(T)];}
+function pctBars(el,p0){bars(el,p0,1-p0);}
+function drawRuler(g,cv,h,col){
+  clear(g,cv,C("bench"));
+  const W=cv._w,H=cv._h,x=W*0.42,top=24,bot=H-24;
+  const Y=v=>bot-(bot-top)*(v+1)/2;
+  line(g,x,top,x,bot,C("rule-strong"),2);
+  [-1,-0.5,0,0.5,1].forEach(v=>{line(g,x-6,Y(v),x+6,Y(v),C("ink-2"),1.2);axisText(g,(v>0?"+":"")+v.toFixed(1),x+12,Y(v),"left","middle",C("muted"),9.5);});
+  g.fillStyle=hex(col,0.25);g.fillRect(x-14,Y(h),28,Y(-1)-Y(h));
+  g.fillStyle=col;g.beginPath();g.moveTo(x-14,Y(h));g.lineTo(x-4,Y(h)-6);g.lineTo(x-4,Y(h)+6);g.closePath();g.fill();
+  axisText(g,"height "+(h>=0?"+":"")+h.toFixed(2),x,H-8,"center","middle",col,9.5);
+}
+
+/* ================= hero ================= */
+(function(){
+  const sph=Sphere(document.getElementById("heroSphere"),{showPhase:false,scale:0.33,pole0:"0",pole1:"1",noSide:true});
+  let t=0.4,spin=true;
+  document.getElementById("heroSphere").addEventListener("pointerdown",()=>{spin=false;});
+  if(REDUCED){sph.r=vecOf(55,40);sph.draw();return;}
+  (function loop(){if(spin)sph.az=-0.72+Math.sin(t*0.12)*0.5;t+=0.016;sph.r=vecOf(60+18*Math.sin(t*0.4),t*35);sph.draw();requestAnimationFrame(loop);})();
+})();
+
+/* ================= 01 switches ================= */
+(function(){
+  const bits=[1,0,1,1];const reg=document.getElementById("reg");
+  function render(){
+    reg.innerHTML="";
+    bits.forEach(function(b,i){const el=document.createElement("button");el.className="tg"+(b?" on":"");
+      el.innerHTML='<span>'+["8s","4s","2s","1s"][i]+'</span><span class="knob"></span><span class="val">'+b+'</span>';
+      el.setAttribute("aria-label","switch worth "+[8,4,2,1][i]+" is "+b);el.onclick=()=>{bits[i]^=1;render();};reg.appendChild(el);});
+    const v=bits.reduce((s,b)=>s*2+b,0);
+    document.getElementById("regread").innerHTML=
+      '<span class="k">the pattern</span>'+bits.join("")+
+      '<br><span class="k">as a number</span>'+bits.map((b,i)=>b?[8,4,2,1][i]:null).filter(x=>x!==null).join(" + ")+(v?" = ":"")+'<span class="z">'+v+'</span>'+
+      '<br><span class="k">patterns four switches can make</span>2 × 2 × 2 × 2 = <span class="z">16</span>';
+    let h="<tr><th>switches</th><th>patterns</th></tr>";
+    [1,2,3,4,5,8,10,20].forEach(n=>{h+="<tr><td"+(n===4?' class="hi"':'')+">"+n+"</td><td class='out"+(n===4?" hi":"")+"'>"+(Math.pow(2,n)).toLocaleString()+"</td></tr>";});
+    document.getElementById("pattbl").innerHTML=h;
+  }
+  render();
+})();
+
+/* ================= 02 coins ================= */
+(function(){
+  const W=document.getElementById("cnW");let last=[];
+  function paint(){
+    const p=+W.value/100;
+    document.getElementById("cnWV").textContent=W.value+"%";
+    document.getElementById("cnRow").innerHTML=last.length?last.map(r=>'<span class="coin '+(r?"o":"z")+'">'+r+'</span>').join(""):'<span style="font-family:\'IBM Plex Mono\',monospace;font-size:.75rem;color:var(--faint)">no flips yet</span>';
+    const z=last.filter(r=>r===0).length,n=last.length;
+    pctBars(document.getElementById("cnbars"),n?z/n:p);
+    document.getElementById("cnread").innerHTML=
+      '<span class="k">the weight, which you never see directly</span>'+W.value+'% heads'+
+      (n?'<br><span class="k">what the pile of '+n+' flips says</span><span class="z">'+Math.round(100*z/n)+'% heads</span>, '+z+' of '+n:'<br><span class="k">what one flip says</span>a 0 or a 1, and nothing about the weight');
+  }
+  document.getElementById("cnOne").onclick=()=>{const r=Math.random()<+W.value/100?0:1;const o=document.getElementById("cnOut");o.textContent=r;o.className="outcome "+(r?"o":"z");last.push(r);if(last.length>100)last.shift();paint();};
+  document.getElementById("cnMany").onclick=()=>{last=[];for(let i=0;i<100;i++)last.push(Math.random()<+W.value/100?0:1);paint();};
+  W.oninput=()=>{last=[];const o=document.getElementById("cnOut");o.textContent="·";o.className="outcome";paint();};
+  redraws.push(paint);paint();
+})();
+
+/* ================= 03 the arrow ================= */
+(function(){
+  const sph=Sphere(document.getElementById("arSphere"),{scale:0.35,pole0:"0",pole1:"1",noSide:true});
+  const rc=document.getElementById("arRuler"),rg=setup(rc);
+  const TH=document.getElementById("arTh");
+  const presets=[["straight up",0],["a bit tilted",30],["sideways",90],["mostly down",140],["straight down",180]];
+  const pp=document.getElementById("arPresets");
+  presets.forEach(p=>{const b=document.createElement("button");b.className="btn gate";b.textContent=p[0];b.onclick=()=>{TH.value=p[1];upd();};pp.appendChild(b);});
+  function upd(){
+    const th=+TH.value,h=Math.cos(th*D2R),p=p0h(h);
+    sph.r=vecOf(th,25);sph.len=1;sph.draw();
+    drawRuler(rg,rc,h,h>=0?C("zero"):C("one"));
+    document.getElementById("arThV").textContent=th+"°";
+    document.getElementById("arPct").innerHTML=Math.round(100*p)+"%<small>chance of reading 0 · (1 + "+(h>=0?"":"−")+Math.abs(h).toFixed(2)+") / 2</small>";
+    pctBars(document.getElementById("arbars"),p);
+  }
+  TH.oninput=upd;redraws.push(upd);upd();
+})();
+
+/* ================= 04 looking ================= */
+(function(){
+  const sph=Sphere(document.getElementById("lkSphere"),{scale:0.35,pole0:"0",pole1:"1",noSide:true});
+  const TH=document.getElementById("lkTh");
+  let looked=null,anim=null;
+  function state(){return looked===null?vecOf(+TH.value,25):(looked===0?[0,0,1]:[0,0,-1]);}
+  function paint(){
+    sph.r=state();sph.len=1;sph.ghost=looked!==null?vecOf(+TH.value,25):null;sph.draw();
+    document.getElementById("lkThV").textContent=TH.value+"°";
+    const p=p0h(Math.cos(+TH.value*D2R));
+    document.getElementById("lkCap").textContent=looked===null?"prepared, not yet looked at":"looked at: the arrow is now at "+looked+" and stays there";
+    document.getElementById("lkread").innerHTML=
+      '<span class="k">chance of 0 from the height</span>'+Math.round(100*p)+'%'+
+      (looked===null?'<br><span class="k">arrow</span>tilted, no one has looked':'<br><span class="k">arrow</span>at pole '+looked+'. Look again and you get '+looked+' for certain.');
+  }
+  function look(){
+    if(looked===null){const p=p0h(Math.cos(+TH.value*D2R));looked=Math.random()<p?0:1;}
+    const o=document.getElementById("lkOut");o.textContent=looked;o.className="outcome "+(looked?"o":"z");paint();
+  }
+  document.getElementById("lkLook").onclick=look;
+  document.getElementById("lkReset").onclick=()=>{looked=null;const o=document.getElementById("lkOut");o.textContent="·";o.className="outcome";paint();};
+  document.getElementById("lkMany").onclick=()=>{const p=p0h(Math.cos(+TH.value*D2R));let z=0;for(let i=0;i<200;i++)if(Math.random()<p)z++;
+    document.getElementById("lkread").innerHTML+='<br><span class="k">200 fresh arrows, each looked at once</span>0 × <span class="z">'+z+'</span>&nbsp;&nbsp;1 × <span class="o">'+(200-z)+'</span> &nbsp;(expected about '+Math.round(200*p)+' zeros)';};
+  TH.oninput=()=>{looked=null;const o=document.getElementById("lkOut");o.textContent="·";o.className="outcome";paint();};
+  redraws.push(paint);paint();
+})();
+
+/* ================= 05 turning ================= */
+(function(){
+  const sph=Sphere(document.getElementById("gtSphere"),{scale:0.35,pole0:"0",pole1:"1",noSide:true});
+  let r=[0,0,1],hist=[],anim=null;
+  const GATES={X:{ax:[1,0,0],ang:Math.PI,label:"Flip"},H:{ax:[Math.SQRT1_2,0,Math.SQRT1_2],ang:Math.PI,label:"Tip"},Z:{ax:[0,0,1],ang:Math.PI/2,label:"Quarter"}};
+  const rotate=rotAxis;
+  function apply(k){
+    if(anim)return;const G=GATES[k],from=r.slice();hist.push({k:k,before:from});
+    const t0=performance.now();sph.axis=G.ax;
+    anim=function(now){const f=Math.min(1,(now-t0)/450),e=f<0.5?2*f*f:1-Math.pow(-2*f+2,2)/2;
+      sph.r=rotate(from,G.ax,G.ang*e);sph.axisT=1;sph.draw();
+      if(f<1)requestAnimationFrame(anim);else{r=rotate(from,G.ax,G.ang);anim=null;fade();paint();}};
+    requestAnimationFrame(anim);
+  }
+  function fade(){const t0=performance.now();(function f(now){const k=Math.min(1,(now-t0)/400);sph.axisT=1-k;sph.draw();if(k<1)requestAnimationFrame(f);else{sph.axis=null;sph.draw();}})(performance.now());}
+  function paint(){
+    sph.r=r;sph.len=1;sph.draw();
+    const p=p0h(r[2]);
+    document.getElementById("gtPct").innerHTML=Math.round(100*p)+"%<small>chance of reading 0</small>";
+    let h='<span class="ket">start at 0</span><span class="wire"></span>';hist.forEach(x=>{h+='<span class="op'+(x.k==="Z"?" ph":"")+'">'+GATES[x.k].label+'</span><span class="wire"></span>';});h+='<span class="mtr">look</span>';
+    document.getElementById("gtCirc").innerHTML=h;
+  }
+  document.getElementById("gtX").onclick=()=>apply("X");document.getElementById("gtH").onclick=()=>apply("H");document.getElementById("gtZ").onclick=()=>apply("Z");
+  document.getElementById("gtUndo").onclick=()=>{if(anim||!hist.length)return;r=hist.pop().before;paint();};
+  document.getElementById("gtReset").onclick=()=>{if(anim)return;r=[0,0,1];hist=[];paint();};
+  document.getElementById("gtLook").onclick=()=>{if(anim)return;const p=p0h(r[2]),out=Math.random()<p?0:1;r=[0,0,out?-1:1];hist.push({k:null,before:r});hist.pop();paint();
+    document.getElementById("gtPct").innerHTML=out+"<small>you read a "+out+". the arrow is now at that pole</small>";};
+  redraws.push(paint);paint();
+})();
+
+/* ================= 06 hidden direction ================= */
+(function(){
+  const sph=Sphere(document.getElementById("hdSphere"),{scale:0.35,pole0:"0",pole1:"1",noSide:true,showPhase:false});
+  const PH=document.getElementById("hdPh");
+  let tipped=false,outA=null,outB=null,anim=null,frac=0;
+  const start=()=>[vecOf(90,0),vecOf(90,+PH.value)];
+  function current(){const [A0,B0]=start();const e=tipped?1:frac;return [rotAxis(A0,TIP_AXIS,Math.PI*e),rotAxis(B0,TIP_AXIS,Math.PI*e)];}
+  function paint(){
+    const ph=+PH.value,[A,B]=current();
+    sph.r=A;sph.len=1;sph.ghost=null;sph.mainLabel="A";sph.second={r:B,c:C("phase"),label:"B"};sph.draw();
+    const pa=p0h(A[2]),pb=p0h(B[2]);
+    document.getElementById("hdPhV").textContent=ph+"°"+(ph===0?" (toward you, same as A)":ph===180?" (away from you)":ph===90||ph===270?" (to the side)":"");
+    document.getElementById("hdA").innerHTML=(outA===null?Math.round(100*pa)+"%":outA)+"<small>"+(outA===null?"arrow A reads 0":"arrow A read this")+"</small>";
+    document.getElementById("hdB").innerHTML=(outB===null?Math.round(100*pb)+"%":outB)+"<small>"+(outB===null?"arrow B reads 0":"arrow B read this")+"</small>";
+    const side=Math.abs(Math.sin(ph*D2R))>0.99;
+    document.getElementById("hdCap").textContent=tipped?"after the tip · drag to look around":anim?"turning around the dashed axis":"both arrows flat, before the tip · drag to look around";
+    document.getElementById("hdread").innerHTML=tipped
+      ?'<span class="k">after the same tip</span>A is at height '+A[2].toFixed(2)+', B is at height '+B[2].toFixed(2)+'.'+
+        (Math.abs(ph-180)<3?' <span class="z">Opposite poles. A look now tells them apart every time.</span>'
+        :side?' B pointed to the side, and the tilted axis leaves left and right alone, so B is still flat and still a coin.'
+        :' Different heights, so a look now separates them most of the time.')
+      :'<span class="k">before any tip</span>both arrows are flat. Same height, same odds, different hidden direction. The tip is a half turn around the dashed axis.';
+  }
+  function tip(){
+    if(anim||tipped)return;
+    const t0=performance.now();sph.axis=TIP_AXIS;sph.axisT=1;
+    anim=function(now){const f=Math.min(1,(now-t0)/900);frac=f<0.5?2*f*f:1-Math.pow(-2*f+2,2)/2;paint();
+      if(f<1)requestAnimationFrame(anim);else{tipped=true;anim=null;frac=1;
+        const [A,B]=current();outA=Math.random()<p0h(A[2])?0:1;outB=Math.random()<p0h(B[2])?0:1;
+        document.getElementById("hdTip").textContent="Reset both arrows";paint();
+        const t1=performance.now();(function fade(n){const k=Math.min(1,(n-t1)/500);sph.axisT=1-k;sph.draw();if(k<1)requestAnimationFrame(fade);else{sph.axis=null;sph.draw();}})(performance.now());}};
+    requestAnimationFrame(anim);
+  }
+  function reset(){tipped=false;frac=0;outA=outB=null;sph.axis=null;document.getElementById("hdTip").textContent="Tip both sideways, then look";paint();}
+  document.getElementById("hdTip").onclick=function(){if(tipped)reset();else tip();};
+  PH.oninput=()=>{if(anim)return;reset();};
+  redraws.push(paint);paint();
+})();
+
+/* ================= quick checks ================= */
+quizEngine([
+  {id:"q1",sec:"01",type:"num",unit:"patterns",q:"Five switches. How many different patterns can they make?",
+   ok:v=>v===32,
+   hint:v=>v===10?"That is 5 + 5. Each switch doubles the count instead of adding to it."
+          :v===25?"That is 5 × 5. Try 2 × 2 × 2 × 2 × 2."
+          :v===16?"16 is four switches. Add one more and it doubles."
+          :"Each switch doubles the number of patterns. Start from 2 and double it five times.",
+   sol:"2 × 2 × 2 × 2 × 2 = <b>32</b>. Every switch you add doubles the count, which is why 10 switches already give 1024 patterns."},
+  {id:"q2",sec:"03",type:"num",unit:"percent",q:"The arrow tip sits at a height of +0.5 on the ruler. What is the chance, in units of percent, of reading 0?",
+   ok:v=>v>=74&&v<=76,
+   hint:v=>v===50?"50% would be a height of exactly 0, sideways. This arrow is above the middle."
+          :v===25?"That is the chance of reading 1. The question asks for 0."
+          :v===0.75?"Right idea. The question asks for a percentage."
+          :"Use the rule: chance of 0 = (1 + height) / 2.",
+   sol:"(1 + 0.5) / 2 = 0.75, so <b>75%</b>. If you know cosine: a height of 0.5 is a tilt of 60° from straight up, since cos 60° = 0.5."},
+  {id:"q3",sec:"04",type:"mc",q:"You prepare a tilted arrow, look, and read a 0. You look again right away. What do you get?",
+   opts:[["A 0, for certain",null],
+         ["A 0 or a 1, with the same odds as before","Looking moved the arrow to the 0 pole. It no longer has a tilt, so there are no odds left. Try it on the bench: Look, then Look again."],
+         ["A 1, because it alternates","Nothing alternates. Once the arrow is at a pole it stays there until you prepare it again."],
+         ["It depends on how long you wait","On this page nothing moves the arrow between looks. Waiting matters on page 3, where fields turn the arrow, but not here."]],
+   ans:0,
+   sol:"<b>A 0, for certain.</b> The first look snapped the arrow to straight up. A second look reads the height of an arrow that is already at +1, so the chance of 0 is 100%. To get odds back you have to prepare a tilted arrow again."},
+  {id:"q4",sec:"06",type:"mc",q:"Two arrows point sideways, one toward you and one away from you. Which of these tells them apart?",
+   opts:[["Looking at each one directly","Both are sideways, so both have height 0 and both read 0 half the time. Looking cannot separate them."],
+         ["Looking at each one many times","Many looks tell you the odds more precisely, and the odds are 50% for both. Still no difference."],
+         ["Tipping both sideways first, then looking",null],
+         ["Nothing. They are the same arrow","They are not. The bench above showed one becoming a certain 0 and the other a certain 1 after the same tip."]],
+   ans:2,
+   sol:"<b>Tip first, then look.</b> A look only reads height. The two arrows differ in their hidden direction, and a tip sideways turns hidden direction into height. After the tip one arrow points up and the other down, and a look tells them apart every time."}
+],"hs1-quiz-v1");
+
+tocBuild();
+
+})();
+</script>
+
+</body>
+</html>

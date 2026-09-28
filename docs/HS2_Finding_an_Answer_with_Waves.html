@@ -1,0 +1,1275 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="High-school page 2 of 3: waves add and cancel, the hidden direction is a phase, two roads to one detector, scores for every pattern, and the four-box search in one try.">
+<style>:root{color-scheme:light dark}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+<title>Finding an Answer with Waves</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<style>
+:root{
+  --ground:#F2F4F4; --surface:#FFFFFF; --surface-2:#E8ECED; --bench:#FAFCFC;
+  --ink:#101619; --ink-2:#38464B; --muted:#5B6A70; --faint:#8C9BA1;
+  --rule:#D5DDDE; --rule-strong:#B6C3C5;
+  --zero:#00819F; --one:#AA6609; --phase:#7448B1;
+  --zero-soft:rgba(0,129,159,.13); --one-soft:rgba(170,102,9,.13); --phase-soft:rgba(116,72,177,.13);
+  --grid:rgba(16,22,25,.09); --sphere:rgba(16,22,25,.55);
+  --shade:rgba(0,129,159,.05);
+  --shadow:0 1px 2px rgba(16,22,25,.04), 0 10px 30px -18px rgba(16,22,25,.30);
+  --sel:rgba(0,129,159,.16);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ground:#0D1214; --surface:#141B1E; --surface-2:#1C2528; --bench:#101A1D;
+    --ink:#E4EDEF; --ink-2:#BAC8CC; --muted:#8FA1A7; --faint:#6B7B81;
+    --rule:#243033; --rule-strong:#35464B;
+    --zero:#1E9FA5; --one:#B97830; --phase:#906FC6;
+    --zero-soft:rgba(30,159,165,.15); --one-soft:rgba(185,120,48,.16); --phase-soft:rgba(144,111,198,.16);
+    --grid:rgba(228,237,239,.10); --sphere:rgba(228,237,239,.50);
+    --shade:rgba(30,159,165,.05);
+    --shadow:0 1px 2px rgba(0,0,0,.35), 0 12px 34px -20px rgba(0,0,0,.8);
+    --sel:rgba(30,159,165,.18);
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#0D1214; --surface:#141B1E; --surface-2:#1C2528; --bench:#101A1D;
+  --ink:#E4EDEF; --ink-2:#BAC8CC; --muted:#8FA1A7; --faint:#6B7B81;
+  --rule:#243033; --rule-strong:#35464B;
+  --zero:#1E9FA5; --one:#B97830; --phase:#906FC6;
+  --zero-soft:rgba(30,159,165,.15); --one-soft:rgba(185,120,48,.16); --phase-soft:rgba(144,111,198,.16);
+  --grid:rgba(228,237,239,.10); --sphere:rgba(228,237,239,.50);
+  --shade:rgba(30,159,165,.05);
+  --shadow:0 1px 2px rgba(0,0,0,.35), 0 12px 34px -20px rgba(0,0,0,.8);
+  --sel:rgba(30,159,165,.18);
+}
+
+*{box-sizing:border-box}
+body{
+  background:var(--ground); color:var(--ink);
+  font-family:"Source Serif 4","Iowan Old Style",Georgia,serif;
+  font-size:17px; line-height:1.62;
+  margin:0; padding-inline:20px; padding-block:0;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1080px;margin:0 auto}
+.prose{max-width:66ch}
+h1,h2,h3,h4,.mono,.eyebrow,.btn,label,th,.tab{font-family:Archivo,"Helvetica Neue",Arial,sans-serif}
+.mono,.eq,.num,code,.eyebrow,.tag,kbd{font-family:"IBM Plex Mono",ui-monospace,"SF Mono",Menlo,monospace}
+h1{font-size:clamp(2.1rem,5.4vw,3.3rem);line-height:1.04;font-weight:700;letter-spacing:-.024em;margin:0;text-wrap:balance}
+h2{font-size:clamp(1.5rem,3.1vw,2.05rem);line-height:1.14;font-weight:600;letter-spacing:-.02em;margin:0;text-wrap:balance}
+h3{font-size:1.12rem;font-weight:600;letter-spacing:-.008em;margin:0 0 .35em;text-wrap:balance}
+h4{font-size:.78rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;margin:0;color:var(--muted)}
+p{margin:0 0 1.05em}
+a{color:inherit;text-underline-offset:3px;text-decoration-color:var(--rule-strong)}
+strong{font-weight:600}
+em{font-style:italic}
+:focus-visible{outline:2px solid var(--zero);outline-offset:2px;border-radius:2px}
+
+/* ---------- masthead ---------- */
+.top{
+  position:sticky;top:0;z-index:40;background:color-mix(in srgb,var(--ground) 88%,transparent);
+  backdrop-filter:blur(10px);border-bottom:1px solid var(--rule);
+  margin-inline:-20px;padding-inline:20px;
+}
+.topin{max-width:1080px;margin:0 auto;display:flex;align-items:center;gap:18px;height:46px}
+.brand{font-family:"IBM Plex Mono",monospace;font-size:.68rem;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);white-space:nowrap;flex:0 1 auto;min-width:0;max-width:52%;overflow:hidden;text-overflow:ellipsis}
+.brand b{color:var(--ink);font-weight:500}
+.tocbar{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none;flex:1;margin-left:auto}
+.tocbar::-webkit-scrollbar{display:none}
+.tocbar a{
+  font-family:"IBM Plex Mono",monospace;font-size:.7rem;color:var(--muted);text-decoration:none;
+  padding:4px 7px;border-radius:3px;white-space:nowrap;transition:background .15s,color .15s;
+}
+.tocbar a:hover{background:var(--surface-2);color:var(--ink)}
+.tocbar a.on{color:var(--ink);background:var(--sel)}
+
+/* ---------- hero ---------- */
+.hero{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:44px;align-items:center;padding-block:64px 52px}
+.kicker{font-family:"IBM Plex Mono",monospace;font-size:.7rem;letter-spacing:.19em;text-transform:uppercase;color:var(--zero);margin-bottom:20px}
+.stand{font-size:1.16rem;color:var(--ink-2);margin-top:22px;max-width:46ch}
+.herofig{position:relative;display:flex;flex-direction:column;align-items:center;gap:10px}
+.herohint{font-family:"IBM Plex Mono",monospace;font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;color:var(--faint)}
+.claims{display:flex;flex-wrap:wrap;gap:0;margin-top:30px;border-top:1px solid var(--rule)}
+.claim{flex:1 1 210px;padding:15px 20px 15px 0;border-right:1px solid var(--rule)}
+.claim:last-child{border-right:none}
+.claim .n{font-family:"IBM Plex Mono",monospace;font-size:.66rem;letter-spacing:.13em;color:var(--faint);display:block;margin-bottom:5px}
+.claim .t{font-size:.95rem;line-height:1.42;color:var(--ink-2)}
+
+/* ---------- sections ---------- */
+section{padding-block:26px 46px;scroll-margin-top:60px}
+.shead{display:grid;grid-template-columns:56px minmax(0,1fr);gap:0;align-items:start;margin-bottom:22px;border-top:2px solid var(--ink);padding-top:14px}
+.snum{font-family:"IBM Plex Mono",monospace;font-size:.8rem;font-weight:500;color:var(--zero);padding-top:.25em}
+.sdek{color:var(--muted);font-size:1.02rem;margin-top:.5em;max-width:62ch}
+.body{display:grid;grid-template-columns:56px minmax(0,1fr);gap:0}
+.body > .col{min-width:0}
+
+/* ---------- bench (interactive panel) ---------- */
+.bench{
+  background:var(--bench);border:1px solid var(--rule);border-radius:4px;
+  margin:26px 0;box-shadow:var(--shadow);overflow:hidden;
+}
+.blab{
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+  padding:9px 16px;border-bottom:1px solid var(--rule);background:var(--surface-2);
+  font-family:"IBM Plex Mono",monospace;font-size:.66rem;letter-spacing:.13em;text-transform:uppercase;color:var(--muted);
+}
+.blab .dot{width:6px;height:6px;border-radius:50%;background:var(--zero);flex:none}
+.blab b{color:var(--ink);font-weight:500;letter-spacing:.09em}
+.bbody{padding:18px 16px}
+.bfoot{padding:11px 16px;border-top:1px solid var(--rule);background:var(--surface-2);font-size:.9rem;color:var(--muted);line-height:1.5}
+.bfoot b{color:var(--ink-2)}
+
+.row{display:flex;gap:18px;flex-wrap:wrap;align-items:flex-start}
+.row > *{min-width:0}
+.grow{flex:1 1 280px}
+.stack{display:flex;flex-direction:column;gap:12px}
+.stack > .ctrl{flex:0 0 auto}
+
+/* ---------- controls ---------- */
+.ctrls{display:flex;flex-wrap:wrap;gap:14px 22px;align-items:flex-end}
+.ctrl{display:flex;flex-direction:column;gap:5px;flex:1 1 170px;min-width:150px}
+.ctrl > label{font-family:"IBM Plex Mono",monospace;font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);display:flex;justify-content:space-between;gap:8px}
+.ctrl > label .v{color:var(--ink);font-variant-numeric:tabular-nums}
+input[type=range]{
+  -webkit-appearance:none;appearance:none;width:100%;height:18px;background:transparent;margin:0;cursor:pointer;
+}
+input[type=range]::-webkit-slider-runnable-track{height:3px;background:var(--rule-strong);border-radius:2px}
+input[type=range]::-moz-range-track{height:3px;background:var(--rule-strong);border-radius:2px}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:15px;height:15px;border-radius:50%;background:var(--zero);margin-top:-6px;border:2px solid var(--bench)}
+input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;background:var(--zero);border:2px solid var(--bench)}
+.btn{
+  font-size:.78rem;font-weight:600;letter-spacing:.01em;padding:6px 11px;border-radius:3px;
+  background:var(--surface);color:var(--ink);border:1px solid var(--rule-strong);cursor:pointer;
+  transition:background .13s,border-color .13s,transform .06s;
+}
+.btn:hover{background:var(--surface-2);border-color:var(--ink-2)}
+.btn:active{transform:translateY(1px)}
+.btn.on{background:var(--zero);border-color:var(--zero);color:#fff}
+.btn.gate{font-family:"IBM Plex Mono",monospace;font-weight:500;min-width:36px;text-align:center}
+.btn.ghost{background:transparent;border-style:dashed}
+.btn.wide{width:100%}
+.btnrow{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.btnrow .sep{width:1px;align-self:stretch;background:var(--rule);margin-inline:4px}
+.seg{display:inline-flex;border:1px solid var(--rule-strong);border-radius:3px;overflow:hidden}
+.seg button{font-family:"IBM Plex Mono",monospace;font-size:.72rem;padding:5px 10px;background:var(--surface);color:var(--muted);border:none;border-right:1px solid var(--rule);cursor:pointer}
+.seg button:last-child{border-right:none}
+.seg button.on{background:var(--zero);color:#fff}
+.swrap{display:flex;align-items:center;gap:7px;font-family:"IBM Plex Mono",monospace;font-size:.72rem;color:var(--muted);cursor:pointer;user-select:none}
+input[type=checkbox]{accent-color:var(--zero);width:15px;height:15px;cursor:pointer}
+
+/* ---------- canvas ---------- */
+canvas{display:block;max-width:100%;touch-action:pan-y}
+.cvwrap{display:flex;flex-direction:column;align-items:center;gap:6px}
+.cvcap{font-family:"IBM Plex Mono",monospace;font-size:.64rem;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);text-align:center}
+
+/* ---------- readouts ---------- */
+.read{font-family:"IBM Plex Mono",monospace;font-size:.8rem;line-height:1.85;font-variant-numeric:tabular-nums}
+.read .k{color:var(--muted)}
+.read .z{color:var(--zero)}
+.read .o{color:var(--one)}
+.read .p{color:var(--phase)}
+.pbar{display:flex;flex-direction:column;gap:7px;margin-top:2px}
+.pb{display:grid;grid-template-columns:58px minmax(0,1fr) 52px;gap:9px;align-items:center;font-family:"IBM Plex Mono",monospace;font-size:.73rem;font-variant-numeric:tabular-nums}
+.pb .track{height:11px;background:var(--surface-2);border-radius:2px;overflow:hidden}
+.pb .fill{height:100%;border-radius:2px;transition:width .22s ease}
+.pb .lbl{color:var(--muted)}
+.pb .val{text-align:right;color:var(--ink-2)}
+
+/* ---------- tables ---------- */
+.tbl{width:100%;border-collapse:collapse;font-family:"IBM Plex Mono",monospace;font-size:.76rem;font-variant-numeric:tabular-nums}
+.tbl th{font-family:Archivo,sans-serif;font-size:.64rem;letter-spacing:.11em;text-transform:uppercase;color:var(--muted);font-weight:600;text-align:left;padding:6px 9px;border-bottom:1px solid var(--rule-strong)}
+.tbl td{padding:5px 9px;border-bottom:1px solid var(--rule);color:var(--ink-2)}
+.tbl tr:last-child td{border-bottom:none}
+.tbl td.hi{background:var(--zero-soft);color:var(--ink)}
+.tbl td.lo{color:var(--faint)}
+.tbl .out{color:var(--ink);font-weight:500}
+.tblscroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+
+/* ---------- equations & notes ---------- */
+.eq{
+  display:block;font-size:.88rem;line-height:1.9;color:var(--ink);
+  background:var(--surface);border-left:2px solid var(--zero);
+  padding:11px 15px;margin:16px 0;border-radius:0 3px 3px 0;overflow-x:auto;white-space:nowrap;
+}
+.eq .c{color:var(--muted)}
+.inl{font-family:"IBM Plex Mono",monospace;font-size:.88em;background:var(--surface-2);padding:.08em .32em;border-radius:2px}
+.note{border-left:2px solid var(--rule-strong);padding:2px 0 2px 16px;margin:18px 0;color:var(--muted);font-size:.96rem}
+.note b{color:var(--ink-2)}
+details.math{margin:16px 0;border:1px solid var(--rule);border-radius:3px;background:var(--surface);overflow:hidden}
+details.math > summary{
+  cursor:pointer;padding:8px 14px;font-family:"IBM Plex Mono",monospace;font-size:.7rem;
+  letter-spacing:.1em;text-transform:uppercase;color:var(--muted);list-style:none;
+  display:flex;align-items:center;gap:8px;
+}
+details.math > summary::-webkit-details-marker{display:none}
+details.math > summary::before{content:"+";color:var(--zero);font-weight:600}
+details.math[open] > summary::before{content:"\2212"}
+details.math > summary:hover{color:var(--ink)}
+.mathbody{padding:2px 16px 14px;font-size:.95rem;border-top:1px solid var(--rule)}
+.mathbody .eq{background:var(--bench);margin:12px 0}
+.matrix{display:inline-grid;grid-template-columns:repeat(2,minmax(52px,auto));gap:2px 12px;font-family:"IBM Plex Mono",monospace;font-size:.8rem;
+  border-left:2px solid var(--ink-2);border-right:2px solid var(--ink-2);padding:6px 10px;text-align:right;font-variant-numeric:tabular-nums}
+.kv{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 14px;font-family:"IBM Plex Mono",monospace;font-size:.76rem;font-variant-numeric:tabular-nums}
+.kv dt{color:var(--muted)}
+.kv dd{margin:0;color:var(--ink)}
+.verdict{font-family:"IBM Plex Mono",monospace;font-size:.78rem;line-height:1.7;padding:9px 12px;border-radius:3px;background:var(--surface);border:1px solid var(--rule)}
+.verdict.bad{border-left:3px solid var(--one)}
+.verdict.good{border-left:3px solid var(--zero)}
+.tag{display:inline-block;font-size:.63rem;letter-spacing:.11em;text-transform:uppercase;padding:2px 6px;border-radius:2px;background:var(--surface-2);color:var(--muted)}
+.tag.z{background:var(--zero-soft);color:var(--zero)}
+.tag.o{background:var(--one-soft);color:var(--one)}
+.tag.p{background:var(--phase-soft);color:var(--phase)}
+.legend{display:flex;flex-wrap:wrap;gap:5px 16px;font-family:"IBM Plex Mono",monospace;font-size:.68rem;color:var(--muted);margin-top:9px}
+.legend span{display:flex;align-items:center;gap:6px}
+.legend i{width:11px;height:11px;border-radius:2px;display:block;flex:none}
+
+/* ---------- circuit strip ---------- */
+.circ{display:flex;align-items:center;gap:0;flex-wrap:wrap;font-family:"IBM Plex Mono",monospace;font-size:.76rem;
+  padding:9px 12px;background:var(--surface);border:1px solid var(--rule);border-radius:3px;min-height:42px}
+.circ .wire{height:1px;background:var(--rule-strong);flex:1 0 14px;min-width:14px}
+.circ .op{border:1px solid var(--ink-2);background:var(--bench);padding:2px 8px;border-radius:2px;color:var(--ink);white-space:nowrap}
+.circ .op.ph{border-color:var(--phase);color:var(--phase)}
+.circ .ket{color:var(--muted);white-space:nowrap}
+.circ .mtr{border:1px solid var(--zero);color:var(--zero);padding:2px 8px;border-radius:2px}
+
+/* ---------- closing ---------- */
+.roles{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:0;border-top:1px solid var(--rule);margin-top:20px}
+.role{padding:16px 20px 18px 0;border-bottom:1px solid var(--rule)}
+.role h5{font-family:Archivo,sans-serif;font-size:.95rem;font-weight:600;margin:0 0 5px;color:var(--ink)}
+.role p{font-size:.92rem;color:var(--muted);margin:0;line-height:1.5}
+.role .n{font-family:"IBM Plex Mono",monospace;font-size:.62rem;letter-spacing:.12em;color:var(--zero);display:block;margin-bottom:7px}
+footer{border-top:2px solid var(--ink);margin-top:40px;padding:20px 0 60px;font-family:"IBM Plex Mono",monospace;font-size:.7rem;color:var(--faint);line-height:1.8}
+
+@media (max-width:880px){
+  .hero{grid-template-columns:1fr;gap:30px;padding-block:40px 34px}
+  .shead,.body{grid-template-columns:1fr}
+  .snum{margin-bottom:6px;padding-top:0}
+  .claim{border-right:none;border-bottom:1px solid var(--rule);padding-right:0}
+  .claim:last-child{border-bottom:none}
+  body{font-size:16.5px}
+}
+@media (prefers-reduced-motion:reduce){
+  *{animation-duration:.001ms !important;transition-duration:.001ms !important}
+}
+</style>
+<style>
+/* ---- undergraduate module: lighter density, larger type, dial components ---- */
+body{font-size:18px;line-height:1.6}
+.prose{max-width:62ch}
+h1{font-size:clamp(2.2rem,5.8vw,3.5rem)}
+.hero{grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);padding-block:56px 40px}
+.assume{border:1px solid var(--rule);background:var(--surface);border-radius:4px;padding:16px 20px;margin-top:26px}
+.assume h4{margin-bottom:10px}
+.assume ol{margin:0;padding-left:1.2em;font-size:.98rem;color:var(--ink-2)}
+.assume li{margin:5px 0}
+.assume li b{color:var(--ink)}
+.msg{font-family:Archivo,sans-serif;font-weight:600;font-size:1.22rem;line-height:1.35;letter-spacing:-.012em;color:var(--ink);margin:6px 0 18px;text-wrap:balance}
+.toggles{display:flex;gap:8px;flex-wrap:wrap}
+.tg{width:54px;height:76px;border:1px solid var(--rule-strong);border-radius:5px;background:var(--surface);cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:7px 0;font-family:"IBM Plex Mono",monospace;font-size:.7rem;color:var(--muted);transition:background .12s}
+.tg .knob{width:30px;height:30px;border-radius:50%;background:var(--surface-2);border:1px solid var(--rule-strong);transition:transform .15s,background .15s}
+.tg.on{background:var(--zero-soft);border-color:var(--zero)}
+.tg.on .knob{background:var(--zero);border-color:var(--zero)}
+.tg .val{font-size:1.1rem;font-weight:600;color:var(--ink)}
+.bigread{font-family:"IBM Plex Mono",monospace;font-size:1.05rem;line-height:1.7;font-variant-numeric:tabular-nums}
+.bigread .k{color:var(--muted);font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;display:block}
+.bigread .z{color:var(--zero)}.bigread .o{color:var(--one)}.bigread .p{color:var(--phase)}
+.outcome{display:inline-flex;align-items:center;justify-content:center;width:64px;height:64px;border-radius:6px;font-family:"IBM Plex Mono",monospace;font-size:2rem;font-weight:600;background:var(--surface-2);color:var(--faint);border:1px solid var(--rule)}
+.outcome.z{background:var(--zero-soft);color:var(--zero);border-color:var(--zero)}
+.outcome.o{background:var(--one-soft);color:var(--one);border-color:var(--one)}
+.roundlog{font-family:"IBM Plex Mono",monospace;font-size:.72rem;line-height:1.7;color:var(--muted);border-top:1px solid var(--rule);padding-top:8px;margin-top:6px}
+.roundlog b{color:var(--ink-2);font-weight:500}
+.roundlog .hit{color:var(--zero)}.roundlog .miss{color:var(--one)}
+details.quick{margin:18px 0 0;border-left:2px solid var(--zero);background:var(--surface);border-radius:0 3px 3px 0}
+details.quick>summary{cursor:pointer;padding:9px 14px;font-family:Archivo,sans-serif;font-weight:600;font-size:.9rem;color:var(--ink-2);list-style:none;display:flex;gap:8px;align-items:center}
+details.quick>summary::-webkit-details-marker{display:none}
+details.quick>summary::before{content:"?";font-family:"IBM Plex Mono",monospace;color:var(--zero);font-weight:600}
+details.quick>.a{padding:0 14px 12px;font-size:.98rem;color:var(--ink-2)}
+.sdtable td.on,.sdtable th.on{background:var(--zero-soft)}
+.answer{border-top:2px solid var(--ink);margin-top:10px}
+.answer .line{display:grid;grid-template-columns:150px minmax(0,1fr);gap:16px;padding:14px 0;border-bottom:1px solid var(--rule);align-items:baseline}
+.answer .q{font-family:"IBM Plex Mono",monospace;font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.answer .v{font-family:Archivo,sans-serif;font-weight:600;font-size:1.15rem;color:var(--ink);letter-spacing:-.01em}
+.answer .v small{display:block;font-family:"Source Serif 4",serif;font-weight:400;font-size:.95rem;color:var(--muted);margin-top:3px}
+@media (max-width:880px){.answer .line{grid-template-columns:1fr;gap:4px}}
+</style>
+<style>
+/* ---- quick checks with an answer box ---- */
+.quiz{margin:18px 0 0;border:1px solid var(--rule);border-left:2px solid var(--zero);background:var(--surface);border-radius:0 3px 3px 0;padding:12px 16px 14px}
+.quiz .qh{font-family:"IBM Plex Mono",monospace;font-size:.64rem;letter-spacing:.12em;text-transform:uppercase;color:var(--zero);margin-bottom:6px;display:flex;justify-content:space-between;gap:10px}
+.quiz .qh .st{color:var(--muted)}
+.quiz .qt{font-family:Archivo,sans-serif;font-weight:600;font-size:.98rem;line-height:1.4;color:var(--ink);margin-bottom:11px;text-wrap:balance}
+.quiz .opts{display:flex;flex-direction:column;gap:6px}
+.quiz .opt{display:flex;gap:10px;align-items:flex-start;text-align:left;padding:8px 11px;border:1px solid var(--rule-strong);border-radius:3px;background:var(--bench);cursor:pointer;font-family:"Source Serif 4",Georgia,serif;font-size:.95rem;line-height:1.45;color:var(--ink-2);transition:border-color .12s,background .12s}
+.quiz .opt:hover{border-color:var(--ink-2)}
+.quiz .opt .L{font-family:"IBM Plex Mono",monospace;font-size:.7rem;color:var(--muted);padding-top:3px;min-width:14px;flex:none}
+.quiz .opt.right{border-color:var(--zero);background:var(--zero-soft);color:var(--ink)}
+.quiz .opt.wrong{border-color:var(--one);background:var(--one-soft)}
+.quiz .opt:disabled{cursor:default}
+.quiz .num{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.quiz .num .u{font-family:"IBM Plex Mono",monospace;font-size:.78rem;color:var(--muted)}
+.quiz input[type=text]{font-family:"IBM Plex Mono",monospace;font-size:.95rem;padding:6px 10px;border:1px solid var(--rule-strong);border-radius:3px;background:var(--bench);color:var(--ink);width:150px}
+.quiz input[type=text]:disabled{color:var(--muted)}
+.quiz .fb{margin-top:10px;padding:9px 12px;border-radius:3px;font-size:.95rem;line-height:1.5;color:var(--ink-2);border-left:3px solid var(--rule-strong);background:var(--bench)}
+.quiz .fb.ok{border-left-color:var(--zero)}
+.quiz .fb.no{border-left-color:var(--one)}
+.quiz .fb b{color:var(--ink)}
+.quiz .acts{margin-top:9px;display:flex;gap:6px;flex-wrap:wrap}
+.quiz .sol{margin-top:10px;font-size:.95rem;line-height:1.5;color:var(--ink-2);border-top:1px solid var(--rule);padding-top:9px}
+.quiz .sol b{color:var(--ink)}
+</style>
+<style>
+/* ---- high-school modules: friendlier density ---- */
+body{font-size:18.5px;line-height:1.62}
+.prose{max-width:60ch}
+h2{font-size:clamp(1.55rem,3.2vw,2.1rem)}
+.msg{font-size:1.28rem}
+.sdek{font-size:1.04rem}
+.bench .bbody{padding:20px 18px}
+.btn{font-size:.84rem;padding:8px 13px}
+.btn.big{font-size:.95rem;padding:10px 16px}
+.ctrl > label{font-size:.7rem}
+input[type=range]::-webkit-slider-thumb{width:18px;height:18px;margin-top:-7.5px}
+input[type=range]::-moz-range-thumb{width:16px;height:16px}
+.series{font-family:"IBM Plex Mono",monospace;font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);margin-bottom:14px}
+.series b{color:var(--zero);font-weight:500}
+.hook{display:grid;grid-template-columns:auto minmax(0,1fr);gap:14px 18px;align-items:start;border:1px solid var(--rule);border-left:3px solid var(--one);background:var(--surface);border-radius:0 4px 4px 0;padding:16px 20px;margin:24px 0}
+.hook .hk{font-family:"IBM Plex Mono",monospace;font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;color:var(--one);padding-top:4px;white-space:nowrap}
+.hook p{margin:0;font-size:1.02rem;color:var(--ink-2)}
+.hook p b{color:var(--ink)}
+.home{border:1px solid var(--rule);border-radius:4px;background:var(--surface);margin:26px 0;overflow:hidden}
+.home .hh{padding:10px 18px;background:var(--surface-2);border-bottom:1px solid var(--rule);font-family:"IBM Plex Mono",monospace;font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.home .hh b{color:var(--ink);font-weight:500}
+.home .hb{padding:16px 18px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.6fr);gap:18px}
+.home h5{font-family:Archivo,sans-serif;font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 0 6px}
+.home ul,.home ol{margin:0;padding-left:1.15em;font-size:.98rem;color:var(--ink-2)}
+.home li{margin:4px 0}
+.home .why{grid-column:1/-1;font-size:.98rem;color:var(--ink-2);border-top:1px solid var(--rule);padding-top:12px}
+.home .why b{color:var(--ink)}
+@media (max-width:700px){.home .hb{grid-template-columns:1fr}.hook{grid-template-columns:1fr;gap:6px}}
+details.teacher{margin:14px 0 0;border:1px dashed var(--rule-strong);border-radius:3px;background:transparent}
+details.teacher>summary{cursor:pointer;padding:7px 12px;font-family:"IBM Plex Mono",monospace;font-size:.66rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);list-style:none;display:flex;gap:8px;align-items:center}
+details.teacher>summary::-webkit-details-marker{display:none}
+details.teacher>summary::before{content:"+";color:var(--phase);font-weight:600}
+details.teacher[open]>summary::before{content:"\2212"}
+details.teacher>.tb{padding:2px 14px 12px;font-size:.93rem;line-height:1.55;color:var(--ink-2);border-top:1px dashed var(--rule)}
+details.teacher>.tb b{color:var(--ink)}
+.coinrow{display:flex;flex-wrap:wrap;gap:5px}
+.coin{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:"IBM Plex Mono",monospace;font-size:.7rem;font-weight:600;color:#fff;background:var(--faint)}
+.coin.z{background:var(--zero)}.coin.o{background:var(--one)}
+.bigpct{font-family:Archivo,sans-serif;font-weight:700;font-size:2.4rem;letter-spacing:-.02em;line-height:1;color:var(--ink);font-variant-numeric:tabular-nums}
+.bigpct small{font-family:"IBM Plex Mono",monospace;font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);display:block;margin-top:6px;font-weight:400}
+.uses{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.use{border:1px solid var(--rule);border-radius:4px;background:var(--surface);padding:14px 16px}
+.use b{display:block;font-family:Archivo,sans-serif;font-size:.98rem;color:var(--ink);margin-bottom:4px}
+.use small{display:block;font-size:.92rem;color:var(--muted);line-height:1.45}
+.use .n{font-family:"IBM Plex Mono",monospace;font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;color:var(--zero);display:block;margin-bottom:6px}
+.stepper{display:flex;gap:6px;flex-wrap:wrap}
+.stepper button{flex:1 1 90px}
+</style>
+<div class="top">
+  <div class="topin">
+    <div class="brand"><b>Finding an Answer with Waves</b> &nbsp;/&nbsp; high school</div>
+    <nav class="tocbar" id="toc" aria-label="Sections"></nav>
+  </div>
+</div>
+
+<div class="wrap">
+
+<header class="hero">
+  <div>
+    <div class="series"><b>Quantum for high school</b> · page 2 of 3</div>
+    <div class="kicker">How a quantum computer finds an answer</div>
+    <h1>Finding an answer with waves</h1>
+    <p class="stand">A normal computer checks possibilities one at a time. A quantum computer gives every possibility a score, lets the scores add and cancel like waves, and reads out whatever is left standing. This page builds that idea from ripples in a pond to a search that finds one box out of four in a single try.</p>
+    <div class="assume">
+      <h4>What you need to know already</h4>
+      <ol>
+        <li><b>The arrow.</b> From page 1. A qubit is an arrow on a sphere. Its height sets the chance of reading 0, and it has a hidden direction that looking cannot see but turning can.</li>
+        <li><b>Waves.</b> Two waves that rise together make a bigger wave. Two waves where one rises as the other falls cancel out. You have seen this with ripples or with sound.</li>
+        <li><b>Squaring.</b> A score of −0.5 and a score of +0.5 both square to 0.25. That one fact is what makes negative scores useful.</li>
+      </ol>
+    </div>
+  </div>
+  <div class="herofig">
+    <div class="cvwrap">
+      <canvas id="heroWave" width="340" height="300" aria-label="Two waves sliding past each other, adding and cancelling"></canvas>
+      <div class="herohint" id="heroCap">two waves, adding and cancelling</div>
+    </div>
+  </div>
+</header>
+
+<!-- ============ 1 ============ -->
+<section id="s1" data-title="01 Waves">
+  <div class="shead">
+    <div class="snum">01</div>
+    <div>
+      <h2>Waves add, and waves cancel</h2>
+      <p class="sdek">Noise-cancelling headphones work by making a second sound wave that is the first one flipped upside down. Added together, they make silence.</p>
+    </div>
+  </div>
+  <div class="body"><div></div><div class="col">
+    <div class="prose">
+      <p class="msg">Two waves in step make a bigger wave. Two waves out of step make nothing.</p>
+      <p>The slider shifts the second wave along. At zero shift the two waves sit on top of each other and their sum is twice as tall. At a half-wave shift, which is 180 degrees, one rises exactly where the other falls, and the sum is a flat line. Everything on this page is a way of using that flat line.</p>
+    </div>
+    <div class="bench">
+      <div class="blab"><span class="dot"></span><b>Try it</b> &nbsp;Two waves and their sum</div>
+      <div class="bbody">
+        <div class="row" style="align-items:center">
+          <div class="cvwrap grow" style="flex:1 1 380px">
+            <canvas id="wvCanvas" width="480" height="260" aria-label="Wave A, wave B shifted by the slider, and their sum"></canvas>
+          </div>
+          <div class="grow stack" style="flex:1 1 240px">
+            <div class="ctrl"><label for="wvPh">Shift between the waves <span class="v" id="wvPhV"></span></label><input type="range" id="wvPh" min="0" max="360" value="60" step="1"></div>
+            <div class="bigpct" id="wvPct">1.73<small>height of the sum, where 2 is the most</small></div>
+            <div class="btnrow" id="wvPresets"></div>
+          </div>
+        </div>
+      </div>
+      <div class="bfoot"><b>The number to remember.</b> The shift is an angle, from 0 to 360 degrees. In step is 0. Fully out of step is 180. Waves are the reason the hidden direction from page 1 was also an angle.</div>
+    </div>
+    <details class="teacher"><summary>For teachers</summary><div class="tb">Superposition of two sinusoids of equal amplitude: sin(x) + sin(x + φ) = 2 cos(φ/2) sin(x + φ/2). The envelope 2 cos(φ/2) is what the readout reports. The important idea for what follows is that a phase is an angle and that 180° means cancellation. Students who know the identity can verify the readout; those who do not can read it off the picture.</div></details>
+    <div class="quiz" data-q="q1"></div>
+  </div></div>
+</section>
+
+<!-- ============ 2 ============ -->
+<section id="s2" data-title="02 Phase">
+  <div class="shead">
+    <div class="snum">02</div>
+    <div>
+      <h2>The hidden direction is where a wave is in its cycle</h2>
+      <p class="sdek">On page 1 the arrow could point toward you or away from you without changing the odds. That compass direction is the same thing as the shift of a wave.</p>
+    </div>
+  </div>
+  <div class="body"><div></div><div class="col">
+    <div class="prose">
+      <p class="msg">Spin the arrow around the vertical axis and a wave slides along with it. The height stays put, so the odds stay put.</p>
+      <p>Physicists call the compass direction of the arrow its phase, and they call the shift of a wave its phase too. That is not a coincidence. A qubit whose arrow points sideways is a wave, and its hidden direction says where in the cycle that wave is. When two such waves meet, they add or cancel depending on the difference between their directions.</p>
+    </div>
+    <div class="bench">
+      <div class="blab"><span class="dot"></span><b>Try it</b> &nbsp;The arrow and its wave</div>
+      <div class="bbody">
+        <div class="row" style="align-items:center">
+          <div class="cvwrap" style="flex:0 0 auto">
+            <canvas id="phSphere" width="250" height="250" aria-label="A sideways arrow spun around the vertical axis"></canvas>
+            <div class="cvcap">drag to look around</div>
+          </div>
+          <div class="cvwrap grow" style="flex:1 1 300px">
+            <canvas id="phWave" width="380" height="180" aria-label="A wave whose position follows the arrow's hidden direction"></canvas>
+          </div>
+          <div class="grow stack" style="flex:1 1 200px">
+            <div class="ctrl"><label for="phSl">Hidden direction <span class="v" id="phV"></span></label><input type="range" id="phSl" min="0" max="360" value="60" step="1"></div>
+            <div class="bigpct" id="phPct">50%<small>chance of reading 0, unchanged</small></div>
+          </div>
+        </div>
+      </div>
+      <div class="bfoot"><b>Two names, one thing.</b> Hidden direction of the arrow, or phase of the wave. From here on the page uses the word phase.</div>
+    </div>
+    <details class="teacher"><summary>For teachers</summary><div class="tb">The state (|0⟩ + e<sup>iφ</sup>|1⟩)/√2 with φ the azimuth of the Bloch vector. The wave drawn is cos(x + φ), a visual stand-in for the complex amplitude e<sup>iφ</sup>. It is a metaphor with a precise core: relative phases between amplitudes combine exactly as phases of interfering waves, which is the content of section 03.</div></details>
+  </div></div>
+</section>
+
+<!-- ============ 3 ============ -->
+<section id="s3" data-title="03 Two roads">
+  <div class="shead">
+    <div class="snum">03</div>
+    <div>
+      <h2>Two roads to the same place</h2>
+      <p class="sdek">Send a qubit down two roads at once, delay one road, and let the roads rejoin. Which detector lights up depends only on the delay.</p>
+    </div>
+  </div>
+  <div class="body"><div></div><div class="col">
+    <div class="prose">
+      <p class="msg">Tip sideways to split the arrow onto two roads. Add a phase on one road. Tip sideways again to rejoin. The waves from the two roads add or cancel at the detectors.</p>
+      <div class="eq">chance of detector 0 = (1 + cos(delay)) / 2</div>
+      <p>Slide the delay. At zero delay the roads rejoin in step and detector 0 fires every time. At 180 degrees they rejoin out of step and detector 1 fires every time. The delay never changed the odds while the qubit was on the road. It only changed what happened at the rejoin. This is the whole trick, and every quantum algorithm uses it.</p>
+    </div>
+    <div class="bench">
+      <div class="blab"><span class="dot"></span><b>Try it</b> &nbsp;The fork in the road</div>
+      <div class="bbody">
+        <div class="cvwrap"><canvas id="mzCanvas" width="760" height="230" aria-label="A qubit split onto two roads, a delay on one road, and two detectors where they rejoin"></canvas></div>
+        <div class="row" style="margin-top:14px;align-items:center">
+          <div class="grow stack" style="flex:2 1 300px">
+            <div class="ctrl"><label for="mzPh">Delay on the upper road <span class="v" id="mzPhV"></span></label><input type="range" id="mzPh" min="0" max="360" value="110" step="1"></div>
+            <div class="btnrow"><button class="btn big" id="mzLook">Send one qubit</button><button class="btn ghost" id="mzMany">Send 200</button><button class="btn ghost" id="mzSweep">Sweep the delay</button></div>
+            <div class="bigread" id="mzread"></div>
+          </div>
+          <div class="cvwrap grow" style="flex:1 1 300px">
+            <canvas id="mzFringe" width="380" height="200" aria-label="Chance of each detector versus the delay"></canvas>
+          </div>
+        </div>
+      </div>
+      <div class="bfoot"><b>Where is the qubit while it is on the road?</b> On both roads, with a score for each. That is not a trick of language. If you block one road, the cancellation stops and both detectors fire half the time. The blank line at 180 degrees only happens when both roads are open.</div>
+    </div>
+    <details class="teacher"><summary>For teachers</summary><div class="tb">The Mach–Zehnder interferometer, or equivalently the circuit H · R<sub>z</sub>(φ) · H. Output probability P(0) = cos²(φ/2) = (1 + cos φ)/2. The which-path point in the footer is the standard argument that the superposition is physical: removing one arm destroys the interference. The word "score" is introduced here and made precise in section 04 as the amplitude.</div></details>
+    <div class="quiz" data-q="q2"></div>
+  </div></div>
+</section>
+
+<!-- ============ 4 ============ -->
+<section id="s4" data-title="04 Scores">
+  <div class="shead">
+    <div class="snum">04</div>
+    <div>
+      <h2>A score for every pattern</h2>
+      <p class="sdek">Two switches make four patterns. Two qubits give each of those four patterns a score. The chance of reading a pattern is its score squared, and scores can be negative.</p>
+    </div>
+  </div>
+  <div class="body"><div></div><div class="col">
+    <div class="prose">
+      <p class="msg">Chance = score × score. A negative score is just as likely as a positive one, but negative and positive scores can cancel.</p>
+      <p>Below are four scores, one per pattern. Drag them. The chances update, and they always add to 100 percent, so the page keeps the scores in balance for you. Notice that a score of −0.5 gives the same chance as +0.5. Now read the next section, where a negative score is made to cancel a positive one on purpose.</p>
+    </div>
+    <div class="bench">
+      <div class="blab"><span class="dot"></span><b>Try it</b> &nbsp;Four patterns, four scores</div>
+      <div class="bbody">
+        <div class="row" style="align-items:flex-start">
+          <div class="cvwrap grow" style="flex:1 1 380px">
+            <canvas id="scCanvas" width="460" height="250" aria-label="Signed score bars for the four patterns and the chances they give"></canvas>
+          </div>
+          <div class="grow stack" style="flex:1 1 240px">
+            <div class="ctrl"><label for="sc0">Score for 00 <span class="v" id="sc0V"></span></label><input type="range" id="sc0" min="-100" max="100" value="50" step="1"></div>
+            <div class="ctrl"><label for="sc1">Score for 01 <span class="v" id="sc1V"></span></label><input type="range" id="sc1" min="-100" max="100" value="50" step="1"></div>
+            <div class="ctrl"><label for="sc2">Score for 10 <span class="v" id="sc2V"></span></label><input type="range" id="sc2" min="-100" max="100" value="-50" step="1"></div>
+            <div class="ctrl"><label for="sc3">Score for 11 <span class="v" id="sc3V"></span></label><input type="range" id="sc3" min="-100" max="100" value="50" step="1"></div>
+            <div class="btnrow"><button class="btn" id="scLook">Look</button><button class="btn ghost" id="scEq">All equal</button></div>
+            <div class="bigread" id="scread"></div>
+          </div>
+        </div>
+      </div>
+      <div class="bfoot"><b>The rule that makes quantum computing possible.</b> Ordinary chances can only add. Scores can subtract. A quantum computer is a machine for arranging the scores so that the wrong answers subtract to zero before anyone looks.</div>
+    </div>
+    <details class="teacher"><summary>For teachers</summary><div class="tb">Real amplitudes for a two-qubit state, with the Born rule P = |a|². The bench renormalizes after each drag so that Σ a² = 1 is always visible. Complex phases are suppressed; every example on this page, including Grover on four items, needs only real amplitudes with signs, which is a deliberate simplification that loses nothing for these cases.</div></details>
+    <div class="quiz" data-q="q3"></div>
+  </div></div>
+</section>
+
+<!-- ============ 5 ============ -->
+<section id="s5" data-title="05 Four boxes">
+  <div class="shead">
+    <div class="snum">05</div>
+    <div>
+      <h2>Find the prize in one try</h2>
+      <p class="sdek">Four boxes, one prize. Opening boxes one at a time takes 2.25 tries on average. With scores that cancel, it takes one.</p>
+    </div>
+  </div>
+  <div class="body"><div></div><div class="col">
+    <div class="prose">
+      <p class="msg">Give every box the same score. Flip the sign of the prize box. Flip every score about the average. The prize box ends up with all of the chance.</p>
+      <p>You are not allowed to see which box has the prize. You are only allowed to ask a machine one question, and the machine answers by flipping the sign of the prize box's score. That sounds useless, since a sign flip does not change any chance. Then the "flip about the average" move turns the one negative score into the only score left. Step through it and watch the bars.</p>
+    </div>
+    <div class="bench">
+      <div class="blab"><span class="dot"></span><b>Try it</b> &nbsp;The four-box search</div>
+      <div class="bbody">
+        <div class="row" style="align-items:flex-start">
+          <div class="cvwrap grow" style="flex:1 1 400px">
+            <canvas id="grCanvas" width="480" height="250" aria-label="The four scores at each step of the search"></canvas>
+          </div>
+          <div class="grow stack" style="flex:1 1 240px">
+            <h4>Where is the prize?</h4>
+            <div class="btnrow" id="grmark"></div>
+            <h4 style="margin-top:8px">Step</h4>
+            <div class="stepper"><button class="btn" id="grprev">← Back</button><button class="btn on" id="grnext">Next →</button></div>
+            <div class="verdict" id="grverdict"></div>
+          </div>
+        </div>
+      </div>
+      <div class="bfoot"><b>What "flip about the average" means.</b> Work out the average of the four scores. Every score is moved to the other side of that average by the same distance it was from it. Three scores that were slightly above the average land on zero. The one that was far below lands far above. Try it with the numbers: average of 0.5, 0.5, −0.5, 0.5 is 0.25.</div>
+    </div>
+    <details class="teacher"><summary>For teachers</summary><div class="tb">Grover's algorithm for N = 4, M = 1, which is exact after one iteration because ⌊(π/4)√4⌋ = 1. The oracle is a phase flip on the marked state and the diffusion operator 2|s⟩⟨s| − I is the "inversion about the mean". For larger N the speedup is √N, not exponential, and students should hear that. The 2.25 figure is the expected number of sequential openings with four boxes: (1 + 2 + 3 + 3)/4.</div></details>
+    <div class="quiz" data-q="q4"></div>
+  </div></div>
+</section>
+
+<!-- ============ 6 ============ -->
+<section id="s6" data-title="06 So what">
+  <div class="shead">
+    <div class="snum">06</div>
+    <div>
+      <h2>What it is good for, and what it is not</h2>
+      <p class="sdek">A quantum computer is not a faster computer. It is a different one, and it wins only on problems where the wrong answers can be made to cancel.</p>
+    </div>
+  </div>
+  <div class="body"><div></div><div class="col">
+    <div class="uses">
+      <div class="use"><span class="n">Chemistry and materials</span><b>Simulating molecules</b><small>Electrons in a molecule are themselves quantum. A quantum computer can keep their scores directly, where a normal computer runs out of memory at a few dozen atoms.</small></div>
+      <div class="use"><span class="n">Codes</span><b>Breaking and making them</b><small>The locks that protect online banking rely on a math problem that a large quantum computer could solve. New locks that resist it are already being rolled out.</small></div>
+      <div class="use"><span class="n">Searching and optimizing</span><b>Modest speedups</b><small>The four-box trick scales: finding one item among a million takes about a thousand tries instead of half a million. Useful, but not magic.</small></div>
+      <div class="use"><span class="n">Not everything</span><b>Email, games, video</b><small>No help at all. Most everyday computing has no wrong answers to cancel, and a normal computer is far cheaper and far more reliable.</small></div>
+    </div>
+    <div class="hook">
+      <div class="hk">Why this matters</div>
+      <p><b>The hard part is keeping the scores.</b> Every score on this page lives in the hidden direction of an arrow, and hidden directions get scrambled by every stray field that reaches the qubit. Real quantum computers today keep their scores for a fraction of a second, which is why they hold only a few hundred to a few thousand qubits and make mistakes. Page 3 shows that the same fragility, turned around, makes a qubit a superb sensor.</p>
+    </div>
+    <div class="home">
+      <div class="hh"><b>Try this at home</b> &nbsp;hear two waves cancel</div>
+      <div class="hb">
+        <div><h5>You need</h5><ul><li>Two phones, or a phone and a laptop</li><li>A tone generator app or website playing a steady note, about 400 Hz</li><li>A quiet room</li></ul></div>
+        <div>
+          <h5>Steps</h5>
+          <ol><li>Play the same steady tone on both devices at the same volume. Put them about a metre apart on a table.</li><li>Walk slowly along a line between them, keeping one ear at table height.</li><li>You will hear the tone get loud, then quiet, then loud again every 40 centimetres or so. The quiet spots are where the two waves arrive out of step and cancel.</li><li>Turn off one device. The quiet spots vanish. That is the "block one road" experiment from section 03.</li></ol>
+        </div>
+        <div class="why"><b>Why this one.</b> It is the fork in the road, done with sound. Two sources, one listener, and a delay set by the difference in distance. The quiet spots are the detector-1 outcomes.</div>
+      </div>
+    </div>
+    <div class="verdict" id="quizTally" style="margin-top:22px"></div>
+    <div class="prose" style="margin-top:22px">
+      <p>Next: <em>A Qubit as a Sensor</em>, where the fragile phase becomes the point. Let the world turn the arrow, and reading it tells you the field the qubit sits in.</p>
+    </div>
+  </div></div>
+</section>
+
+<footer>
+  Page 2 of a three-page introduction to qubits for high-school students.<br>
+  All figures are computed live in the browser. The four-box search reaches 100% for every choice of prize box, checked against a direct calculation.
+</footer>
+</div>
+<style>canvas{height:auto}</style>
+<script>
+(function(){
+"use strict";
+const REDUCED=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+function norm3(a){const m=Math.hypot(a[0],a[1],a[2])||1;return [a[0]/m,a[1]/m,a[2]/m];}
+const D2R=Math.PI/180, R2D=180/Math.PI;
+const KS=[2,3,4,5,6,8,12,16,32,64];
+function gauss(){let u=0,v=0;while(u===0)u=Math.random();while(v===0)v=Math.random();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v);}
+function tocBuild(){
+  const toc=document.getElementById("toc");if(!toc)return;
+  const secs=[].slice.call(document.querySelectorAll("section[data-title]"));
+  secs.forEach(function(s){const a=document.createElement("a");a.href="#"+s.id;a.textContent=s.dataset.title;a.dataset.for=s.id;toc.appendChild(a);});
+  const links={};[].forEach.call(toc.children,a=>links[a.dataset.for]=a);
+  if("IntersectionObserver" in window){
+    const io=new IntersectionObserver(function(ents){ents.forEach(function(e){if(e.isIntersecting){
+      Object.keys(links).forEach(k=>links[k].classList.remove("on"));links[e.target.id].classList.add("on");}});},{rootMargin:"-45% 0px -50% 0px"});
+    secs.forEach(s=>io.observe(s));
+  }
+}
+/* ================= theme-aware colors ================= */
+const CV={};
+function readVars(){
+  const cs=getComputedStyle(document.documentElement);
+  ["--ink","--ink-2","--muted","--faint","--rule","--rule-strong","--zero","--one","--phase","--surface","--bench","--surface-2","--grid","--sphere"]
+    .forEach(k=>CV[k]=cs.getPropertyValue(k).trim());
+}
+readVars();
+const C=k=>CV["--"+k];
+const redraws=[];
+const redrawAll=()=>{readVars();redraws.forEach(f=>{try{f();}catch(e){}});};
+if(window.matchMedia){
+  const mq=window.matchMedia("(prefers-color-scheme: dark)");
+  (mq.addEventListener?mq.addEventListener("change",redrawAll):mq.addListener(redrawAll));
+}
+new MutationObserver(redrawAll).observe(document.documentElement,{attributes:true,attributeFilter:["data-theme"]});
+
+/* ================= canvas helpers ================= */
+function setup(cv){
+  const w=cv.width,h=cv.height,dpr=Math.min(window.devicePixelRatio||1,2);
+  cv.style.width=w+"px";cv.style.height=h+"px";
+  cv.width=Math.round(w*dpr);cv.height=Math.round(h*dpr);
+  const g=cv.getContext("2d");g.scale(dpr,dpr);
+  cv._w=w;cv._h=h;return g;
+}
+function clear(g,cv,bg){g.save();g.setTransform(1,0,0,1,0,0);g.clearRect(0,0,cv.width,cv.height);g.restore();
+  if(bg){g.fillStyle=bg;g.fillRect(0,0,cv._w,cv._h);} }
+function mono(g,size,weight){g.font=(weight||400)+" "+size+"px 'IBM Plex Mono', ui-monospace, monospace";}
+function dash(g,arr){g.setLineDash(arr||[]);}
+function line(g,x1,y1,x2,y2,col,w){g.strokeStyle=col;g.lineWidth=w||1;g.beginPath();g.moveTo(x1,y1);g.lineTo(x2,y2);g.stroke();}
+function rr(g,x,y,w,h,r){g.beginPath();
+  if(g.roundRect){g.roundRect(x,y,w,h,r);}else{g.rect(x,y,w,h);} }
+
+/* ================= Bloch sphere ================= */
+function Sphere(cv,opt){
+  opt=opt||{};
+  const g=setup(cv),W=cv._w,H=cv._h;
+  const S={az:opt.az!==undefined?opt.az:-0.72,el:opt.el!==undefined?opt.el:0.30,
+           r:[0,0,1],len:1,axis:null,axisT:0,cap:opt.cap,
+           labels:opt.labels!==false,small:!!opt.small,ghost:null};
+  const R=Math.min(W,H)*(opt.scale||0.345);
+  const cxp=W/2, cyp=H/2+(opt.dy||0);
+
+  function basis(){
+    const ca=Math.cos(S.az),sa=Math.sin(S.az),ce=Math.cos(S.el),se=Math.sin(S.el);
+    return {right:[-sa,ca,0],up:[-ca*se,-sa*se,ce],fwd:[ca*ce,sa*ce,se]};
+  }
+  function P(p,b){
+    const d=p[0]*b.fwd[0]+p[1]*b.fwd[1]+p[2]*b.fwd[2];
+    return {x:cxp+R*(p[0]*b.right[0]+p[1]*b.right[1]+p[2]*b.right[2]),
+            y:cyp-R*(p[0]*b.up[0]+p[1]*b.up[1]+p[2]*b.up[2]), d:d};
+  }
+  function circlePts(kind,a){
+    const pts=[];
+    for(let i=0;i<=96;i++){
+      const t=i/96*Math.PI*2;
+      if(kind==="lat"){const s=Math.sin(a);pts.push([s*Math.cos(t),s*Math.sin(t),Math.cos(a)]);}
+      else{pts.push([Math.sin(t)*Math.cos(a),Math.sin(t)*Math.sin(a),Math.cos(t)]);}
+    }
+    return pts;
+  }
+  function poly(pts,b,colFront,colBack,w){
+    for(let i=0;i<pts.length-1;i++){
+      const p1=P(pts[i],b),p2=P(pts[i+1],b);
+      const front=(p1.d+p2.d)/2>0;
+      g.strokeStyle=front?colFront:colBack;g.lineWidth=w||1;
+      g.beginPath();g.moveTo(p1.x,p1.y);g.lineTo(p2.x,p2.y);g.stroke();
+    }
+  }
+  function arrow(from,to,col,b,w){
+    const a=P(from,b),c=P(to,b);
+    g.strokeStyle=col;g.lineWidth=w||2.4;g.lineCap="round";
+    g.beginPath();g.moveTo(a.x,a.y);g.lineTo(c.x,c.y);g.stroke();g.lineCap="butt";
+    const ang=Math.atan2(c.y-a.y,c.x-a.x),hl=9,hw=4.4;
+    g.fillStyle=col;g.beginPath();
+    g.moveTo(c.x,c.y);
+    g.lineTo(c.x-hl*Math.cos(ang-0.42),c.y-hl*Math.sin(ang-0.42));
+    g.lineTo(c.x-hl*Math.cos(ang+0.42),c.y-hl*Math.sin(ang+0.42));
+    g.closePath();g.fill();
+  }
+  function tag(p,txt,col,b,off){
+    const q=P(p,b);mono(g,S.small?9:10.5,500);g.fillStyle=col;
+    g.textAlign="center";g.textBaseline="middle";
+    g.fillText(txt,q.x+(off?off[0]:0),q.y+(off?off[1]:0));
+  }
+
+  S.draw=function(){
+    const b=basis();
+    clear(g,cv,null);
+    /* ball */
+    g.fillStyle=C("surface");g.globalAlpha=0.55;
+    g.beginPath();g.arc(cxp,cyp,R,0,7);g.fill();g.globalAlpha=1;
+    /* equatorial disc */
+    const eq=circlePts("lat",Math.PI/2);
+    g.beginPath();
+    eq.forEach((p,i)=>{const q=P(p,b);i?g.lineTo(q.x,q.y):g.moveTo(q.x,q.y);});
+    g.closePath();g.fillStyle=C("zero");g.globalAlpha=0.055;g.fill();g.globalAlpha=1;
+
+    const back=hex(C("sphere"),0.16), front=hex(C("sphere"),0.42);
+    if(!S.small){
+      [Math.PI/4,Math.PI/2,3*Math.PI/4].forEach(a=>poly(circlePts("lat",a),b,front,back,a===Math.PI/2?1.25:0.8));
+      for(let k=0;k<4;k++)poly(circlePts("lon",k*Math.PI/4),b,hex(C("sphere"),0.26),hex(C("sphere"),0.10),0.8);
+    }else{
+      poly(circlePts("lat",Math.PI/2),b,front,back,1.1);
+      poly(circlePts("lon",0),b,hex(C("sphere"),0.2),hex(C("sphere"),0.08),0.8);
+      poly(circlePts("lon",Math.PI/2),b,hex(C("sphere"),0.2),hex(C("sphere"),0.08),0.8);
+    }
+    /* rim */
+    g.strokeStyle=hex(C("sphere"),0.5);g.lineWidth=1;g.beginPath();g.arc(cxp,cyp,R,0,7);g.stroke();
+
+    /* axes */
+    const AX=[[[1,0,0],"x"],[[0,1,0],"y"],[[0,0,1],"z"]];
+    AX.forEach(function(A){
+      const p1=P(A[0].map(v=>-v*1.14),b),p2=P(A[0].map(v=>v*1.14),b);
+      dash(g,[3,3]);line(g,p1.x,p1.y,p2.x,p2.y,hex(C("sphere"),0.35),1);dash(g);
+    });
+    if(S.labels){
+      tag([0,0,1.34],opt.pole0||"|0⟩",C("zero"),b);
+      tag([0,0,-1.34],opt.pole1||"|1⟩",C("one"),b);
+      if(!S.small&&!opt.noSide){
+        tag([1.3,0,0],opt.side||"|+⟩",C("muted"),b);
+        tag([-1.3,0,0],opt.side2||"|−⟩",C("muted"),b);
+        tag([0,1.3,0],opt.side3||"|i⟩",C("muted"),b);
+        tag([0,-1.3,0],opt.side4||"|−i⟩",C("muted"),b);
+      }
+    }
+
+    /* rotation axis being applied */
+    if(S.axis&&S.axisT>0.02){
+      const n=norm3(S.axis);
+      const p1=P(n.map(v=>-v*1.24),b),p2=P(n.map(v=>v*1.24),b);
+      g.globalAlpha=Math.min(1,S.axisT);
+      dash(g,[5,4]);line(g,p1.x,p1.y,p2.x,p2.y,C("phase"),1.8);dash(g);
+      g.globalAlpha=1;
+    }
+
+    const r=S.r,L=S.len;
+    const rv=[r[0]*L,r[1]*L,r[2]*L];
+
+    /* phase construction */
+    if(opt.showPhase&&L>0.02&&Math.hypot(rv[0],rv[1])>0.03){
+      const foot=[rv[0],rv[1],0];
+      dash(g,[2,3]);
+      const a=P(rv,b),f=P(foot,b),o=P([0,0,0],b);
+      line(g,a.x,a.y,f.x,f.y,hex(C("phase"),0.75),1);
+      line(g,o.x,o.y,f.x,f.y,hex(C("phase"),0.75),1);
+      dash(g);
+      const phi=Math.atan2(rv[1],rv[0]);
+      const arc=[];for(let i=0;i<=40;i++){const t=phi*i/40;arc.push([0.36*Math.cos(t),0.36*Math.sin(t),0]);}
+      g.strokeStyle=C("phase");g.lineWidth=1.6;g.beginPath();
+      arc.forEach((p,i)=>{const q=P(p,b);i?g.lineTo(q.x,q.y):g.moveTo(q.x,q.y);});g.stroke();
+      tag([0.52*Math.cos(phi/2),0.52*Math.sin(phi/2),0.04],"φ",C("phase"),b);
+      /* theta arc */
+      const st=Math.hypot(rv[0],rv[1]),ct=rv[2],th=Math.atan2(st,ct),ux=rv[0]/(st||1),uy=rv[1]/(st||1);
+      const arc2=[];for(let i=0;i<=40;i++){const t=th*i/40;arc2.push([0.5*Math.sin(t)*ux,0.5*Math.sin(t)*uy,0.5*Math.cos(t)]);}
+      g.strokeStyle=C("zero");g.lineWidth=1.6;g.beginPath();
+      arc2.forEach((p,i)=>{const q=P(p,b);i?g.lineTo(q.x,q.y):g.moveTo(q.x,q.y);});g.stroke();
+      tag([0.63*Math.sin(th/2)*ux,0.63*Math.sin(th/2)*uy,0.63*Math.cos(th/2)],"θ",C("zero"),b);
+    }
+
+    /* point cloud */
+    if(S.points&&S.points.length){
+      S.points.forEach(function(p){const q=P(p,b);g.fillStyle=hex(p[3]||C("zero"),q.d>0?0.8:0.22);g.beginPath();g.arc(q.x,q.y,2.1,0,7);g.fill();});
+    }
+    /* ghost (previous state) */
+    if(S.ghost){
+      g.globalAlpha=0.28;arrow([0,0,0],S.ghost,C("muted"),b,1.8);g.globalAlpha=1;
+    }
+
+    /* state vector */
+    if(S.noArrow){}else if(L<0.035){
+      const o=P([0,0,0],b);
+      g.fillStyle=C("muted");g.beginPath();g.arc(o.x,o.y,4,0,7);g.fill();
+      g.strokeStyle=hex(C("muted"),0.5);dash(g,[2,3]);g.lineWidth=1;
+      g.beginPath();g.arc(cxp,cyp,R*0.985,0,7);g.stroke();dash(g);
+      mono(g,S.small?9:9.5,500);g.fillStyle=C("muted");g.textAlign="center";g.textBaseline="middle";
+      g.fillText("no direction",cxp,cyp+19);
+    }else{
+      const col=rv[2]>=0?C("zero"):C("one");
+      arrow([0,0,0],rv,col,b,2.6);
+      if(L<0.985){
+        const q=P(rv,b);g.strokeStyle=hex(col,0.5);g.lineWidth=1;dash(g,[2,2]);
+        const e=P(r,b);g.beginPath();g.moveTo(q.x,q.y);g.lineTo(e.x,e.y);g.stroke();dash(g);
+      }
+    }
+    if(S.second){arrow([0,0,0],S.second.r,S.second.c||C("phase"),b,2.6);
+      if(S.second.label){tag(S.second.r.map(v=>v*1.18),S.second.label,S.second.c||C("phase"),b);}}
+    if(S.mainLabel){tag(rv.map(v=>v*1.18),S.mainLabel,rv[2]>=0?C("zero"):C("one"),b);}
+    if(S.cap){mono(g,9.5,500);g.fillStyle=C("faint");g.textAlign="left";g.textBaseline="top";g.fillText(S.cap,8,7);}
+  };
+
+  /* drag */
+  let drag=null;
+  cv.style.cursor="grab";
+  cv.addEventListener("pointerdown",e=>{drag={x:e.clientX,y:e.clientY,az:S.az,el:S.el};cv.setPointerCapture(e.pointerId);cv.style.cursor="grabbing";});
+  cv.addEventListener("pointermove",e=>{
+    if(!drag)return;
+    S.az=drag.az-(e.clientX-drag.x)*0.0115;
+    S.el=Math.max(-1.35,Math.min(1.35,drag.el+(e.clientY-drag.y)*0.0115));
+    S.draw();
+  });
+  const end=()=>{drag=null;cv.style.cursor="grab";};
+  cv.addEventListener("pointerup",end);cv.addEventListener("pointercancel",end);
+  redraws.push(()=>S.draw());
+  return S;
+}
+function hex(c,a){
+  c=(c||"#888").trim();
+  if(c[0]==="#"){
+    if(c.length===4)c="#"+c[1]+c[1]+c[2]+c[2]+c[3]+c[3];
+    const n=parseInt(c.slice(1),16);
+    return "rgba("+((n>>16)&255)+","+((n>>8)&255)+","+(n&255)+","+a+")";
+  }
+  if(c.indexOf("rgb")===0)return c.replace(/rgba?\(([^)]+)\)/,(m,p)=>{const v=p.split(",").map(s=>s.trim());return "rgba("+v[0]+","+v[1]+","+v[2]+","+a+")";});
+  return c;
+}
+
+/* ================= probability bars ================= */
+function bars(el,p0,p1){
+  el.innerHTML=
+   '<div class="pb"><span class="lbl">P(0)</span><span class="track"><span class="fill" style="width:'+(p0*100).toFixed(1)+'%;background:'+C("zero")+'"></span></span><span class="val">'+(p0*100).toFixed(1)+'%</span></div>'+
+   '<div class="pb"><span class="lbl">P(1)</span><span class="track"><span class="fill" style="width:'+(p1*100).toFixed(1)+'%;background:'+C("one")+'"></span></span><span class="val">'+(p1*100).toFixed(1)+'%</span></div>';
+}
+
+/* ================= chart frame helper ================= */
+function frame(g,cv,m){
+  clear(g,cv,C("bench"));
+  return {l:m.l,r:cv._w-m.r,t:m.t,b:cv._h-m.b,w:cv._w-m.l-m.r,h:cv._h-m.t-m.b};
+}
+function axisText(g,txt,x,y,align,base,col,size){
+  mono(g,size||9.5,400);g.fillStyle=col||C("muted");
+  g.textAlign=align||"center";g.textBaseline=base||"middle";g.fillText(txt,x,y);
+}
+
+/* ================= dial renderer ================= */
+function dialGeom(cv){const W=cv._w,H=cv._h;return {cx:W/2,cy:H/2,R:Math.min(W,H)*0.37};}
+function dialPt(d,angDeg,rad){const a=angDeg*D2R;return {x:d.cx+(rad===undefined?d.R:rad)*Math.sin(a),y:d.cy-(rad===undefined?d.R:rad)*Math.cos(a)};}
+function drawDial(g,cv,o){
+  const d=dialGeom(cv);
+  clear(g,cv,null);
+  /* face */
+  g.fillStyle=C("surface");g.globalAlpha=0.7;g.beginPath();g.arc(d.cx,d.cy,d.R,0,7);g.fill();g.globalAlpha=1;
+  /* cells (resolution) */
+  if(o.cells){
+    const n=Math.max(1,Math.floor(360/o.cells)), step=360/n;
+    for(let i=0;i<n;i++){
+      g.beginPath();
+      g.arc(d.cx,d.cy,d.R*1.06,(i*step-90)*D2R,((i+1)*step-90)*D2R);
+      g.arc(d.cx,d.cy,d.R*0.94,((i+1)*step-90)*D2R,(i*step-90)*D2R,true);
+      g.closePath();
+      g.fillStyle=i%2?hex(C("zero"),0.30):hex(C("zero"),0.08);g.fill();
+    }
+  }
+  /* ring */
+  g.strokeStyle=hex(C("sphere"),0.55);g.lineWidth=1.2;g.beginPath();g.arc(d.cx,d.cy,d.R,0,7);g.stroke();
+  /* ticks */
+  if(o.ticks&&o.ticks>0&&o.ticks<=128){
+    for(let i=0;i<o.ticks;i++){
+      const a=i*360/o.ticks, p1=dialPt(d,a,d.R*0.9), p2=dialPt(d,a,d.R*1.0);
+      line(g,p1.x,p1.y,p2.x,p2.y,hex(C("ink"),0.7),o.ticks>24?1:1.6);
+    }
+  }else if(o.ticks>128){
+    g.strokeStyle=hex(C("ink"),0.5);g.lineWidth=5;g.beginPath();g.arc(d.cx,d.cy,d.R*0.95,0,7);g.stroke();
+  }
+  /* fuzz wedge */
+  if(o.fuzz&&o.pointer!==null&&o.pointer!==undefined){
+    const a0=(o.pointer-o.fuzz/2-90)*D2R,a1=(o.pointer+o.fuzz/2-90)*D2R;
+    g.beginPath();g.moveTo(d.cx,d.cy);g.arc(d.cx,d.cy,d.R,a0,a1);g.closePath();
+    g.fillStyle=hex(C("one"),0.22);g.fill();
+  }
+  /* labels */
+  if(o.labels){
+    mono(g,11,500);g.textAlign="center";g.textBaseline="middle";
+    const L=o.labels, r=d.R*1.22;
+    if(L.t){g.fillStyle=L.tc||C("zero");const p=dialPt(d,0,r);g.fillText(L.t,p.x,p.y);}
+    if(L.b){g.fillStyle=L.bc||C("one");const p=dialPt(d,180,r);g.fillText(L.b,p.x,p.y);}
+    if(L.r){g.fillStyle=C("muted");const p=dialPt(d,90,r);g.fillText(L.r,p.x,p.y);}
+    if(L.l){g.fillStyle=C("muted");const p=dialPt(d,270,r);g.fillText(L.l,p.x,p.y);}
+  }
+  if(o.extra)o.extra(g,d);
+  /* pointer(s) */
+  const ptrs=o.pointers||(o.pointer!==null&&o.pointer!==undefined?[{a:o.pointer,c:o.pointerColor}]:[]);
+  ptrs.forEach(function(p){
+    const col=p.c||C("ink"), tip=dialPt(d,p.a,d.R*0.86);
+    g.strokeStyle=col;g.lineWidth=p.w||2.6;g.lineCap="round";
+    g.beginPath();g.moveTo(d.cx,d.cy);g.lineTo(tip.x,tip.y);g.stroke();g.lineCap="butt";
+    g.fillStyle=col;g.beginPath();g.arc(tip.x,tip.y,4.2,0,7);g.fill();
+    if(p.label){mono(g,10,500);g.fillStyle=col;g.textAlign="center";g.textBaseline="middle";
+      const q=dialPt(d,p.a,d.R*1.13);g.fillText(p.label,q.x,q.y);}
+  });
+  g.fillStyle=C("ink");g.beginPath();g.arc(d.cx,d.cy,3.2,0,7);g.fill();
+  if(o.cap){mono(g,9.5,500);g.fillStyle=C("faint");g.textAlign="left";g.textBaseline="top";g.fillText(o.cap,8,7);}
+}
+function dialClick(cv,fn){
+  const d=()=>dialGeom(cv);
+  let down=false;
+  function ang(e){
+    const r=cv.getBoundingClientRect(), sx=cv._w/r.width, sy=cv._h/r.height;
+    const x=(e.clientX-r.left)*sx-d().cx, y=(e.clientY-r.top)*sy-d().cy;
+    return ((Math.atan2(x,-y)*R2D)+360)%360;
+  }
+  cv.style.cursor="crosshair";
+  cv.addEventListener("pointerdown",e=>{down=true;cv.setPointerCapture(e.pointerId);fn(ang(e));});
+  cv.addEventListener("pointermove",e=>{if(down)fn(ang(e));});
+  const up=()=>{down=false;};
+  cv.addEventListener("pointerup",up);cv.addEventListener("pointercancel",up);
+}
+const p0of=thDeg=>Math.pow(Math.cos(thDeg*D2R/2),2);
+
+
+/* ================================================================
+   QUICK CHECKS - answer first, then feedback and the solution
+   quizEngine(bank, storageKey) renders every .quiz[data-q] mount
+   ================================================================ */
+function quizEngine(QUIZ,KEY){
+  let state={};
+  try{state=JSON.parse(localStorage.getItem(KEY)||"{}")||{};}catch(e){state={};}
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){}}
+  function st(id){return state[id]||(state[id]={tries:0,done:false,first:null,solved:false});}
+
+  function parseNum(s){
+    s=String(s||"").trim().replace(/,/g,"").replace(/\s+/g,"").replace(/°|%|ns$/g,"");
+    if(!s)return NaN;
+    if(/^-?[\d.]+$/.test(s))return parseFloat(s);
+    if(/^[\d.^*+\-/()]+$/.test(s)){
+      try{const v=Function('"use strict";return ('+s.replace(/\^/g,"**")+")")();return typeof v==="number"&&isFinite(v)?v:NaN;}catch(e){return NaN;}
+    }
+    return NaN;
+  }
+
+  function render(Q,mount){
+    const S=st(Q.id);
+    mount.innerHTML="";
+    const head=document.createElement("div");head.className="qh";
+    head.innerHTML='<span>Quick check · section '+Q.sec+'</span><span class="st" id="'+Q.id+'st"></span>';
+    const qt=document.createElement("div");qt.className="qt";qt.innerHTML=Q.q;
+    mount.appendChild(head);mount.appendChild(qt);
+    const fb=document.createElement("div");fb.className="fb";fb.hidden=true;
+    const acts=document.createElement("div");acts.className="acts";
+    const sol=document.createElement("div");sol.className="sol";sol.hidden=true;sol.innerHTML="<b>Solution.</b> "+Q.sol;
+    const showSol=document.createElement("button");showSol.className="btn ghost";showSol.textContent="Show solution";
+    const again=document.createElement("button");again.className="btn ghost";again.textContent="Try again";again.hidden=true;
+    let inputs=[];
+
+    function status(){
+      const el=document.getElementById(Q.id+"st");
+      if(!el)return;
+      el.textContent=S.done?(S.first?"correct first time":"correct after "+S.tries+(S.tries===1?" try":" tries")):S.solved?"solution shown":(S.tries?S.tries+(S.tries===1?" try":" tries"):"");
+      tally();
+    }
+    function finish(correct,msg){
+      S.tries++;
+      if(correct&&!S.done){S.done=true;if(S.first===null)S.first=(S.tries===1);}
+      if(!correct&&S.first===null)S.first=false;
+      save();
+      fb.hidden=false;fb.className="fb "+(correct?"ok":"no");
+      fb.innerHTML=(correct?"<b>Correct.</b> ":"<b>Not quite.</b> ")+msg;
+      if(correct){sol.hidden=false;showSol.hidden=true;again.hidden=true;inputs.forEach(i=>i.disabled=true);}
+      else{again.hidden=false;}
+      status();
+    }
+    function reveal(){S.solved=true;save();sol.hidden=false;showSol.hidden=true;status();}
+
+    if(Q.type==="mc"){
+      const opts=document.createElement("div");opts.className="opts";
+      Q.opts.forEach(function(o,i){
+        const b=document.createElement("button");b.className="opt";b.type="button";
+        b.innerHTML='<span class="L">'+"abcd"[i]+'</span><span>'+o[0]+'</span>';
+        b.onclick=function(){
+          if(S.done)return;
+          [].forEach.call(opts.children,c=>c.classList.remove("wrong"));
+          const correct=(i===Q.ans);
+          b.classList.add(correct?"right":"wrong");
+          if(correct){[].forEach.call(opts.children,c=>c.disabled=true);}
+          finish(correct,correct?"":o[1]);
+        };
+        opts.appendChild(b);inputs.push(b);
+      });
+      mount.appendChild(opts);
+      again.onclick=()=>{[].forEach.call(opts.children,c=>c.classList.remove("wrong"));fb.hidden=true;again.hidden=true;};
+    }else{
+      const row=document.createElement("div");row.className="num";
+      const inp=document.createElement("input");inp.type="text";inp.inputMode="decimal";inp.placeholder="your answer";inp.id=Q.id+"in";inp.setAttribute("aria-label","answer for "+Q.id);
+      const unit=document.createElement("span");unit.className="u";unit.textContent=Q.unit;
+      const chk=document.createElement("button");chk.className="btn";chk.textContent="Check";
+      function submit(){
+        if(S.done)return;
+        const v=parseNum(inp.value);
+        if(isNaN(v)){fb.hidden=false;fb.className="fb no";fb.innerHTML="Enter a number. Powers like <b>2^7</b> are fine.";return;}
+        if(Q.ok(v))finish(true,"");
+        else if(Q.near&&Q.near(v))finish(true,Q.nearMsg||"Close enough.");
+        else finish(false,Q.hint(v));
+      }
+      chk.onclick=submit;inp.addEventListener("keydown",e=>{if(e.key==="Enter")submit();});
+      row.appendChild(inp);row.appendChild(unit);row.appendChild(chk);
+      mount.appendChild(row);inputs.push(inp,chk);
+      again.onclick=()=>{fb.hidden=true;again.hidden=true;inp.focus();};
+    }
+    showSol.onclick=reveal;
+    acts.appendChild(again);acts.appendChild(showSol);
+    mount.appendChild(fb);mount.appendChild(acts);mount.appendChild(sol);
+    if(S.done){sol.hidden=false;showSol.hidden=true;inputs.forEach(i=>i.disabled=true);
+      if(Q.type==="mc"){const b=mount.querySelectorAll(".opt")[Q.ans];if(b)b.classList.add("right");}
+      fb.hidden=false;fb.className="fb ok";fb.innerHTML="<b>Correct.</b> Answered earlier.";}
+    else if(S.solved){sol.hidden=false;showSol.hidden=true;}
+    status();
+  }
+  function tally(){
+    const el=document.getElementById("quizTally");if(!el)return;
+    const done=QUIZ.filter(Q=>st(Q.id).done).length, first=QUIZ.filter(Q=>st(Q.id).done&&st(Q.id).first).length;
+    el.className="verdict "+(done===QUIZ.length?"good":"");
+    el.innerHTML="<b>Your quick checks.</b> "+done+" of "+QUIZ.length+" answered correctly"+(done?", "+first+" on the first try":"")+"."+
+      (done<QUIZ.length?" The unanswered ones are back in sections "+QUIZ.filter(Q=>!st(Q.id).done).map(Q=>Q.sec).join(", ")+".":" Every section's question is done.")+
+      ' <button class="btn ghost" id="quizReset" style="margin-left:8px">Reset</button>';
+    const r=document.getElementById("quizReset");
+    if(r)r.onclick=()=>{state={};save();QUIZ.forEach(Q=>{const m=document.querySelector('.quiz[data-q="'+Q.id+'"]');if(m)render(Q,m);});tally();};
+  }
+  QUIZ.forEach(Q=>{const m=document.querySelector('.quiz[data-q="'+Q.id+'"]');if(m)render(Q,m);});
+  tally();
+}
+
+/* ================= wave helpers ================= */
+function drawWaves(g,cv,phDeg,o){
+  o=o||{};
+  const A=frame(g,cv,{l:14,r:14,t:o.top||16,b:14});
+  const rows=o.sumOnly?1:3, rh=A.h/rows;
+  const ph=phDeg*D2R, cyc=o.cycles||2.2;
+  function wave(f,y0,amp,col,w,dsh,label){
+    if(dsh)g.setLineDash(dsh);g.strokeStyle=col;g.lineWidth=w;g.beginPath();
+    for(let i=0;i<=240;i++){const x=A.l+A.w*i/240,u=cyc*2*Math.PI*i/240,y=y0-amp*f(u);i?g.lineTo(x,y):g.moveTo(x,y);}
+    g.stroke();g.setLineDash([]);
+    if(label)axisText(g,label,A.l+4,y0-amp-8,"left","middle",col,9.5);
+  }
+  if(!o.sumOnly){
+    [0,1,2].forEach(k=>line(g,A.l,A.t+rh*k+rh/2,A.r,A.t+rh*k+rh/2,C("grid"),1));
+    wave(u=>Math.sin(u),A.t+rh*0.5,rh*0.34,C("zero"),2,null,"wave A");
+    wave(u=>Math.sin(u+ph),A.t+rh*1.5,rh*0.34,C("one"),2,null,"wave B, shifted "+phDeg+"°");
+    wave(u=>Math.sin(u),A.t+rh*2.5,rh*0.17,C("zero"),1,[3,3]);
+    wave(u=>Math.sin(u+ph),A.t+rh*2.5,rh*0.17,C("one"),1,[3,3]);
+    wave(u=>Math.sin(u)+Math.sin(u+ph),A.t+rh*2.5,rh*0.17,C("phase"),2.6,null,"A + B");
+  }else{
+    line(g,A.l,A.t+rh/2,A.r,A.t+rh/2,C("grid"),1);
+    wave(u=>Math.sin(u),A.t+rh/2,rh*0.2,C("zero"),1,[3,3]);
+    wave(u=>Math.sin(u+ph),A.t+rh/2,rh*0.2,C("one"),1,[3,3]);
+    wave(u=>Math.sin(u)+Math.sin(u+ph),A.t+rh/2,rh*0.2,C("phase"),2.6,null,o.label||"A + B");
+  }
+  return Math.abs(2*Math.cos(ph/2));
+}
+
+/* ================= hero ================= */
+(function(){
+  const cv=document.getElementById("heroWave"),g=setup(cv),cap=document.getElementById("heroCap");
+  let t=0;
+  function draw(){const ph=(180-180*Math.cos(t*0.35));const s=drawWaves(g,cv,Math.round(ph),{top:18});
+    cap.textContent=s>1.7?"in step: the waves add":s<0.3?"out of step: the waves cancel":"two waves, adding and cancelling";}
+  if(REDUCED){t=4;draw();return;}
+  (function loop(){t+=1/60;draw();requestAnimationFrame(loop);})();
+})();
+
+/* ================= 01 waves ================= */
+(function(){
+  const cv=document.getElementById("wvCanvas"),g=setup(cv),sl=document.getElementById("wvPh");
+  const pp=document.getElementById("wvPresets");
+  [["in step",0],["quarter",90],["half, cancel",180],["three quarters",270]].forEach(p=>{const b=document.createElement("button");b.className="btn gate";b.textContent=p[0];b.onclick=()=>{sl.value=p[1];upd();};pp.appendChild(b);});
+  function upd(){const ph=+sl.value,s=drawWaves(g,cv,ph,{});document.getElementById("wvPhV").textContent=ph+"°";
+    document.getElementById("wvPct").innerHTML=s.toFixed(2)+"<small>"+(s<0.05?"the sum is a flat line":s>1.95?"twice as tall: fully in step":"height of the sum, where 2 is the most")+"</small>";}
+  sl.oninput=upd;redraws.push(upd);upd();
+})();
+
+/* ================= 02 phase ================= */
+(function(){
+  const sph=Sphere(document.getElementById("phSphere"),{scale:0.34,pole0:"0",pole1:"1",noSide:true,showPhase:true});
+  const cv=document.getElementById("phWave"),g=setup(cv),sl=document.getElementById("phSl");
+  function upd(){const ph=+sl.value;sph.r=[Math.cos(ph*D2R),Math.sin(ph*D2R),0];sph.len=1;sph.draw();
+    const A=frame(g,cv,{l:14,r:14,t:16,b:14});line(g,A.l,A.t+A.h/2,A.r,A.t+A.h/2,C("grid"),1);
+    g.strokeStyle=hex(C("muted"),0.5);g.lineWidth=1;g.setLineDash([3,3]);g.beginPath();
+    for(let i=0;i<=240;i++){const x=A.l+A.w*i/240,y=A.t+A.h/2-A.h*0.36*Math.cos(2.2*2*Math.PI*i/240);i?g.lineTo(x,y):g.moveTo(x,y);}g.stroke();g.setLineDash([]);
+    g.strokeStyle=C("phase");g.lineWidth=2.4;g.beginPath();
+    for(let i=0;i<=240;i++){const x=A.l+A.w*i/240,y=A.t+A.h/2-A.h*0.36*Math.cos(2.2*2*Math.PI*i/240+ph*D2R);i?g.lineTo(x,y):g.moveTo(x,y);}g.stroke();
+    axisText(g,"the arrow's wave, shifted "+ph+"°",A.l+4,A.t+2,"left","middle",C("phase"),9.5);
+    axisText(g,"reference wave",A.r-4,A.b-2,"right","middle",C("muted"),9);
+    document.getElementById("phV").textContent=ph+"°";}
+  sl.oninput=upd;redraws.push(upd);upd();
+})();
+
+/* ================= 03 two roads ================= */
+(function(){
+  const cv=document.getElementById("mzCanvas"),g=setup(cv),fr=document.getElementById("mzFringe"),gf=setup(fr),sl=document.getElementById("mzPh");
+  let last=null,sweep=null;
+  const p0=ph=>(1+Math.cos(ph*D2R))/2;
+  function schematic(ph){
+    const W=cv._w;clear(g,cv,C("bench"));
+    const yU=58,yL=118,x0=40,xF=150,xJ=450,xD=560;
+    line(g,x0,(yU+yL)/2,xF,(yU+yL)/2,C("rule-strong"),2);
+    axisText(g,"qubit in",x0,(yU+yL)/2-14,"left","middle",C("muted"),9.5);
+    function tipbox(x,label){g.fillStyle=C("surface");g.strokeStyle=C("ink-2");g.lineWidth=1.3;rr(g,x-16,yU-14,32,(yL-yU)+28,4);g.fill();g.stroke();
+      mono(g,9.5,600);g.fillStyle=C("ink");g.textAlign="center";g.textBaseline="middle";g.save();g.translate(x,(yU+yL)/2);g.rotate(-Math.PI/2);g.fillText(label,0,0);g.restore();}
+    tipbox(xF,"tip sideways");tipbox(xJ,"tip sideways");
+    [yU,yL].forEach(y=>{line(g,xF+16,(yU+yL)/2,xF+40,y,C("rule-strong"),2);line(g,xF+40,y,xJ-40,y,C("rule-strong"),2);line(g,xJ-40,y,xJ-16,(yU+yL)/2,C("rule-strong"),2);});
+    axisText(g,"upper road",310,yU-24,"center","middle",C("faint"),9);axisText(g,"lower road",310,yL+18,"center","middle",C("faint"),9);
+    g.fillStyle=C("bench");g.strokeStyle=C("phase");g.lineWidth=1.5;rr(g,270,yU-13,80,26,3);g.fill();g.stroke();
+    mono(g,10.5,500);g.fillStyle=C("phase");g.textAlign="center";g.textBaseline="middle";g.fillText("delay "+ph+"°",310,yU);
+    const P=p0(ph);
+    [[yU,P,"detector 0",C("zero")],[yL,1-P,"detector 1",C("one")]].forEach(d=>{
+      line(g,xJ+16,(yU+yL)/2,xD-4,d[0],C("rule-strong"),2);
+      g.fillStyle=C("surface");g.strokeStyle=C("rule-strong");g.lineWidth=1;rr(g,xD,d[0]-11,120,22,3);g.fill();g.stroke();
+      g.fillStyle=hex(d[3],0.85);rr(g,xD+1,d[0]-10,118*d[1],20,2);g.fill();
+      mono(g,10,500);g.fillStyle=d[3];g.textAlign="left";g.textBaseline="middle";g.fillText(d[2]+"  "+Math.round(100*d[1])+"%",xD,d[0]-22);});
+    /* waves from each road, and their sum */
+    const wy=190;axisText(g,"WAVE FROM THE UPPER ROAD (SHIFTED) + WAVE FROM THE LOWER ROAD = WHAT REACHES DETECTOR 0",40,158,"left","middle",C("faint"),8.4);
+    function w(f,x0,x1,col,wd,dsh){if(dsh)g.setLineDash(dsh);g.strokeStyle=col;g.lineWidth=wd;g.beginPath();for(let i=0;i<=120;i++){const x=x0+(x1-x0)*i/120,y=wy-22*f(2*2*Math.PI*i/120);i?g.lineTo(x,y):g.moveTo(x,y);}g.stroke();g.setLineDash([]);}
+    w(u=>Math.sin(u+ph*D2R),40,230,C("phase"),1.8);w(u=>Math.sin(u),270,460,C("zero"),1.8);
+    w(u=>(Math.sin(u+ph*D2R)+Math.sin(u))/2,500,W-20,C("zero"),2.4);w(u=>Math.sin(u+ph*D2R)/2,500,W-20,C("phase"),1,[2,3]);w(u=>Math.sin(u)/2,500,W-20,C("zero"),1,[2,3]);
+    mono(g,12,500);g.fillStyle=C("muted");g.textAlign="center";g.textBaseline="middle";g.fillText("+",250,wy);g.fillText("=",480,wy);
+  }
+  function fringe(ph){
+    const A=frame(gf,fr,{l:40,r:14,t:20,b:30});
+    [0,0.5,1].forEach(v=>{line(gf,A.l,A.b-A.h*v,A.r,A.b-A.h*v,C("grid"),1);axisText(gf,Math.round(100*v)+"%",A.l-6,A.b-A.h*v,"right","middle",C("faint"),9);});
+    [0,90,180,270,360].forEach(d=>axisText(gf,d+"°",A.l+A.w*d/360,A.b+12,"center","middle",C("faint"),9));
+    function curve(f,col){gf.strokeStyle=col;gf.lineWidth=2;gf.beginPath();for(let i=0;i<=200;i++){const d=360*i/200,x=A.l+A.w*i/200,y=A.b-A.h*f(d);i?gf.lineTo(x,y):gf.moveTo(x,y);}gf.stroke();}
+    curve(d=>p0(d),C("zero"));curve(d=>1-p0(d),C("one"));
+    const xm=A.l+A.w*ph/360;gf.setLineDash([3,3]);line(gf,xm,A.t,xm,A.b,C("rule-strong"),1);gf.setLineDash([]);
+    [[p0(ph),C("zero")],[1-p0(ph),C("one")]].forEach(d=>{gf.fillStyle=C("bench");gf.beginPath();gf.arc(xm,A.b-A.h*d[0],5.2,0,7);gf.fill();gf.fillStyle=d[1];gf.beginPath();gf.arc(xm,A.b-A.h*d[0],3.6,0,7);gf.fill();});
+    axisText(gf,"CHANCE OF EACH DETECTOR VS DELAY",A.l,A.t-10,"left","middle",C("faint"),8.6);
+    axisText(gf,"detector 0",A.l+A.w*340/360,A.b-A.h*p0(340)+13,"center","middle",C("zero"),9);axisText(gf,"detector 1",A.l+A.w*0.5,A.b-A.h*(1-p0(180))+13,"center","middle",C("one"),9);
+  }
+  function upd(){const ph=+sl.value;document.getElementById("mzPhV").textContent=ph+"°";schematic(ph);fringe(ph);
+    document.getElementById("mzread").innerHTML='<span class="k">chance of detector 0</span>(1 + cos '+ph+'°) / 2 = <span class="z">'+Math.round(100*p0(ph))+'%</span>'+(last!==null?'<br><span class="k">'+last.label+'</span>'+last.text:'');}
+  document.getElementById("mzLook").onclick=()=>{const d=Math.random()<p0(+sl.value)?0:1;last={label:"one qubit sent",text:"detector <span class='"+(d?"o":"z")+"'>"+d+"</span> fired"};upd();};
+  document.getElementById("mzMany").onclick=()=>{let z=0;for(let i=0;i<200;i++)if(Math.random()<p0(+sl.value))z++;last={label:"200 qubits sent",text:"detector 0 fired <span class='z'>"+z+"</span> times, detector 1 fired <span class='o'>"+(200-z)+"</span> times"};upd();};
+  document.getElementById("mzSweep").onclick=function(){const btn=this;if(sweep){cancelAnimationFrame(sweep);sweep=null;btn.classList.remove("on");return;}btn.classList.add("on");(function step(){sl.value=(+sl.value+2)%361;last=null;upd();sweep=requestAnimationFrame(step);})();};
+  sl.oninput=()=>{if(sweep){cancelAnimationFrame(sweep);sweep=null;document.getElementById("mzSweep").classList.remove("on");}last=null;upd();};
+  redraws.push(upd);upd();
+})();
+
+/* ================= 04 scores ================= */
+(function(){
+  const cv=document.getElementById("scCanvas"),g=setup(cv);
+  const sl=[0,1,2,3].map(i=>document.getElementById("sc"+i));
+  let lastLook=null;
+  function scores(){const a=sl.map(s=>+s.value/100);const n=Math.hypot.apply(null,a)||1;return a.map(v=>v/n);}
+  function draw(){
+    const a=scores(),A=frame(g,cv,{l:40,r:14,t:26,b:34});
+    const zero=A.t+A.h*0.5,sc=A.h*0.44;
+    [1,0.5,0,-0.5,-1].forEach(v=>{const y=zero-sc*v;if(v)g.setLineDash([2,3]);line(g,A.l,y,A.r,y,v?C("grid"):C("rule-strong"),v?1:1.2);g.setLineDash([]);axisText(g,v.toFixed(1),A.l-6,y,"right","middle",C("faint"),9);});
+    const lbl=["00","01","10","11"],bw=A.w/4;
+    a.forEach((v,i)=>{const x=A.l+bw*i+bw*0.2,w=bw*0.6,h=Math.abs(v)*sc;
+      g.fillStyle=v>=0?C("zero"):C("one");if(Math.abs(v)>1e-6){rr(g,x,v>=0?zero-h:zero,w,Math.max(h,2),3);g.fill();}
+      axisText(g,lbl[i],x+w/2,A.b+12,"center","middle",C("ink-2"),10);
+      axisText(g,"score "+(v>=0?"+":"")+v.toFixed(2),x+w/2,v>=0?zero-h-9:zero+h+9,"center","middle",C("muted"),9);
+      axisText(g,"chance "+Math.round(100*v*v)+"%",x+w/2,A.t+6,"center","middle",v*v>0.001?C("ink"):C("faint"),9.5);});
+    axisText(g,"SCORES ABOVE OR BELOW ZERO · CHANCE = SCORE × SCORE",A.l,A.t-14,"left","middle",C("faint"),8.6);
+    sl.forEach((s,i)=>document.getElementById("sc"+i+"V").textContent=(a[i]>=0?"+":"")+a[i].toFixed(2));
+    document.getElementById("scread").innerHTML='<span class="k">the chances add up to</span>'+Math.round(100*a.reduce((s,v)=>s+v*v,0))+'%'+
+      (lastLook!==null?'<br><span class="k">you looked and read</span><span class="z">'+lbl[lastLook]+'</span>':'');
+  }
+  sl.forEach(s=>s.oninput=()=>{lastLook=null;draw();});
+  document.getElementById("scLook").onclick=()=>{const a=scores();let u=Math.random(),c=0;for(let i=0;i<4;i++){c+=a[i]*a[i];if(u<=c){lastLook=i;break;}}if(lastLook===null)lastLook=3;draw();};
+  document.getElementById("scEq").onclick=()=>{sl.forEach(s=>s.value=50);lastLook=null;draw();};
+  redraws.push(draw);draw();
+})();
+
+/* ================= 05 four boxes ================= */
+(function(){
+  const cv=document.getElementById("grCanvas"),g=setup(cv);
+  let marked=2,step=0;const lbl=["box 1","box 2","box 3","box 4"];
+  const mr=document.getElementById("grmark");
+  lbl.forEach((L,i)=>{const b=document.createElement("button");b.className="btn gate"+(i===marked?" on":"");b.textContent=L;b.onclick=()=>{marked=i;step=0;[].forEach.call(mr.children,c=>c.classList.remove("on"));b.classList.add("on");draw();};mr.appendChild(b);});
+  function amps(k){let a=[0.5,0.5,0.5,0.5];if(k>=1)a[marked]*=-1;if(k>=2){const m=(a[0]+a[1]+a[2]+a[3])/4;a=a.map(v=>2*m-v);}return a;}
+  const names=["every box gets the same score","the machine flips the sign of the prize box","flip every score about the average","look"];
+  function draw(){
+    const a=amps(step),A=frame(g,cv,{l:42,r:16,t:26,b:34}),zero=A.t+A.h*0.52,sc=A.h*0.45;
+    [1,0.5,0,-0.5].forEach(v=>{const y=zero-sc*v;if(v){g.setLineDash([2,3]);line(g,A.l,y,A.r,y,C("grid"),1);g.setLineDash([]);}axisText(g,v.toFixed(1),A.l-7,y,"right","middle",C("faint"),9);});
+    line(g,A.l,zero,A.r,zero,C("rule-strong"),1.2);
+    if(step===1||step===2){const mm=amps(1).reduce((x,y)=>x+y,0)/4,y=zero-sc*mm;g.setLineDash([6,4]);line(g,A.l,y,A.r,y,C("phase"),1.6);g.setLineDash([]);axisText(g,"average = "+mm.toFixed(2),A.r-4,y-10,"right","middle",C("phase"),9.5);}
+    const bw=A.w/4;
+    a.forEach((v,i)=>{const x=A.l+bw*i+bw*0.2,w=bw*0.6,h=Math.abs(v)*sc,isM=i===marked;
+      g.fillStyle=isM?C("one"):C("zero");g.globalAlpha=isM?1:0.72;if(Math.abs(v)>1e-9){rr(g,x,v>=0?zero-h:zero,w,Math.max(h,2),3);g.fill();}g.globalAlpha=1;
+      axisText(g,lbl[i]+(isM?" ★":""),x+w/2,A.b+12,"center","middle",isM?C("one"):C("muted"),9.8);
+      axisText(g,v.toFixed(2),x+w/2,v>=0?zero-h-9:zero+h+9,"center","middle",C("ink-2"),9);
+      if(step===3)axisText(g,"chance "+Math.round(v*v*100)+"%",x+w/2,A.t+6,"center","middle",isM?C("one"):C("faint"),9.5);});
+    axisText(g,"STEP "+(step+1)+" OF 4 · "+names[step].toUpperCase(),A.l,A.t-12,"left","middle",C("faint"),8.6);
+    const v=document.getElementById("grverdict");v.className="verdict "+(step===3?"good":"");
+    v.innerHTML=["<b>Start.</b> Four boxes, four equal scores of 0.5. Every box has a 25% chance.",
+      "<b>Ask the machine once.</b> It flips the sign of the prize box. Every chance is still 25%, since (−0.5)² = 0.25. If you looked now you would learn nothing.",
+      "<b>Flip about the average.</b> The average was 0.25. The three scores at 0.5 land at 0. The one at −0.5 lands at +1.",
+      "<b>Look.</b> The prize box comes up with 100% chance. One question to the machine, and the answer is certain. Opening boxes one at a time takes 2.25 tries on average."][step];
+  }
+  document.getElementById("grnext").onclick=()=>{step=(step+1)%4;draw();};document.getElementById("grprev").onclick=()=>{step=(step+3)%4;draw();};
+  redraws.push(draw);draw();
+})();
+
+/* ================= quick checks ================= */
+quizEngine([
+  {id:"q1",sec:"01",type:"mc",q:"Two waves of the same size meet with a shift of 180 degrees. What do you get?",
+   opts:[["A wave twice as tall","That is what a shift of 0 gives. At 180 degrees one wave rises where the other falls."],["A flat line: they cancel",null],["The same wave as before","Both waves are still there and both push the medium. At 180 degrees they push in opposite directions at every moment."],["A wave with twice the frequency","Adding two waves of the same frequency never changes the frequency. It only changes the height."]],
+   ans:1,sol:"<b>A flat line.</b> At a 180 degree shift, wherever wave A is at its peak wave B is at its trough. Their sum is zero everywhere. This is what noise-cancelling headphones do, and it is the move every quantum algorithm is built on."},
+  {id:"q2",sec:"03",type:"num",unit:"percent",q:"The delay on the upper road is 60 degrees. What is the chance, in units of percent, that detector 0 fires?",
+   ok:v=>v>=74&&v<=76,
+   hint:v=>v===50?"50% is the answer for a 90 degree delay, where cos is zero. At 60 degrees cos is 0.5."
+          :v===60?"The delay is 60 degrees, but the chance comes from cos(60°), which is 0.5."
+          :v===25?"That is the chance of detector 1. The question asks for detector 0."
+          :"Use (1 + cos(delay)) / 2. cos(60°) = 0.5.",
+   sol:"(1 + cos 60°) / 2 = (1 + 0.5) / 2 = <b>75%</b>. Check it on the bench: set the delay to 60 and read detector 0."},
+  {id:"q3",sec:"04",type:"mc",q:"A pattern has a score of −0.6. What is the chance of reading that pattern?",
+   opts:[["−60%. A negative chance","There is no such thing as a negative chance. The chance is the score squared, and squares are never negative."],["36%",null],["60%","Close. The chance is the score squared, not the score itself. 0.6 × 0.6 = 0.36."],["0%. Negative scores never come up","A negative score is just as likely as a positive one of the same size. The sign only matters when scores meet and cancel."]],
+   ans:1,sol:"<b>36%.</b> Chance = score × score = (−0.6) × (−0.6) = 0.36. The minus sign disappears when you square. It matters only when this score is added to another score, where a −0.6 can wipe out a +0.6."},
+  {id:"q4",sec:"05",type:"num",unit:"tries",q:"Four boxes, one prize. Using the score trick, how many questions to the machine does it take to find the prize for certain?",
+   ok:v=>v===1,
+   hint:v=>v===4?"That is checking every box. The score trick does better than that."
+          :v===2?"Two tries is roughly the classical average. The bench needed fewer."
+          :v>=3?"Fewer. Step through the bench and count how many times the machine was asked."
+          :"Count the steps on the bench where the machine flips a sign.",
+   sol:"<b>One.</b> The machine flips the prize box's sign once. The flip about the average then moves all of the chance onto that box. Opening boxes one at a time takes 2.25 tries on average, since you might open one, two, or three wrong boxes first."}
+],"hs2-quiz-v1");
+
+tocBuild();
+
+})();
+</script>
+
+</body>
+</html>

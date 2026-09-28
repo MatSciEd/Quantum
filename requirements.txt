@@ -1,0 +1,4 @@
+numpy
+matplotlib
+ipywidgets
+matscied-tools @ git+https://github.com/MatSciEd/matscied-tools.git@v0.1.0
