@@ -371,6 +371,46 @@ details.teacher>.tb b{color:var(--ink)}
 .stepper{display:flex;gap:6px;flex-wrap:wrap}
 .stepper button{flex:1 1 90px}
 </style>
+<style>
+/* ---------- institutional strip and credit ---------- */
+.ufbar{background:var(--surface);border-bottom:1px solid var(--rule);margin-inline:-20px;padding:24px 20px}
+.ufbar-in{max-width:1080px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:24px}
+.ufbar a{display:block;color:inherit;text-decoration:none}
+.ufbar .college{flex:0 1 352px;min-width:0}
+.ufbar .college img{display:block;width:352px;max-width:100%;height:auto}
+.ufbar .college .logo-dark{display:none}
+.ufbar .qtp{display:flex;align-items:center;gap:12px;flex:none;font-family:Archivo,"Helvetica Neue",Arial,sans-serif;font-weight:600;font-size:1rem;line-height:1.2;color:var(--ink-2)}
+.ufbar .qtp img{display:block;width:47px;height:72px}
+.ufbar a:hover span{text-decoration:underline;text-decoration-color:var(--rule-strong);text-underline-offset:3px}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]) .ufbar .college .logo-light{display:none}
+  :root:not([data-theme="light"]) .ufbar .college .logo-dark{display:block}
+  :root:not([data-theme="light"]) .ufbar .qtp img{filter:invert(1)}
+}
+:root[data-theme="dark"] .ufbar .college .logo-light{display:none}
+:root[data-theme="dark"] .ufbar .college .logo-dark{display:block}
+:root[data-theme="dark"] .ufbar .qtp img{filter:invert(1)}
+@media (max-width:640px){.ufbar .qtp{display:none}}
+.credit{margin-top:18px;padding-top:16px;border-top:1px solid var(--rule);color:var(--muted)}
+.credit p{margin:0 0 6px}
+.credit a{color:var(--ink-2)}
+.credit nav{display:flex;flex-wrap:wrap;gap:2px 22px}
+/* phones: the opening block stacks into one column (a later two-column rule used to override this) */
+@media (max-width:880px){.hero{grid-template-columns:1fr;gap:30px;padding-block:40px 34px}}
+</style>
+<div class="ufbar">
+  <div class="ufbar-in">
+    <a class="college" href="https://www.eng.ufl.edu/">
+      <img class="logo-light" src="assets/hwcoe-logo.png" width="352" height="85" alt="UF Herbert Wertheim College of Engineering, University of Florida">
+      <img class="logo-dark" src="assets/hwcoe-logo-white.png" width="352" height="85" alt="UF Herbert Wertheim College of Engineering, University of Florida">
+    </a>
+    <a class="qtp" href="https://qtp.ufl.edu/">
+      <img src="assets/qtp-logo.svg" width="47" height="72" alt="">
+      <span>Quantum Theory<br>Project</span>
+    </a>
+  </div>
+</div>
+
 <div class="top">
   <div class="topin">
     <div class="brand"><b>Finding an Answer with Waves</b> &nbsp;/&nbsp; high school</div>
@@ -628,6 +668,15 @@ details.teacher>.tb b{color:var(--ink)}
 <footer>
   Page 2 of a three-page introduction to qubits for high-school students.<br>
   All figures are computed live in the browser. The four-box search reaches 100% for every choice of prize box, checked against a direct calculation.
+  <div class="credit">
+    <p>Richard G. Hennig, <a href="https://mse.ufl.edu/">Department of Materials Science and Engineering</a>. &copy; 2026, <a href="https://github.com/MatSciEd/Quantum/blob/main/LICENSE">MIT License</a>.</p>
+    <nav aria-label="Affiliations and source">
+      <a href="https://www.ufl.edu/">University of Florida</a>
+      <a href="https://www.eng.ufl.edu/">Herbert Wertheim College of Engineering</a>
+      <a href="https://qtp.ufl.edu/">Quantum Theory Project</a>
+      <a href="https://github.com/MatSciEd/Quantum">Source on GitHub</a>
+    </nav>
+  </div>
 </footer>
 </div>
 <style>canvas{height:auto}</style>
